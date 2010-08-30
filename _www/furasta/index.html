@@ -1,0 +1,42 @@
+<html>
+<head>
+	<noscript><meta http-equiv="refresh" content="0;url=/_inc/noscript.php"></noscript>
+	{$metadata}
+	<link rel="stylesheet" href="/_inc/css/admin.css"/>
+	<title>{$site_title} - {$page_name}</title>
+</head>
+<body>
+<div id="dialog">&nbsp;</div>
+{frontend_editor}
+	<div id="wrapper">
+		<div id="top">
+			<div id="top-wrapper">
+	                        <div id="title"><a href="http://Furasta.Org">{$site_title}</a><br/><span id="subtitle">{$site_subtitle}</span></div>
+				<div id="right">&nbsp;</div>
+			</div>
+		</div>
+		<div id="header">
+			<div id="menu">
+				{menu}
+			</div>
+		</div>
+		<div id="container">
+			<div id="container-right">
+				<div id="main">
+					<div id="right">
+						{$page_content}
+					</div>
+				</div>
+			</div>
+			<div id="footer">
+				<img src="/_inc/img/footer-right.png" style="float:right"/>
+				<img src="/_inc/img/footer-left.png"/>
+			</div>
+		</div>
+		<div id="bottom">
+			<p class="left">&copy; <a href="http://furasta.org">Furasta.Org</a> | <a href="http://furasta.org/Support">Support</a> | <a href="http://furasta.org/Feature-Requests">Feature Requests</a></p>
+			<br style="clear:both"/>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+/**
+ * Frontend CSS, Furasta.Org
+ *
+ * Contains all the default style information for the frontend
+ * of the CMS including basic menu styles.
+ *
+ * @author     Conor Mac Aoidh <conormacaoidh@gmail.com>
+ * @license    http://furasta.org/licence.txt The BSD License
+ * @version    1.0
+ */
+
+ul.furasta-menu-0{ float:left;list-style-type:none }
+ul.furasta-menu-0 li a{ padding:8px 9px }
+ul.furasta-menu-0 li{ float:left }
+ul.furasta-menu-0 > li ul{ display:none;list-style:none;position:absolute;margin:6px 0 0 -1px;z-index:90;border-bottom }
+ul.furasta-menu-0 > li ul li{ float:none }
+ul.furasta-menu-0 > li ul a{ display:block;width:152px;padding:4px 6px }
+ul.furasta-menu-0 > li ul li ul{ margin:-35px 0 0 170px;position:absolute }
+
+#admin-editor{ background:url("/_inc/img/header.png") no-repeat scroll right center #2A2A2A;height:40px;text-align:center }
+#admin-editor ul{ border:1px solid transparent;color:#fff;font-size:16px;margin:0 auto;text-align:left:width:78% }
+#admin-editor ul li{ display:inline;list-style-type:none }
+#admin-editor ul li a{ text-decoration:none;padding:8px 9px;color:#fff }

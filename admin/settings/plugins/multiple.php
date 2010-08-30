@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * Multiple Actions on Plugins, Furasta.Org
+ *
+ * Performs multiple actions on plugins, such as
+ * Activate, Deactivate, Delete etc. This page is 
+ * accessed via AJAX.
+ *
+ * @author     Conor Mac Aoidh <conormacaoidh@gmail.com>
+ * @license    http://furasta.org/licence.txt The BSD License
+ * @version    1.0
+ * @package    admin_settings
+ */
+
+$action=@$_GET['act'];
+$boxes=@$_GET['boxes'];
+$boxes=explode(',',$boxes);
+
+switch($action){
+	case 'Activate':
+		foreach($boxes as $box){
+                        if(!in_array($box,$PLUGINS)){
+				array_push($PLUGINS,$box);
+
+				$file=HOME.'_plugins/'.$box.'/install.php';
+				if(file_exists($file))
+				        require $file;
+			}
+		}
+	break;
+	case 'Deactivate':
+		foreach($boxes as $box){
+                        if(in_array($box,$PLUGINS)){
+                                $PLUGINS=array_flip($PLUGINS);
+				unset($PLUGINS[$box]);
+				$PLUGINS=array_flip($PLUGINS);
+
+				$file=HOME.'_plugins/'.$box.'/uninstall.php';
+				if(file_exists($file))
+				        require $file;
+			}
+		}
+	break;
+	case 'Delete':
+		foreach($boxes as $box){
+			$dir=HOME.'_plugins/'.$box;
+
+
+			$file=HOME.'_plugins/'.$box.'/uninstall.php';
+			if(file_exists($file))
+			        require $file;
+
+			if(is_dir($dir))
+			        remove_dir($dir);
+
+			if(in_array($box,$PLUGINS)){
+                                $PLUGINS=array_flip($PLUGINS);
+                                unset($PLUGINS[$box]);
+                                $PLUGINS=array_flip($PLUGINS);
+			}
+		}
+	break;
+	default:
+		error('Please contact bugs@macaoidh.name','Unknown Error');
+}
+
+settings_rewrite($SETTINGS,$DB,$PLUGINS);
+
+cache_clear();
+
+header('location: settings.php?page=plugins');
+?>

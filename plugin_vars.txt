@@ -1,0 +1,21 @@
+# variables #
+
+$name
+$description
+$version
+$email
+$href
+$importance
+$adminPageType
+$frontendTemplateFunction
+
+# functions #
+
+adminMenu($menu_array,$url)
+adminPageType($page_id)
+adminPage()
+adminOverviewItem()
+frontendPageType($Page)
+frontendTemplateFunction($Page)
+htaccess($htaccess)
+robots($robots)
