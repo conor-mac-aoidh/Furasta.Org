@@ -17,7 +17,35 @@ require 'header.php';
 if(@$_SESSION['begin']!=2)
         header('location: stage1.php');
 
-if(isset($_POST['submit'])){
+/**
+ * Conditions for validation
+ */
+
+$conds=array(
+        'Name'=>array(
+                'required'=>true
+        ),
+        'Email'=>array(
+                'required'=>true,
+		'email'=>true,
+        ),
+        'Password'=>array(
+                'required'=>true,
+		'minlength'=>6,
+		'match'=>'Repeat-Password'
+        ),
+	'Repeat-Password'=>array(
+		'required'=>true
+	)
+);
+
+/**
+ * Validate the conditions
+ */
+
+$valid=validate($conds,'#install','form-submit');
+
+if(isset($_POST['submit'])&&$valid==true){
 	$_SESSION['user']['name']=addslashes($_POST['Name']);
 	$_SESSION['user']['email']=addslashes($_POST['Email']);
 	$pass=$_POST['Password'];
@@ -32,28 +60,6 @@ if(isset($_POST['submit'])){
 		header('location: stage3.php');
 	}
 }
-
-$head='
-<script type="text/javascript">
-$("document").ready(function(){
-	$("#install").submit(function(){
-		var errors=required(["Name","Email","Password","Repeat-Password"]);
-		if(errors==0){
-			errors=emailFormat("Email");
-			if(errors==0){
-				errors=match("Password","Repeat-Password");
-				if(errors==0)
-					errors=minlength("Password",6);
-			}
-		}
-		if(errors!=0)
-			return false;
-	});
-});
-</script>
-';
-
-$Template->add('head',$head);
 
 $content='
 <div id="install-center">

@@ -24,6 +24,7 @@ $Template=new Template();
 
 $head='
 <script type="text/javascript" src="/_inc/js/system.js"></script>
+<script type="text/javascript" src="/_inc/js/validate.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
         if($(".row-color")){

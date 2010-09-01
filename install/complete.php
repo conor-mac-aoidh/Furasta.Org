@@ -11,7 +11,6 @@
  * @license    http://furasta.org/licence.txt The BSD License
  * @version    1.0
  * @package    installer
- * @todo       create contents of _user dir here, and let the user choose it's location, which should be inside the web root by default
  */
 
 require 'header.php';
@@ -42,8 +41,8 @@ query('create table '.$pages.' (id int auto_increment primary key,name text,cont
 query('insert into '.$pages.' values(0,"Home","'.$pagecontent.'","Home","Default","Normal","'.date('Y-m-d').'","Installer",1,0,0,1,1)');
 
 query('drop table if exists '.$users);
-query('create table '.$users.' (id int auto_increment primary key,name text,email text,password text,homepage text,user_group text,overview text,hash text,reminder text)');
-query('insert into '.$users.' values(0,"'.$_SESSION['user']['name'].'","'.$_SESSION['user']['email'].'","'.$_SESSION['user']['pass'].'","","Admin","'.$hash.'","")');
+query('create table '.$users.' (id int auto_increment primary key,name text,email text,password text,homepage text,user_group text,hash text,reminder text)');
+query('insert into '.$users.' values(0,"'.$_SESSION['user']['name'].'","'.$_SESSION['user']['email'].'","'.$_SESSION['user']['pass'].'","","Admin","'.$hash.'","")',true);
 
 query('drop table if exists '.$trash);
 query('create table '.$trash.' (id int auto_increment primary key,name text,content text,slug text,template text,type text,edited date,user text,position int,parent int,perm text,home int,display int)');
@@ -59,12 +58,13 @@ define(\'PREFIX\',\''.$prefix.'\');
 define(\'VERSION\',\'0.9\');
 define(\'SITEURL\',\''.$site_url.'\');
 define(\'USERFILES\',\''.$user_files.'\');
+define(\'SYSTEM_ALERT\',\'\');
 
 $PLUGINS=array();
 
 $SETTINGS=array(
-	\'site_title\'=>\''.$_SESSION['settings']['title'].'\',
-        \'site_subtitle\'=>\''.$_SESSION['settings']['sub_title'].'\',
+	\'site_title\'=>"'.$_SESSION['settings']['title'].'",
+        \'site_subtitle\'=>"'.$_SESSION['settings']['sub_title'].'",
         \'index\'=>\''.$_SESSION['settings']['index'].'\',
 	\'maintenance\'=>\''.$_SESSION['settings']['maintenance'].'\'
 );
@@ -80,6 +80,15 @@ $DB=array(
 ';
 
 file_put_contents(HOME.'.settings.php',$filecontents) or error('Please grant <i>0777</i> write access to the <i>'.HOME.'</i> directory then reload this page to complete installation.');
+
+$cache_dir=$user_files.'files';
+$files_dir=$user_files.'cache';
+
+if(!is_dir($cache_dir))
+	mkdir($cache_dir);
+
+if(!is_dir($files_dir))
+	mkdir($files_dir);
 
 $htaccess=
 	"# .htaccess - Furasta.Org\n".
@@ -103,7 +112,7 @@ $htaccess=
 
 file_put_contents(HOME.'.htaccess',$htaccess);
 
-if($_SESSION['settings']['index']==0)
+if($_SESSION['settings']['index']=='0')
 	$robots=
 	"# robots.txt - Furasta.Org\n".
 	"User-agent: *\n".
@@ -118,7 +127,7 @@ else
 
 file_put_contents(HOME.'robots.txt',$robots);
 
-$url='http://'.$_SERVER["SERVER_NAME"];
+$url='http://'.$_SERVER['SERVER_NAME'];
 $subject='User Activation | Furasta.Org';
 $message=$_SESSION['user']['name'].',
 
@@ -138,8 +147,8 @@ $headers='From: support@furasta.org'."\r\n".'Reply-To: support@furasta.org'."\r\
 mail($_SESSION['user']['email'],$subject,$message,$headers);
 
 $content='
-<h1>Installation Complete</h1>
-<p>Your Furasta CMS installation has been performed successfully. Please now finish and configure your website.</p>
+<h1>Installation Complete / Verification Email</h1>
+<p>Your Furasta CMS installation has been performed successfully. A user verification email has been sent to your email address. You must verify this address before you can log in. Please now finish and configure your website.</p>
 <br/>
 <a href="../admin/index.php" class="grey-submit right">Finish</a>
 </form>

@@ -162,8 +162,9 @@ class Plugins{
                 foreach($this->plugins as $plugin){
                         if(method_exists($plugin,'adminOverviewItem')){
                                 $items[$num]['name']=$plugin->name;
-				$items[$num]['class_name']=get_class($plugin);
+				$items[$num]['id']=get_class($plugin);
 				$items[$num]['content']=$plugin->adminOverviewItem();
+				$items[$num]['status']='open';
 				$num++;
 			}
                 }

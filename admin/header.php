@@ -46,14 +46,14 @@ else{
 				),
 			),
 		),
-		'Users & Groups'=>array(
-			'url'=>'/admin/users-groups.php',
+		'Users'=>array(
+			'url'=>'/admin/users.php',
 			'submenu'=>array(
 				'Edit Users'=>array(
-					'url'=>'/admin/users-groups.php?page=users',
+					'url'=>'/admin/users.php?page=users',
 				),
 				'Edit Groups'=>array(
-					'url'=>'/admin/users-groups.php?page=groups',
+					'url'=>'/admin/users.php?page=groups',
 				),
 			),
 		),
@@ -80,8 +80,8 @@ else{
 
 	$menu=display_menu($menu_items);
 
-        $content=json_encode($menu);
-        cache($cache_file,$content,'PAGES');
+        $menu_items_cache=json_encode($menu);
+        cache($cache_file,$menu_items_cache,'PAGES');
 }
 
 $Template->add('menu',$menu);

@@ -57,7 +57,7 @@ $num=0;
 $p_inactive=scan_dir(HOME.'_plugins');
 
 foreach($p_inactive as $plugin)
-	if(!in_array($plugin,$PLUGINS))
+	if(!in_array($plugin,$PLUGINS)&&is_dir(HOME.'_plugins/'.$plugin))
 	        require HOME.'_plugins/'.$plugin.'/plugin.php';
 
 

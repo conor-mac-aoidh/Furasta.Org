@@ -13,14 +13,11 @@
 
 require 'header.php';
 
-$perm=substr(sprintf('%o',fileperms(HOME)),-4);
-$granted=($perm==777)?1:0;
-
 $phpversion=phpversion();
 $ver=split("[/ ]",$_SERVER['SERVER_SOFTWARE']);
 $apacheversion=$ver[1].' '.$ver[2];
 
-$access=($granted==1) ? '<span class="green">Granted</span>':'<span id="notgranted" class="red">Not Granted</span>';
+$access=(is_writable(HOME)) ? '<span class="green">Granted</span>':'<span id="notgranted" class="red">Not Granted</span>';
 $php=($phpversion<<5) ? '<span class="green">'.$phpversion.'</span>':'<span class="red">'.$phpversion.'</span>';
 $apache=($ver[1]<<2) ? '<span class="green">'.$apacheversion.'</span>':'<span class="red">'.$apacheversion.'</span>';
 
@@ -65,5 +62,4 @@ $content='
 ';
 
 require 'footer.php';
-
 ?>	

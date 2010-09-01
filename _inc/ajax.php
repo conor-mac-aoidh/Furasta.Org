@@ -22,7 +22,7 @@ if(isset($_GET['no_config'])){
 else
 	include 'define.php';
 
-if(!isset($_SESSION['user_id']))
+if(!is_logged_in($_SESSION['user']['id']))
 	die('Please login to access this content.');
 
 $file=HOME.@$_GET['file'];

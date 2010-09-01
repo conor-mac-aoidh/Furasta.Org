@@ -158,6 +158,7 @@ function htaccess_rewrite(){
  * @param mixed $DB
  * @param mixed $PLUGINS
  * @param mixed $template_dir optional
+ * @param mixed $system_alert optional
  * @param mixed $version optional
  * @param mixed $prefix optional
  * @param mixed $pages optional
@@ -169,7 +170,7 @@ function htaccess_rewrite(){
  * @access public
  * @return void
  */
-function settings_rewrite($SETTINGS,$DB,$PLUGINS,$template_dir=TEMPLATE_DIR,$version=VERSION,$prefix=PREFIX,$pages=PAGES,$users=USERS,$trash=TRASH,$groups=GROUPS,$site_url=SITEURL,$user_files=USERFILES){
+function settings_rewrite($SETTINGS,$DB,$PLUGINS,$template_dir=TEMPLATE_DIR,$system_alert=SYSTEM_ALERT,$version=VERSION,$prefix=PREFIX,$pages=PAGES,$users=USERS,$trash=TRASH,$groups=GROUPS,$site_url=SITEURL,$user_files=USERFILES){
 	$filecontents='<?php
 # Furasta.Org - .settings.php #
 
@@ -182,7 +183,7 @@ define(\'PREFIX\',\''.$prefix.'\');
 define(\'VERSION\',\''.$version.'\');
 define(\'SITEURL\',\''.$site_url.'\');
 define(\'USERFILES\',\''.$user_files.'\');
-
+define(\'SYSTEM_ALERT\',\''.$system_alert.'\');
 
 $PLUGINS=array(';
 
@@ -192,8 +193,8 @@ $PLUGINS=array(';
 	$filecontents.=');
 
 $SETTINGS=array(
-        \'site_title\'=>\''.$SETTINGS['site_title'].'\',
-        \'site_subtitle\'=>\''.$SETTINGS['site_subtitle'].'\',
+        \'site_title\'=>"'.$SETTINGS['site_title'].'",
+        \'site_subtitle\'=>"'.$SETTINGS['site_subtitle'].'",
         \'index\'=>\''.$SETTINGS['index'].'\',
         \'maintenance\'=>\''.$SETTINGS['maintenance'].'\'
 );
@@ -241,7 +242,8 @@ function remove_dir($dir){
  * scan_dir 
  * 
  * Scans a dir for subdirs. Returns an
- * array of dirs, files are excluded.
+ * array of dirs, files and hidden
+ * directories are excluded.
  *
  * @param mixed $dir to be scanned
  * @access public
@@ -252,7 +254,7 @@ function scan_dir($dir){
 
 	$dirs=array();
 	foreach($files as $file){
-		if($file=='.'||$file=='..')
+		if($file=='.'||$file=='..'||substr($file,0,1)=='.')
 			continue;
 		if(is_dir($dir.'/'.$file))
 			array_push($dirs,$file);

@@ -128,8 +128,8 @@ function cache_clear($dir=''){
 function cache_exists($file,$dir=''){
 	if($dir!=''&&substr($dir,-1)!='/')
 		$dir=$dir.'/';
-	
-	return file_exists(USERFILES.$dir.md5($file));
+
+	return (file_exists(USERFILES.'cache/'.$dir.md5($file)));
 }
 
 ?>

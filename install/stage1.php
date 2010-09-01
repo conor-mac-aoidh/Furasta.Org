@@ -14,7 +14,30 @@
 
 require 'header.php';
 
-if(isset($_POST['submit'])){
+
+/**
+ * Conditions for validation
+ */
+
+$conds=array(
+	'DatabaseName'=>array(
+		'required'=>true
+	),
+	'Hostname'=>array(
+		'required'=>true
+	),
+	'Username'=>array(
+		'required'=>true
+	)
+);
+
+/**
+ * Validate the conditions
+ */
+
+$valid=validate($conds,'#install','form-submit');
+
+if(isset($_POST['submit'])&&$valid==true){
 	$_SESSION['db']['name']=$_POST['DatabaseName'];
 	$_SESSION['db']['host']=$_POST['Hostname'];
 	$_SESSION['db']['user']=$_POST['Username'];
@@ -26,35 +49,29 @@ if(isset($_POST['submit'])){
 
 $head='
 <script type="text/javascript">
-
-$(document).ready(function(){
-	$("#form-submit").click(function(){
-		var errors=required(["DatabaseName","Hostname","Username"]);
-                if(errors==0){
-			$("#check_connection").html("<img src=\"/_inc/img/loading.gif\"/> Checking Details...");
-			var connection=checkConnection(["Hostname","Username","DatabaseName","Password"]);
-			$("input[name=DatabaseName]").removeClass("error");
-                        $("input[name=Hostname]").removeClass("error");
-                        $("input[name=Username]").removeClass("error");
-                        $("input[name=Password]").removeClass("error");
-			if(connection!="ok"){
-				if(connection=="database")
-					$("input[name=DatabaseName]").addClass("error");
-				else{
-                                        $("input[name=Hostname]").addClass("error");
-                                        $("input[name=Username]").addClass("error");
-                                        $("input[name=Password]").addClass("error");
-				}
-                                fAlert("The details that you have supplied are invalid. Please correct them to continue.");
-                                $("#check_connection").html("&nbsp;");
+	function validateCallback(){
+		$("#check_connection").html("<img src=\"/_inc/img/loading.gif\"/> Checking Details...");
+		var connection=checkConnection(["Hostname","Username","DatabaseName","Password"]);
+		$("input[name=DatabaseName]").removeClass("error");
+		$("input[name=Hostname]").removeClass("error");
+		$("input[name=Username]").removeClass("error");
+		$("input[name=Password]").removeClass("error");
+		if(connection!="ok"){
+			if(connection=="database")
+				$("input[name=DatabaseName]").addClass("error");
+			else{
+				$("input[name=Hostname]").addClass("error");
+				$("input[name=Username]").addClass("error");
+				$("input[name=Password]").addClass("error");
 			}
-			else
-				return true;
+			fAlert("The details that you have supplied are invalid. Please correct them to continue.");
+			$("#check_connection").html("&nbsp;");
 		}
-		return false;
-	});
-});
+		else
+			return true;
 
+		return false;
+	}
 </script>
 ';
 

@@ -82,6 +82,9 @@ function validate(pieces){
 	if(match_f.length!=0&&match(match_f)==false)
 		return false;
 
+	if(typeof(validateCallback)=='function')
+		return validateCallback();
+
 	return true;	
 }
 
@@ -115,7 +118,7 @@ function pattern(field,pat){
 
 	if(!pat.test(loc.val())){
 		console.log('error');
-		fAlert('Please do not use special characters in the '+field+' field.');
+		fAlert('The '+field+' field is not valid.');
 		loc.addClass('error');
 		return false;
 	}

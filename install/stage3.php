@@ -17,15 +17,51 @@ require 'header.php';
 if(@$_SESSION['begin']!=3)
         header('location: stage2.php');
 
-if(isset($_POST['submit'])){
-	$_SESSION['settings']['title']=addslashes($_POST['Title']);
-	$_SESSION['settings']['sub_title']=addslashes($_POST['SubTitle']);
-	$_SESSION['settings']['index']=($_POST['Index']==1)?1:'0';
-        $_SESSION['settings']['maintenance']=($_POST['Maintenance']==1)?1:'0';
-        $_SESSION['settings']['user_files']=addslashes($_POST['User-Files']);
-        $_SESSION['settings']['site_url']=addslashes($_POST['Website-Url']);
-	$_SESSION['complete']=1;
-	header('location: complete.php');
+/**
+ * Conditions for validation
+ */
+
+$conds=array(
+        'Title'=>array(
+                'required'=>true,
+		'patern'=>'^[A-Za-z0-9., ]{2,40}$'
+        ),
+        'SubTitle'=>array(
+                'required'=>true,
+		'patern'=>'^[A-Za-z0-9., ]{2,40}$'
+	),
+	'Website-URL'=>array(
+		'required'=>true,
+		'pattern'=>'^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\?\/.=]+$'
+	),
+	'User-Files'=>array(
+		'required'=>true
+	)
+);
+
+/**
+ * Validate the conditions
+ */
+
+$valid=validate($conds,'#install','form-submit');
+
+if(isset($_POST['submit'])&&$valid==true){	
+	$_SESSION['settings']['title']=$_POST['Title'];
+	$_SESSION['settings']['sub_title']=$_POST['SubTitle'];
+	$_SESSION['settings']['index']=(@$_POST['Index']==1)?'1':'0';
+        $_SESSION['settings']['maintenance']=(@$_POST['Maintenance']==1)?'1':'0';
+        $_SESSION['settings']['user_files']=$_POST['User-Files'];
+        $_SESSION['settings']['site_url']=$_POST['Website-URL'];
+
+	if(substr($_SESSION['settings']['user_files'],-1)!='/')
+		$_SESSION['settings']['user_files'].='/';
+	
+	if(!mkdir($_SESSION['settings']['user_files'])&&!is_dir($_SESSION['settings']['user_files']))
+                $Template->add('system_error','User files directory must be writable.');
+	else{
+	        $_SESSION['complete']=1;
+	        header('location: complete.php');
+	}
 }
 
 $index_checked=(@$_SESSION['settings']['index']==1)?'CHECKED':'';
@@ -34,13 +70,6 @@ $maintenance_checked=(@$_SESSION['settings']['maintenance']==1)?'CHECKED':'';
 $head='
 <script type="text/javascript">
 $(document).ready(function(){
-	$("#install").submit(function(){
-		var errors=required(["Title","SubTitle"]);
-		if(errors==0)
-			errors+=pattern(["Title","SubTitle"],/^[A-Za-z0-9., ]{2,40}$/);
-		if(errors!=0)
-			return false;
-	});
 	$("#help-index").click(function(){
 		fHelp("Ticking this box will force search engines such as Google, Yahoo etc not to index this website. This option should be enabled to make the website more private, though people will still be able to access it through direct URLs.");
 	});
@@ -70,8 +99,8 @@ $content='
 			<tr><th colspan="2">Website Settings</th></tr>
 			<tr><td>Title:</td><td><input type="text" name="Title" value="'.@$_SESSION['settings']['title'].'" class="input right" /></td></tr>
                         <tr><td>Sub Title:</td><td><input type="text" name="SubTitle" value="'.@$_SESSION['settings']['sub_title'].'" class="input right" /></td></tr>
-			<tr><td>Website URL <a href="#" id="help-url"><img src="/_inc/img/help.png"/></a>:</td><td><input type="text" name="SubTitle" value="'.$url.'" class="input right" /></td></tr>
-                        <tr><td>User Files Locatione <a href="#" id="help-files"><img src="/_inc/img/help.png"/></a>:</td><td><input type="text" name="Title" value="'.$user_files.'" class="input right" /></td></tr>
+			<tr><td>Website URL <a href="#" id="help-url"><img src="/_inc/img/help.png"/></a>:</td><td><input type="text" name="Website-URL" value="'.$url.'" class="input right" /></td></tr>
+                        <tr><td>User Files Location <a href="#" id="help-files"><img src="/_inc/img/help.png"/></a>:</td><td><input type="text" name="User-Files" value="'.$user_files.'" class="input right" /></td></tr>
 			<tr><td>Don\'t Index Website <a href="#" id="help-index"><img src="/_inc/img/help.png"/></a>:</td><td><input type="checkbox" name="Index" value="1" class="checkbox" style="margin:0 10px 0 28%" '.$index_checked.'/></td></tr>
 		        <tr><td>Enable Maintenance Mode <a href="#" id="help-maintenance"><img src="/_inc/img/help.png"/></a>:</td><td><input type="checkbox" name="Maintenance" value="1" class="checkbox" style="margin:0 10px 0 28%"/ '.$maintenance_checked.'></td></tr>
 		</table>
