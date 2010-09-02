@@ -14,25 +14,20 @@
 
 header('Content-Type: text/html; charset=UTF-8');
 
+$Template->loadJavascript('_inc/js/jquery/multi-ddm.min.js');
+$Template->loadJavascript('_inc/js/admin/admin.js');
+$Template->loadJavascript('_inc/js/system.js');
+
+$Template->loadCss('/_inc/css/admin');
+
 echo'
 <html>
 <head>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
 	<noscript><meta http-equiv="refresh" content="0;url=/_inc/noscript.php"></noscript>
-	<script type="text/javascript" src="/_inc/js/multi-ddm.jquery.min.js"></script>
-	<script type="text/javascript" src="/_inc/js/treeTable.jquery.min.js"></script>
-        <script type="text/javascript" src="/_inc/js/system.js"/></script>
-	<script	type="text/javascript" src="/_inc/js/admin.js"/></script>
-';//<script type="text/javascript" src="/_inc/js/all.php?files='.$Template->about('javascript').')"></script>
-echo $Template->display('head');
-
-$jquery=$Template->display('jquery');
-if($jquery!=false)
-	echo '<script type="text/javascript"> $(document).ready(function(){ '.$jquery.' }); </script>';
-
-echo '
-	<link rel="stylesheet" href="/_inc/css/admin.css"/>
+	<script type="text/javascript" src="'.$Template->javascriptUrl().'"></script>
+	<link rel="stylesheet" href="'.$Template->cssUrl().'"/>
 	<title>Furasta.Org '.$Template->display('title').'</title>
 </head>
 <body>

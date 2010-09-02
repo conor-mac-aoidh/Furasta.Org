@@ -13,10 +13,12 @@
  * @version    1.0
  */
 
+require '../define.php';
+
 $files=@$_GET['files'];
 
-if($files==''||strstr($files,'.'))
-	die('filename cannot contain dots for security reasons. the ".css" is automatically appended to the name.');
+if($files==''||strstr($files,'..'))
+	die('filename cannot be empty, or contain ".." for security reasons.');
 
 ob_start('ob_gzhandler');
 header('Content-type: text/css; charset: UTF-8');
@@ -40,7 +42,7 @@ else{
 
 	$content='';
 	foreach($files as $file)
-		$content.=compress(file_get_contents(substr(dirname(__FILE__),0,-8).$file.'.css'));
+		$content.=compress(file_get_contents(HOME.$file));
 
 	cache($cache_file,$content,'CSS');
 

@@ -15,46 +15,7 @@
 
 require 'header.php';
 
-$jquery='
-        $(".sort-container").sortable({
-		placeholder:"ui-state-highlight",
-		connectWith:".sort-container",
-		stop:function(){
-			var order="";
-			$(".column_one").children(".overview-preview").each(function(){
-				order+=$(this).attr("id")+",";
-			});
-                        order=order.substring(0,order.length-1)+"|";
-                        $(".column_two").children(".overview-preview").each(function(){
-                                order+=$(this).attr("id")+",";
-                        });
-			order=order.substring(0,order.length-1);
-			fetch("/_inc/ajax.php?file=admin/overview/item_order.php&order="+order);
-		}
-	});
-	$(".sort-container").disableSelection();
-	$(".collapse-button").click(function(){
-		if($(this).html()=="+"){
-			var el=$(this).parent().parent();
-			el.removeClass("closed");
-			el.addClass("open");
-                        $(this).html("-");
-			var id=el.attr("id");
-			fetch("/_inc/ajax.php?file=admin/overview/item_status.php&id="+id+"&status=open");
-		}
-		else{
-			var el=$(this).parent().parent();
-                        el.removeClass("open");
-                        el.addClass("closed");
-			$(this).html("+");
-                        var id=el.attr("id");
-                        fetch("/_inc/ajax.php?file=admin/overview/item_status.php&id="+id+"&status=closed");
-		}
-		$(this).parent().siblings(".collapse-content").slideToggle("fast");
-	});
-';
-
-$Template->add('jquery',$jquery);
+$Template->loadJavascript('_inc/js/admin/overview.js');
 
 /**
  * Require and proccess order of overview items

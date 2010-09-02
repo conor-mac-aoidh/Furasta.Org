@@ -20,8 +20,9 @@ class Template{
 	var $menu='';
 	var $content='';
 	var $footer='';
-	var $jquery='';
+	var $doc_ready='';
 	var $javascript=array();
+	var $css=array();
 
 	function __construct(){
 		$this->system_error=(defined(SYSTEM_ALERT))?SYSTEM_ALERT:'';
@@ -37,13 +38,30 @@ class Template{
 		return false;
 	}
 
-	function load_javascript($file){
-		array_push($this->javascript,$file);
+	function loadCss($file){
+		return (array_push($this->css,$file));
 	}
 
-	function javascript_url(){
-		
+	function loadJavascript($file){
+		return (array_push($this->javascript,$file));
 	}
+
+	function javascriptUrl(){
+		$javascript=$this->javascript;
+
+                $files=implode(',',$javascript);
+
+                return '/_inc/js/js.php?files='.$files;
+	}
+
+	function cssUrl(){
+		$css=$this->css;
+		
+		$files=implode(',',$css);
+
+		return '/_inc/css/css.php?files='.$files;
+	}
+
 }
 
 ?>
