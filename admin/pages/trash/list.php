@@ -11,8 +11,7 @@
  * @package    admin_pages
  */
 
-$head='
-<script type="text/javascript">
+$jquery='
 $(document).ready(function(){
         $(".delete").click(function(){
                 fConfirm("Are you sure you want to permenantly delete this page?",function(element){
@@ -52,10 +51,9 @@ $(document).ready(function(){
                 fConfirm("Are you sure you want to perform a multiple "+action+"?",function(){ window.location="pages.php?page=trash&action=multiple&act="+action+"&boxes="+boxes; });
         });
 });
-</script>
 ';
 
-$Template->add('head',$head);
+$Template->loadJavascript('FURASTA_ADMIN_PAGES_TRASH_LIST',$jquery);
 
 $content='
 <span class="right"><select name="action" class="trash-select select-p_1"><option default="default">---</option><option>Restore</option><option>Delete</option></select> <input id="p_1" class="p-submit submit" type="submit" value="Go"/></span>

@@ -1,4 +1,4 @@
-//$(document).ready(function() {
+$(document).ready(function() {
 	$('#page-content').tinymce({
 		// Location of TinyMCE script
 		script_url : '/_inc/tiny_mce/tiny_mce.js',
@@ -23,4 +23,4 @@
 		media_external_list_url : "lists/media_list.js",
 
 	});
-//});
+});

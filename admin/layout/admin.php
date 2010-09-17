@@ -12,13 +12,14 @@
  * @package    admin_temnplate
  */
 
-header('Content-Type: text/html; charset=UTF-8');
+ob_start('ob_gzhandler');
+header('Content-type: text/html; charset: UTF-8');
 
 $Template->loadJavascript('_inc/js/jquery/multi-ddm.min.js');
 $Template->loadJavascript('_inc/js/admin/admin.js');
 $Template->loadJavascript('_inc/js/system.js');
 
-$Template->loadCss('/_inc/css/admin');
+$Template->loadCSS('_inc/css/admin.css');
 
 echo'
 <html>
@@ -51,7 +52,7 @@ echo'
 		<div id="container">
 			<div id="container-right">
 				<div id="main">';
-				$error=$Template->display('system_error');
+				$error=$Template->display('systemError');
 				if($error!='')
 					echo '
 					<div id="system_error">
@@ -77,4 +78,6 @@ echo '
 </body>
 </html>
 ';
+
+ob_end_flush();
 ?>

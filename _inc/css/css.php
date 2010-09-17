@@ -15,39 +15,18 @@
 
 require '../define.php';
 
-$files=@$_GET['files'];
+$cache_file = $_SERVER['QUERY_STRING'];
 
-if($files==''||strstr($files,'..'))
-	die('filename cannot be empty, or contain ".." for security reasons.');
+if( $cache_file == '' || strstr( $cache_file, '..' ) )
+        die( 'hash cannot be blank, or contain ".." for security reasons.' );
 
-ob_start('ob_gzhandler');
-header('Content-type: text/css; charset: UTF-8');
-header('Expires: '.gmdate( "D, d M Y H:i:s",time()+'35000000').' GMT');
-header('Cache-Control: public, max-age=35000000');
+ob_start( 'ob_gzhandler' );
+header( 'Content-type: text/css; charset: UTF-8' );
+header( 'Expires: ' . gmdate( "D, d M Y H:i:s", time() + '35000000' ) .' GMT' );
+header( 'Cache-Control: public, max-age=35000000' );
 
-$cache_file='FURASTA_CSS_'.$files;
-
-if(cache_exists($cache_file,'CSS'))
-	echo cache_get($cache_file,'CSS');
-else{
-	$files=explode(',',$files);
-
-	function compress($buffer){
-		/* remove comments */
-		$buffer=preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-		/* remove tabs, spaces, newlines, etc. */
-		$buffer=str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '), '', $buffer);
-		return $buffer;
-	}
-
-	$content='';
-	foreach($files as $file)
-		$content.=compress(file_get_contents(HOME.$file));
-
-	cache($cache_file,$content,'CSS');
-
-	echo $content;
-}
+if( cache_exists( $cache_file, 'CSS' ) )
+        echo cache_get( $cache_file, 'CSS' );
 
 ob_end_flush();
 ?>

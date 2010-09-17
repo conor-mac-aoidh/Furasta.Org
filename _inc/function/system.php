@@ -5,7 +5,7 @@
  *
  * Contains system functions which can be expected
  * available at all times during execution, frontend
- * and admin area and ever other area.
+ * and admin area, ie system wide.
  *
  * @author     Conor Mac Aoidh <conormacaoidh@gmail.com>
  * @license    http://furasta.org/licence.txt The BSD License
@@ -37,7 +37,7 @@ function __autoload($class_name){
  * @return void
  */
 function error($error,$title='Error'){
-	$Template=new Template();
+	$Template=Template::getInstance(true);
 	$Template->add('content','<h1>'.$title.'</h1>');
 	$Template->add('content','<p>'.$error.'</p>');
 	$Template->add('title','Fatal Error - Furasta.Org');
@@ -417,5 +417,25 @@ function validate($conds,$selector,$post){
 
 function is_logged_in($id){
 	return row('select name from '.USERS.' where id='.addslashes($id));
+}
+
+/**
+ * compress
+ *
+ * Compresses content of string
+ * 
+ * @param string to be compressed
+ * @access public
+ * @return string
+ */
+function compress($content){
+
+	/**
+	 * compress content
+	 */
+	$content=preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!','',$content);
+	$content=str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '),'',$content);
+
+	return $content;;
 }
 ?>

@@ -16,12 +16,12 @@ require $function_dir.'admin.php';
 
 $admin_dir=HOME.'admin/';
 
-$Template=new Template();
+$Template=Template::getInstance();
 
 if(!is_logged_in($_SESSION['user']['id']))
         require 'login.php';
 else
-        $User=new User($_SESSION['user_id']);
+        $User=new User($_SESSION['user']['id']);
 
 $cache_file='FURASTA_ADMIN_MENU';
 

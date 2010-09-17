@@ -10,7 +10,6 @@
 9. Change the pages options section to an AJAX request, most people will not use it and it is quite intensive creating parent lists etc, yet not enough used or large enough to be cached.
 10. Develop a few plugins to test, and adjust, the plugin architecture: File Manager (*), News Plugin (with RSS), something else..
 11. Do something to solve all the javascript code, try and genralise it somehow so it can be re-used rather than loads of 'once-offs'. all.php
-15. change the javascript validation system. the current system has too many ifs. streamline it to a syntax similar to the jquery validation plugin
 16. get rid of the admin/post dir - that was a stupid idea!
 17. Finish the password reminder!
 18. List Pages - add expand, contract all buttons
@@ -37,4 +36,4 @@
 8  Language support
 9. Possibly feature that when you register a new user on your website it also registers/allows you access to forum.furasta.org, bugs.furasta.org, and possibly developer.furasta.org. The later still tbc
 10. Possibly, add an option for scheduled backups, and add a restore from backup feature, or even better add a browse backups feature like Time Machine, although could be some space issues!
-
+11. Possibly create a power-law graph for the caching system to establish what should and should not be graphed

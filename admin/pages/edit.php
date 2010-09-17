@@ -45,7 +45,8 @@ if(isset($_POST['edit-save'])&&$valid==true){
 
 $Page=row('select * from fr_pages where id='.$id);
 
-$head='
+$javascript='
+$(document).ready(function(){
 	var type=$("#pages-type-content").attr("type");
         var id=$("#pages-type-content").attr("page-id");
         $("#pages-type-content").html("Loading... <img src=\"/_inc/img/loading.gif\"/>");
@@ -79,10 +80,11 @@ $head='
 	$("#redirect-help").click(function(){
 		fHelp("This feature allows you to redirect the user. Enter a URL to forward them to and then when they look at this page they will be redirected to that URL. For more information visit <a href=\"http://Furasta.Org/Help\">http://Furasta.Org/Help</a>");
 	});
+});
 ';
 
-$Template->load_javascript('_inc/js/validate.js');
-$Template->add('doc_ready',$jquery);
+$Template->loadJavascript( '_inc/js/validate.js' );
+$Template->loadJavascript( 'FURASTA_ADMIN_PAGES_EDIT', $jquery );
 
 $url='http://'.$_SERVER["SERVER_NAME"];
 
