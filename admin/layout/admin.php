@@ -15,9 +15,10 @@
 ob_start('ob_gzhandler');
 header('Content-type: text/html; charset: UTF-8');
 
-$Template->loadJavascript('_inc/js/jquery/multi-ddm.min.js');
-$Template->loadJavascript('_inc/js/admin/admin.js');
-$Template->loadJavascript('_inc/js/system.js');
+$Template->loadJavascript( '_inc/js/jquery/multi-ddm.min.js' );
+$Template->loadJavascript( '_inc/js/admin/admin.js' );
+$Template->loadJavascript( '_inc/js/system.js' );
+$Template->loadJavascript( '_inc/js/validate.js' );
 
 $Template->loadCSS('_inc/css/admin.css');
 

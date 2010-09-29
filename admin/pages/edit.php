@@ -12,81 +12,163 @@
  * @package    admin_pages
  */
 
-$id=(int)@$_GET['id'];
-if($id==0)
-        header('location pages.php?action=new');
+/**
+ * get page id - if none present redirect to 'new page' 
+ */
+$id = (int) @$_GET[ 'id' ];
+if( $id == 0 )
+        header( 'location pages.php?action=new' );
 
-$conds=array(
-	'Name'=>array(
-		'required'=>true,
-		'minlength'=>2,
-		'pattern'=>"^[A-Z a-z0-9]{1,40}$"
+
+/**
+ * get the status if isset 
+ */
+$status = @$_GET[ 'status' ];
+
+/**
+ * set up javascript and php form validation
+ */
+$conds = array(
+	'Name' => array(
+		'required'	=>	true,
+		'minlength'	=>	2,
+		'pattern'	=>	"^[A-Z a-z0-9]{1,40}$"
 	)
 );
 
 $valid=validate($conds,"#pages-edit",'edit-save');
 
-if(isset($_POST['edit-save'])&&$valid==true){
-        $name=addslashes($_POST['Name']);
-        $type=addslashes($_POST['Type']);
-        $template=addslashes($_POST['Template']);
-        $content=addslashes($_POST['PageContent']);
-        $slug=addslashes($_POST['slug']);
-        $home=(int)@$_POST['Homepage'];
-        $navigation=(@$_POST['Navigation']==1)?0:1;
-        $parent=(int)$_POST['Parent'];
-        $perm=(int)$_POST['perm'];
+/**
+ * read post information and edit page if applicable
+ */
+if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
+
+	/**
+	 *  set up post variables
+	 */
+        $name = addslashes( $_POST[ 'Name' ] );
+        $type = addslashes( $_POST[ 'Type' ] );
+        $template = addslashes( $_POST[ 'Template' ] );
+        $content = addslashes( $_POST[ 'PageContent' ] );
+        $slug = addslashes( $_POST[ 'slug' ] );
+        $home = (int) @$_POST[ 'Homepage' ];
+        $navigation = ( @$_POST[ 'Navigation' ] == 1 ) ? 0 : 1;
+        $parent = (int) $_POST[ 'Parent' ];
+        $perm = (int) $_POST[ 'perm' ];
+
+	/**
+	 * update database with edited page 
+	 */
 	query('update '.PAGES.' set
 	name="'.$name.'",content="'.$content.'",slug="'.$slug.'",template="'.$template.'",type="'.$type.'",edited="'.date('Y-m-d
 	G:i:s').'",user="'.$User->about('name').'",parent='.$parent.',perm="'.$perm.'",home='.$home.',display='.$navigation.'
 	where id='.$id,true);
-	cache_clear('PAGES');
+
+	/**
+	 * clear pages cache and set status as edited 
+	 */
+	cache_clear( 'PAGES' );
+
+	$status = 'edited';
 }
 
-$Page=row('select * from fr_pages where id='.$id);
+$Page = row( 'select * from fr_pages where id= ' . $id );
 
 $javascript='
 $(document).ready(function(){
+
 	var type=$("#pages-type-content").attr("type");
+
         var id=$("#pages-type-content").attr("page-id");
+
         $("#pages-type-content").html("Loading... <img src=\"/_inc/img/loading.gif\"/>");
+
 	loadPageType(type,id);
 
 	$("#edit-delete").click(function(){
+
 		fConfirm("Are you sure you want to delete this page?");
+
 		return false;
+
 	});
+
         $("#options-link").click(displayOptions);
+
         $("#edit-type").change(function(){
+
                 $("#pages-type-content").html("Loading... <img src=\"/_inc/img/loading.gif\"/>");
+
                 var type=$(this).attr("value");
+
 		loadPageType(type,id);
+
         });
+
 	$("#pages-permissions").click(function(){ pagePermissions(id); });
+
 	$("#page-name").keyup(function(){
+
 		var url=$("#page-name").val();
+
 		var result=slugCheck(url);
+
 		if(result==false)
+
 			$("#page-name").addClass("error");
+
 		else{
+
 			$("#page-name").removeClass("error");
+
 			var fullUrl="http://furasta.l/"+result;
+
 			$("#slug-url").html(fullUrl);
+
                         $("#slug-url").attr("href",fullUrl);
+
 			$("#slug-put").attr("value",result);
+
 		}
 		
 	});
+
 	$("#redirect-help").click(function(){
+
 		fHelp("This feature allows you to redirect the user. Enter a URL to forward them to and then when they look at this page they will be redirected to that URL. For more information visit <a href=\"http://Furasta.Org/Help\">http://Furasta.Org/Help</a>");
+
 	});
+
 });
 ';
 
-$Template->loadJavascript( '_inc/js/validate.js' );
-$Template->loadJavascript( 'FURASTA_ADMIN_PAGES_EDIT', $jquery );
+/**
+ * load javascript files to Template class for output later 
+ */
+$Template->loadJavascript( '_inc/js/jquery/tinymce.min.js' );
+$Template->loadJavascript( '_inc/js/tiny_mce.js' );
+$Template->loadJavascript( 'FURASTA_ADMIN_PAGES_EDIT', $javascript );
 
-$url='http://'.$_SERVER["SERVER_NAME"];
+/**
+ * recognise page updates etc 
+ */
+
+if( $status != '' ){
+
+	switch( $status ){
+
+		case 'updated':
+			$Template->add( 'systemError', '<p>page updated</p>' );
+		break;
+		case 'new':
+			$Template->add( 'systemError', '<p>page created</p>' );
+		break;
+
+	}
+
+}
+
+$url = 'http://' . $_SERVER[ 'SERVER_NAME' ];
 
 $content='
 <span style="float:right"><a href="pages.php?page=new&parent='.$Page['id'].'" id="new-subpage"><img src="/_inc/img/new-page.png" style="float:left"/> <h1 class="image-left">New Subpage</h1></a></span>

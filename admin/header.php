@@ -85,4 +85,22 @@ else{
 }
 
 $Template->add('menu',$menu);
+
+$javascript='
+$(document).ready(function(){
+        rowColor();
+        $("#menu ul").dropDownMenu({timer:1500,parentMO:"parent-hover"});
+        var path=location.pathname;
+        if(path=="/admin"||path=="/admin/"){
+                $("#Overview").addClass("current");
+        }
+        else{
+                $("#menu li a[href=\'"+path+"\']").addClass("current");
+        }
+});
+';
+
+$Template->loadJavascript( '_inc/js/admin.js' );
+$Template->loadJavascript( 'FURASTA_ADMIN_HEADER', $javascript );
+
 ?>

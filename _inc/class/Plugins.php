@@ -24,6 +24,17 @@
  * @todo add support for $importance var, add the importance as array key in $this->plugins, and order foreaches by key 
  */
 class Plugins{
+        /**
+         * instance
+         * 
+         * holds the Plugins instance
+         *
+         * @var object
+         * @static
+         * @access public
+         */
+        private static $instance;
+
 	/**
 	 * plugins 
 	 * 
@@ -33,6 +44,37 @@ class Plugins{
 	 * @access public
 	 */
 	public $plugins=array();
+
+        /**
+         * getInstance 
+         * 
+         * @static
+         * @param string $value , true if new instance should be made
+         * @access public
+         * @return instance
+         */
+        public static function getInstance( $value = false ){
+
+                /**
+                 * if value is true a new instance is created
+                 */
+                if( $value == true ){
+                        if( self::$instance )
+                                self::$instance == '';
+
+                        self::$instance = new Plugins() ;
+                        return self::$instance;
+                }
+
+                /**
+                 *  checks if an instance exists
+                 */
+                if(!self::$instance)
+                        self::$instance = new Plugins();
+
+                return self::$instance;
+        }
+
 
 	/**
 	 * register 
@@ -163,12 +205,35 @@ class Plugins{
                         if(method_exists($plugin,'adminOverviewItem')){
                                 $items[$num]['name']=$plugin->name;
 				$items[$num]['id']=get_class($plugin);
-				$items[$num]['content']=$plugin->adminOverviewItem();
 				$items[$num]['status']='open';
 				$num++;
 			}
                 }
                 return $items;
+	}
+
+	/**
+	 * adminOverviewItemContent 
+	 * 
+	 * returns the content of a specific admin
+	 * overview item
+	 *
+	 * @param string $item_id
+	 * @access public
+	 * @return string
+	 */
+	public function adminOverviewItemContent( $item_id ){
+		foreach( $this->plugins as $plugin ){
+			if( get_class( $plugin ) == $item_id ){
+				$content = $plugin->adminOverviewItem();
+				break;
+			}
+		}
+		
+		if( !isset( $content ) )
+			return 'plugin not found';
+
+		return $content;
 	}
 }
 ?>

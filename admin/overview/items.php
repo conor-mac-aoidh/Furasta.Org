@@ -3,7 +3,8 @@
 /**
  * Overview Items, Furasta.Org
  *
- * Collects the overview items into an array.
+ * Accessed via AJAX, this file loads the content
+ * of overview items.
  *
  * @author     Conor Mac Aoidh <conormacaoidh@gmail.com>
  * @license    http://furasta.org/licence.txt The BSD License
@@ -11,96 +12,98 @@
  * @package    admin_overview
  */
 
+$overview_item = @$_GET['overview_item'];
+
+if( $overview_item == '' )
+	die( 'There has been an error loading the page.' );
+
 /**
- * START OVERVIEW ITEMS
+ * switch
  *
- * Website Overview Item
+ * switches between the possible values of
+ * $overview_item and echos the content of the
+ * associated item. the default switch checks
+ * plugins and if it exists in a plugin it also
+ * echos the content. 
  */
+switch( $overview_item ){
 
-$template=parse_template_file(TEMPLATE_DIR.'style.css');
+	case 'website-overview':
+		require_once HOME . '_inc/function/admin.php';
 
-$name='Website Overview';
-$id='website-overview';
-$item_content='
-<table class="row-color">
-	<tr><td>Pages:</td><td>'.count(rows('select id from '.PAGES)).'</td></tr>
-	<tr><td>Trash:</td><td>'.count(rows('select id from '.TRASH)).'</td></tr>
-	<tr><td>Users:</td><td>'.count(rows('select id from '.USERS)).'</td></tr>
-	<tr><td>Theme:</td><td>'.$template['Name'].'</td></tr>
-	<tr><td>Furasta.Org Version:</td><td>'.VERSION.'</td></tr>
-</table>';
+		$template = parse_template_file(TEMPLATE_DIR.'style.css');
 
-$OverviewItems->addItem($name,$id,$item_content);
+		echo '
+		<table class="row-color">
+		        <tr><td>Pages:</td><td>' . count( rows( 'select id from ' . PAGES ) ) . '</td></tr>
+		        <tr><td>Trash:</td><td>' . count( rows( 'select id from ' . TRASH ) ) . '</td></tr>
+		        <tr><td>Users:</td><td>' . count( rows( 'select id from ' . USERS ) ) . '</td></tr>
+		        <tr><td>Theme:</td><td>' . $template[ 'Name' ] . '</td></tr>
+		        <tr><td>Furasta.Org Version:</td><td>' . VERSION . '</td></tr>
+		</table>';
+	break;
+	case 'recently-edited':
+		echo '<table class="row-color">';
 
-/**
- * Recently Trashed Item
- */
+		$pages = rows( 'select id,name,content,edited from ' . TRASH . ' order by edited desc limit 5' );
+		foreach( $pages as $page )
+        		echo '<tr><td><span>' . date( "F j, Y", strtotime( $page[ 'edited' ] ) ) . '
+        		</span><a href="pages.php?page=trash"><h3>' . $page[ 'name' ] . '</h3></a>
+        		<p>' . strip_tags( substr( $page[ 'content' ], 0, 125 ) ) . ' [...]</p></td></tr>';
 
-$name='Recently Trashed';
-$id='recently-trashed';
+		echo '</table>';
+	break;
+	case 'recently-trashed':
+		echo '<table class="row-color">';
 
-$item_content='<table class="row-color">';
+		$pages = rows( 'select id,name,content,edited from ' . PAGES . ' order by edited desc limit 5' );
+		foreach( $pages as $page )
+        		echo '<tr><td><span>' . date( "F j,Y", strtotime( $page[ 'edited' ] ) ) . '</span><a
+		        href="pages.php?page=edit&id=' . $page[ 'id' ] . '"><h3>' . $page[ 'name' ] . '</h3></a>
+		        <p>' . strip_tags( substr( $page[ 'content' ], 0, 125 ) ) . ' [...]</p></td></tr>';
 
-$pages=rows('select id,name,content,edited from '.TRASH.' order by edited desc limit 5');
-foreach($pages as $page)
-	$item_content.='<tr><td><span>'.date("F j, Y",strtotime($page['edited'])).'
-	</span><a href="pages.php?page=trash"><h3>'.$page['name'].'</h3></a>
-	<p>'.strip_tags(substr($page['content'],0,125)).' [...]</p></td></tr>';
+		echo '</table>';
+	break;
+	case 'furasta-devblog':
+		$cache_file = 'FURASTA_RSS_DEVBLOG';
 
-$item_content.='</table>';
+		if( cache_is_good( $cache_file, '60*60*24', 'RSS' ) )
+        		$items = json_decode( cache_get( $cache_file, 'RSS' ), true );
+		else{
+			$elements = rss_fetch( 'http://blog.macaoidh.name/tag/furasta-org/feed/' );
+			$items = array( );
 
-$OverviewItems->addItem($name,$id,$item_content);
+			for( $i=0; $i<=2; $i++ ){
+			        foreach( $elements[ $i ] as $element=>$value ){
+		  	        	switch( $element ){
+                        			case 'pubDate':
+                                			$items[ $i ][ 'pubDate' ] = date( "F j, Y", strtotime( $value ) );
+                        			break;
+                        			case 'title':
+                                			$items[ $i ][ 'title' ] = iconv( "UTF-8", "UTF-8//IGNORE", $value );
+                        			break;
+                        			case 'link':
+                                			$items[ $i ][ 'link' ] = $value;
+                        			break;
+                        			case 'description':
+                                			$items[ $i ][ 'description' ] = substr( $value, 0, 125) . ' [...]';
+                        			break;
+                			}
+        			}
+			}
 
-/**
- * Recently Edited Item
- */
+			cache( 'FURASTA_RSS_DEVBLOG ', json_encode( $items ), 'RSS' );
+		}
 
-$name='Recently Edited';
-$id='recently-edited';
+		echo '<table class="row-color">';
 
-$item_content='<table class="row-color">';
+		foreach( $items as $item )
+		        echo '<tr><td><span>' . $item[ 'pubDate' ] . '</span><a
+		        href="' .$item[ 'link' ] . '"><h3>' . $item[ 'title' ] . '</h3></a><p>' . $item[ 'description' ] . '</p></td></tr>';
 
-$pages=rows('select id,name,content,edited from '.PAGES.' order by edited desc limit 5');
-foreach($pages as $page)
-	$item_content.='<tr><td><span>'.date("F j,Y",strtotime($page['edited'])).'</span><a
-	href="pages.php?page=edit&id='.$page['id'].'"><h3>'.$page['name'].'</h3></a>
-	<p>'.strip_tags(substr($page['content'],0,125)).' [...]</p></td></tr>';
-
-$item_content.='</table>';
-
-$OverviewItems->addItem($name,$id,$item_content);
-
-/**
- * Furasta Development Blog
- */
-
-$name='Furasta Development Blog';
-$id='furasta-devblog';
-
-$cache_file='FURASTA_RSS_DEVBLOG';
-
-if(cache_is_good($cache_file,'60*60*24','RSS'))
-        $items=json_decode(cache_get($cache_file,'RSS'),true);
-else{
-	if(file_exists(USERFILES.'cache/RSS/'.md5($cache_file))){
-		$Template->add('jquery','fetch("'.SITEURL.'admin/overview/dev_blog.php?ajax=on");');
-        	$items=json_decode(cache_get($cache_file,'RSS'),true);
-	}
-	else
-		require HOME.'admin/overview/dev_blog.php';
+		echo '</table>';
+	break;
+	default:
+		echo $Plugins->adminOverviewItemContent( $overview_item );
 }
-
-$item_content='<table class="row-color">';
-
-foreach($items as $item)
-	$item_content.='<tr><td><span>'.$item['pubDate'].'</span><a
-	href="'.$item['link'].'"><h3>'.$item['title'].'</h3></a><p>'.$item['description'].'</p></td></tr>';
-
-$item_content.='</table>';
-
-$OverviewItems->addItem($name,$id,$item_content);
-
-/**
- * END OVERVIEW ITEMS
- */
 ?>

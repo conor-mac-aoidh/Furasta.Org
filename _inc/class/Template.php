@@ -32,6 +32,17 @@ class Template {
 	 */
 	private static $instance;
 
+	/**
+	 * diagnosticJavascript 
+	 * 
+	 * re-creates the javascript cache without compression
+	 * for diagnostic reasons
+	 *
+	 * @var mixed
+	 * @access public
+	 */
+	public $diagnosticJavascript=0;
+
         /**
          * title 
          * 
@@ -203,7 +214,7 @@ class Template {
          * @return string
          */
         public function javascriptUrl(){
-                
+
 		$files = $this->javascriptFiles;
                 $sources = $this->javascriptSources;
                 $content = '';
@@ -218,9 +229,19 @@ class Template {
 
                 $cache_file = md5( implode( '', $files ) );
 
+		/**
+		 * check if diagnostic javascript is enabled
+		 * and if so do not compress data
+		 */
+
                 if( !cache_exists( $cache_file, 'JS' ) ){
-                        $content = compress( $content );
-                        cache( $cache_file, $content, 'JS');
+			if( $this->diagnosticJavascript == 1 )
+				cache( $cache_file, $content, 'JS' );
+			else{
+				$packer = new JavaScriptPacker( $content, 'Normal', true, false );
+	                        $content = $packer->pack( );
+        	                cache( $cache_file, $content, 'JS');
+			}
                 }
 
                 return '/_inc/js/js.php?' . $cache_file;
@@ -272,7 +293,8 @@ class Template {
                 $cache_file = md5( implode( '', $files ) );
 
                 if( !cache_exists( $cache_file, 'CSS' ) ){
-                        $content = compress( $content );
+			$packer = new JavaScriptPacker( $content, 'Normal', true, false);
+                        $content = $packer->pack( );
                         cache( $cache_file, $content, 'CSS');
                 }
 

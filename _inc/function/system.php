@@ -275,22 +275,22 @@ function scan_dir($dir){
  * @access public
  * @return array or bool false
  */
-function rss_fetch($url,$tagname='item'){
+function rss_fetch( $url, $tagname = 'item' ){
 
 	/** @todo ajax cache renewal */
-	$dom=new DOMdocument();
-	$dom->load($url);
-	$elements=$dom->getElementsByTagName($tagname);
-	$items=array();
+	$dom = new DOMdocument( );
+	$dom->load( $url );
+	$elements = $dom->getElementsByTagName( $tagname );
+	$items = array( );
 
-	foreach($elements as $element){
-		$item=array();
+	foreach( $elements as $element ){
+		$item = array( );
 
-		if($element->childNodes->length){
-			foreach($element->childNodes as $node){
-				$item[$node->nodeName]=$node->nodeValue;
+		if( $element->childNodes->length ){
+			foreach( $element->childNodes as $node ){
+				$item[ $node->nodeName ] = $node->nodeValue;
 			}
-			$items[]=$item;
+			$items[ ] = $item;
 		}
 	}
 
@@ -309,10 +309,23 @@ function rss_fetch($url,$tagname='item'){
  * @return void
  */
 function validate($conds,$selector,$post){
-	global $Template;
 
-        $script='$("'.$selector.'").submit(function(){ return validate('.json_encode($conds).'); });';
-	$Template->add('jquery',$script);
+	/**
+	 * initiate an instance of the Template class
+	 */
+	$Template = Template::getInstance( );
+
+	/**
+	 * set up javascript validation 
+	 */
+        $javascript = '
+	$(document).ready(function(){
+		$("' . $selector . '").submit(function(){ 
+			return validate(' . json_encode( $conds ) . '); 
+		});
+	});';
+
+	$Template->loadJavascript( 'FURASTA_VALIDATE_PLUGIN_' .  json_encode( $conds ), $javascript );
 
         if(!isset($_POST[$post]))
                 return true;
@@ -417,25 +430,5 @@ function validate($conds,$selector,$post){
 
 function is_logged_in($id){
 	return row('select name from '.USERS.' where id='.addslashes($id));
-}
-
-/**
- * compress
- *
- * Compresses content of string
- * 
- * @param string to be compressed
- * @access public
- * @return string
- */
-function compress($content){
-
-	/**
-	 * compress content
-	 */
-	$content=preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!','',$content);
-	$content=str_replace(array("\r\n", "\r", "\n", "\t", '  ', '    ', '    '),'',$content);
-
-	return $content;;
 }
 ?>

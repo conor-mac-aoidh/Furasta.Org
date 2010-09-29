@@ -31,7 +31,7 @@ class OverviewItems{
 	 * @var array
 	 * @access private
 	 */
-	private $items=array();
+	private $items = array( );
 
 	/**
 	 * order 
@@ -41,7 +41,7 @@ class OverviewItems{
 	 * @var array
 	 * @access private
 	 */
-	private $order=array();
+	private $order = array( );
 
 	/**
 	 * status
@@ -52,7 +52,7 @@ class OverviewItems{
 	 * @var array
 	 * @access private
 	 */
-	private $status=array();
+	private $status = array( );
 
 	/**
 	 * __construct 
@@ -63,31 +63,43 @@ class OverviewItems{
 	 * @access protected
 	 * @return void
 	 */
-	function __construct(){
-		global $Plugins;
-		$this->items=$Plugins->adminOverviewItems();
-	}
+	function __construct( ){
 
-	/**
-	 * addItem 
-	 *
-	 * Facilitates the addition of overview items
-	 * to the $items array.
-	 * 
-	 * @param string $name 
-	 * @param string $id 
-	 * @param string $content 
-	 * @access public
-	 * @return bool
-	 */
-	function addItem($name,$id,$content){
-		$array[]=array(
-			'name'=>$name,
-			'id'=>$id,
-			'content'=>$content,
-			'status'=>'open'
-		);
-		return ($this->items=array_merge($this->items,$array));
+                #################### CHANGE TO GET INSTANCE ############################
+
+  //              global $Plugins;
+//                $items = $Plugins->adminOverviewItems( );
+
+                #######################################################################
+
+		$Plugins = Plugins::getInstance( );
+		$items = $Plugins->adminOverviewItems( );
+
+		$items = array_merge( $items, array(
+			array(
+				'name'	=>	'Website Overview',
+				'id'	=>	'website-overview',
+				'status'=>	'open'
+			),
+			array(
+                                'name'  =>      'Recently Edited',
+                                'id'    =>      'recently-edited',
+                                'status'=>      'open'
+			),
+			array(
+                                'name'  =>      'Recently Trashed',
+                                'id'    =>      'recently-trashed',
+                                'status'=>      'open'
+			),
+			array(
+                                'name'  =>      'Furasta Development Blog',
+                                'id'    =>      'furasta-devblog',
+                                'status'=>      'open'
+			)
+		) );
+
+		$this->items = $items;
+
 	}
 
 	/**
@@ -99,64 +111,63 @@ class OverviewItems{
 	 * @access public
 	 * @return bool
 	 */
-	function order(){
-                $items=$this->items;
+	function order( ){
+                $items = $this->items;
 
-                $cache_file='FURASTA_OVERVIEW_ITEMS_STATUS_'.$_SESSION['user']['id'];
+                $cache_file = 'FURASTA_OVERVIEW_ITEMS_STATUS_' . $_SESSION[ 'user' ][ 'id' ];
 
-                if(cache_exists($cache_file,'OVERVIEW_ITEMS')){
-                        $items_status=json_decode(cache_get($cache_file,'OVERVIEW_ITEMS'));
+                if( cache_exists( $cache_file, 'OVERVIEW_ITEMS' ) ){
+                        $items_status = json_decode( cache_get( $cache_file, 'OVERVIEW_ITEMS' ) );
 
-			foreach($items as $item=>$value){
-				foreach($items_status as $key=>$status){
-					if($value['id']==$key){
-						$items[$item]['status']=$status;
+			foreach( $items as $item => $value ){
+				foreach( $items_status as $key => $status ){
+					if( $value[ 'id' ] == $key ){
+						$items[ $item ][ 'status' ] = $status;
 						break;
 					}
 				}
 			}
                 }
 
-		$cache_file='FURASTA_OVERVIEW_ITEMS_'.$_SESSION['user']['id'];
+		$cache_file = 'FURASTA_OVERVIEW_ITEMS_' . $_SESSION[ 'user' ][ 'id' ];
 
-		if(cache_exists($cache_file,'OVERVIEW_ITEMS'))
-			$order=json_decode(cache_get($cache_file,'OVERVIEW_ITEMS'),true);
+		if( cache_exists( $cache_file, 'OVERVIEW_ITEMS' ) )
+			$order = json_decode( cache_get( $cache_file, 'OVERVIEW_ITEMS' ), true );
 		else{
-		        $order=array(
-	                	'1'=>array( 'website-overview','recently-trashed' ),
-        		        '2'=>array( 'recently-edited','furasta-devblog' )
+		        $order = array(
+	                	'1' => array( 'website-overview', 'recently-trashed' ),
+        		        '2' => array( 'recently-edited', 'furasta-devblog' )
 		        );
-			cache($cache_file,json_encode($order),'OVERVIEW_ITEMS');
+			cache( $cache_file, json_encode( $order ), 'OVERVIEW_ITEMS' );
 		}
 		
-		$ordered=array();
-		$num=0;
+		$ordered = array( );
+		$num = 0;
 
-		foreach($order as $key=>$value){
-			foreach($value as $id){
+		foreach( $order as $key => $value ){
+			foreach( $value as $id ){
 				$num++;
-				foreach($items as $item=>$vals){
-					if($vals['id']==$id){
-						$ordered[$key][$num]=$vals;
-						unset($items[$item]);
+				foreach( $items as $item => $vals ){
+					if( $vals[ 'id' ] == $id ){
+						$ordered[ $key ][ $num ] = $vals;
+						unset( $items[ $item ] );
 						break;
 					}
 				}
 			}
 		}
 
-
-		if(count($items)!=0){
-			for($i=0;$i<=(count($items)-1);$i++){
+		if( count( $items ) != 0 ){
+			for( $i=0; $i<= ( count( $items ) -1 ); $i++ ){
 				$num++;
-				if($i%2)
-					$ordered['2'][$num]=$items[$i];
+				if( $i%2 )
+					$ordered[ '2' ][ $num ]= $items[ $i ];
 				else
-					$ordered['1'][$num]=$items[$i];
+					$ordered[ '1' ][ $num ] = $items[ $i ];
 			}
 		}
 
-		return ($this->items=$ordered);
+		return ( $this->items = $ordered );
 	}
 
 	/**
@@ -168,27 +179,27 @@ class OverviewItems{
 	 * @access public
 	 * @return string
 	 */
-	function displayItems(){
-		$items=$this->items;
-		$content='<div class="sort-container column_one" style="float:left">';
+	function displayItems( ){
+		$items = $this->items;
+		$content = '<div class="sort-container column_one" style="float:left">';
 
-		foreach($items['1'] as $item){
-			$status=($item['status']=='open')?'-':'+';
-                        $content.='<div class="overview-preview" id="'.$item['id'].'">
-                                        <p class="th"><a class="collapse-button" class="right">'.$status.'</a><span>'.$item['name'].'</span></p>'
-                                        .'<div class="collapse-content '.$item['status'].'">'.$item['content'].'</div></div>';
+		foreach( $items[ '1' ] as $item ){
+			$status = ( $item[ 'status' ] == 'open' ) ? '-' : '+';
+                        $content .= '<div class="overview-preview" id="' . $item[ 'id' ] . '">
+                                        <p class="th"><a class="collapse-button" class="right">' . $status . '</a><span>' . $item[ 'name' ] . '</span></p>'
+                                        .'<div class="collapse-content '. $item[ 'status' ] . '"></div></div>';
 		}
 
-		$content.='</div><div class="sort-container column_two" style="margin-left:50%">';
+		$content .= '</div><div class="sort-container column_two" style="margin-left:50%">';
 
-                foreach($items['2'] as $item){
-                        $status=($item['status']=='open')?'-':'+';
-                        $content.='<div class="overview-preview" id="'.$item['id'].'">
-                                        <p class="th"><a class="collapse-button" class="right">'.$status.'</a><span>'.$item['name'].'</span></p>'
-                                        .'<div class="collapse-content '.$item['status'].'">'.$item['content'].'</div></div>';
+                foreach( $items[ '2' ] as $item ){
+                        $status = ( $item[ 'status' ] == 'open' ) ? '-' : '+';
+                        $content .= '<div class="overview-preview" id="' . $item[ 'id' ] . '">
+                                        <p class="th"><a class="collapse-button" class="right">' . $status . '</a><span>' . $item[ 'name' ] .'</span></p>'
+                                        .'<div class="collapse-content ' . $item[ 'status' ] . '"></div></div>';
                 }
 
-		$content.='</div>';
+		$content .= '</div>';
 
 		return $content;
 	}

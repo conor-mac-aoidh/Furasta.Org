@@ -17,8 +17,6 @@ $page=addslashes(@$_GET['page']);
 
 switch($page){
 	case 'new':
-		if(isset($_POST))
-		        require 'post/pages.php';
 		$Template->add('title','- New Page');
 		require 'pages/new.php';
 	break;

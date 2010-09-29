@@ -41,7 +41,7 @@ if(!mysql_select_db($DB['name'],$connect))
 
 session_start();
 
-$Plugins=new Plugins();
+$Plugins = Plugins::getInstance( );
 
 foreach($PLUGINS as $plugin)
 	require HOME.'_plugins/'.$plugin.'/plugin.php';

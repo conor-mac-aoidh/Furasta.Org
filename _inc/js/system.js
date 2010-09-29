@@ -11,11 +11,12 @@
 
 function rowColor(){
 	$(".row-color tr").each(function(){
-		if($(this).hasClass('even'))
+		if($(this).hasClass('even')){
                         $(this).removeClass('even');
-		else if($(this).hasClass('odd'))
+		}
+		else if($(this).hasClass('odd')){
 			$(this).removeClass('odd');
-			
+		}
 	});
 	$(".row-color tr:even").addClass("even");
 	$(".row-color tr:odd").addClass("odd");
@@ -64,15 +65,28 @@ function checkConnection(details){
 	return window.html;
 }
 
-function fetch(url){
+/**
+ * fetch 
+ * 
+ * @param string url to be fetched
+ * @param selector put - optional place to put loaded content
+ * @access public
+ * @return void
+ */
+function fetch( url, put ){
 	$.ajax({
-		url:url,
-		success:function(html){
-			if(html=='1')
-				fAlert('There has been an unknown error. Please refresh the page and try again.');
-		},
-		error:function(){
-			fAlert('There has been an error processing your request. Please check your internet connection and refresh the page.');
-		}
+		url	:	url,
+		timeout	:	500,
+		success	:	function( html ){
+					if( html == '1' )
+						fAlert( 'There has been an unknown error. Please refresh the page and try again.' );
+					else if( put != null )
+						$( put ).html( html );
+					rowColor();
+				},
+		error	:	function( ){
+					fAlert( 'There has been an error processing your request. Please <a href="javascript:window.location.reload()">refresh the page</a> and try again. ' );
+					$( put ).html( '<i>content not loaded</i>' );
+				}
 	});
 }
