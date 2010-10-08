@@ -25,14 +25,16 @@ switch($page){
 		require 'pages/edit.php';
 	break;
 	case 'trash':
-		if(isset($_POST))
-		        require 'post/pages.php';
 		$Template->add('title','- Trash');
 		require 'pages/trash.php';
 	break;
 	default:
-		$Template->add('title','- List Pages');
-		require 'pages/list.php';
+		if( @$_GET[ 'action' ] == 'multiple' )
+			require 'pages/multiple.php';
+		else{
+			$Template->add('title','- List Pages');
+			require 'pages/list.php';
+		}
 }
 
 require 'footer.php';

@@ -85,7 +85,14 @@ $(document).ready(function(){
 
                         var item = sib.parent( ).attr( "id" );
 
-			fetch( "/_inc/ajax.php?file=admin/overview/items.php&overview_item="+ item + "&hash=" + hash, sib );
+			fetch( 
+				"/_inc/ajax.php?file=admin/overview/items.php&overview_item="+ item + "&hash=" + hash,
+				function( sib, html ){
+					$( sib ).html( html );
+					rowColor( );
+				},
+				sib
+			);
 
 			rowColor();
                 }
@@ -122,7 +129,14 @@ $(document).ready(function(){
 
 			var item = $( this ).parent( ).attr( "id" );
 
-			fetch( "/_inc/ajax.php?file=admin/overview/items.php&overview_item="+ item + "&hash=" + hash, thiscol );
+			fetch(
+				"/_inc/ajax.php?file=admin/overview/items.php&overview_item="+ item + "&hash=" + hash,
+				function( thiscol, html ){
+					$( thiscol ).html( html );
+					rowColor( );
+				},
+				thiscol
+			);
 
 		}	
 

@@ -277,7 +277,6 @@ class Template {
          * @return string
          */
         public function cssUrl(){
-
                 $files = $this->cssFiles;
                 $sources = $this->cssSources;
                 $content = '';
@@ -287,14 +286,24 @@ class Template {
 
                 foreach( $sources as $source => $contents ){
                         $content .= $contents;
+			die( $contents );
                         array_push( $files, $source );
                 }
 
                 $cache_file = md5( implode( '', $files ) );
 
                 if( !cache_exists( $cache_file, 'CSS' ) ){
-			$packer = new JavaScriptPacker( $content, 'Normal', true, false);
-                        $content = $packer->pack( );
+
+			/**
+			 * remove comments
+			 */
+			$content = preg_replace( '!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $content );
+
+			/**
+			 * remove spaces, tabs etc
+			 */
+    			$content = str_replace( array( "\r\n", "\r", "\n", "\t", '  ', '    ', '    ' ), '', $content );
+
                         cache( $cache_file, $content, 'CSS');
                 }
 

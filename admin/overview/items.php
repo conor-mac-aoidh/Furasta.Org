@@ -67,9 +67,10 @@ switch( $overview_item ){
 	case 'furasta-devblog':
 		$cache_file = 'FURASTA_RSS_DEVBLOG';
 
-		if( cache_is_good( $cache_file, '60*60*24', 'RSS' ) )
+		if( cache_is_good( $cache_file, '60 * 60 * 24 * 3', 'RSS' ) )
         		$items = json_decode( cache_get( $cache_file, 'RSS' ), true );
 		else{
+//			die('1');
 			$elements = rss_fetch( 'http://blog.macaoidh.name/tag/furasta-org/feed/' );
 			$items = array( );
 

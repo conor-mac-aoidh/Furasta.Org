@@ -74,9 +74,15 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
 
 $Page = row( 'select * from fr_pages where id= ' . $id );
 
+/**
+ * @todo below: finish page delete! 
+ */
 $javascript='
 $(document).ready(function(){
 
+	/**
+	 * load page type
+	 */
 	var type=$("#pages-type-content").attr("type");
 
         var id=$("#pages-type-content").attr("page-id");
@@ -85,6 +91,17 @@ $(document).ready(function(){
 
 	loadPageType(type,id);
 
+        /**
+         * initial url load, also loads url from querystring parent 
+         */
+	var pagename = $( "#page-name" ).attr( "value" );
+
+        getUrl( pagename );
+
+	/**
+	 * delete the page if delete button is clicked 
+	 *  @todo finish!
+	 */
 	$("#edit-delete").click(function(){
 
 		fConfirm("Are you sure you want to delete this page?");
@@ -93,8 +110,14 @@ $(document).ready(function(){
 
 	});
 
+        /**
+         * display options when clicked 
+         */
         $("#options-link").click(displayOptions);
 
+        /**
+         * reload page type when select box is changed 
+         */
         $("#edit-type").change(function(){
 
                 $("#pages-type-content").html("Loading... <img src=\"/_inc/img/loading.gif\"/>");
@@ -105,38 +128,32 @@ $(document).ready(function(){
 
         });
 
-	$("#pages-permissions").click(function(){ pagePermissions(id); });
+        /**
+         * set up page url 
+         */
+        $( "#select-parent" ).change( function(){
 
+                var pagename = $( "#page-name" ).attr( "value" );
+
+		getUrl( pagename );
+
+        });
+
+	/**
+	 * re-set up page url when typing occurs
+	 */
 	$("#page-name").keyup(function(){
 
-		var url=$("#page-name").val();
+		var pagename = slugCheck( $("#page-name").val() );
 
-		var result=slugCheck(url);
-
-		if(result==false)
+		if( pagename == false )
 
 			$("#page-name").addClass("error");
 
-		else{
+		else
 
-			$("#page-name").removeClass("error");
-
-			var fullUrl="http://furasta.l/"+result;
-
-			$("#slug-url").html(fullUrl);
-
-                        $("#slug-url").attr("href",fullUrl);
-
-			$("#slug-put").attr("value",result);
-
-		}
+			getUrl( pagename );
 		
-	});
-
-	$("#redirect-help").click(function(){
-
-		fHelp("This feature allows you to redirect the user. Enter a URL to forward them to and then when they look at this page they will be redirected to that URL. For more information visit <a href=\"http://Furasta.Org/Help\">http://Furasta.Org/Help</a>");
-
 	});
 
 });
@@ -240,13 +257,15 @@ $content.='
 			</tr>
 			<tr>
 				<td class="small">Parent:</td>
-				<td><select name="Parent">
+				<td><select id="select-parent" name="Parent">
 ';
 
 $pages=array();
 $query=query('select id,name,parent from '.PAGES.' order by position,name desc');
-while($row=mysql_fetch_assoc($query))
-        $pages[$row['parent']][]=$row;
+while($row=mysql_fetch_assoc($query)){
+	if( $row[ 'id' ] != $Page['id'] )
+        	$pages[$row['parent']][]=$row;
+}
 
 $parent=$Page['parent'];
 if($parent==0){

@@ -11,23 +11,16 @@
  * @package	   admin_temnplate
  */
 
+ob_start('ob_gzhandler');
 header('Content-Type: text/html; charset=UTF-8');
+
+$Template->loadCSS('_inc/css/admin.css');
 
 echo'
 <html>
 <head>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
         <noscript><meta http-equiv="refresh" content="0;url=/_inc/noscript.php"></noscript>
-	'.$Template->display('head');
-
-$jquery=$Template->display('jquery');
-if($jquery!=false)
-	        echo '<script type="text/javascript">$(document).ready(function(){
-			'.$jquery.' }); </script>';
-
-echo '
-	<link rel="stylesheet" href="/_inc/css/admin.css"/>
+        <link rel="stylesheet" href="'.$Template->cssUrl().'"/>
 	<title>'.$Template->display('title').'</title>
 </head>
 <body>
@@ -46,7 +39,7 @@ echo '
 	<div id="container">
 		<div id="container-right">
 			<div id="main">';
-			$error=$Template->display('system_error');
+			$error=$Template->display('systemError');
 			if($error!='')
 				echo '
                                         <div id="system-error">
@@ -68,6 +61,11 @@ echo '
 	</div>
 </div>
 </body>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="'.$Template->javascriptUrl().'"></script>
 </html>
 ';
+
+ob_end_flush();
 ?>

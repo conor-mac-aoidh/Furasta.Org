@@ -25,10 +25,7 @@ $Template->loadCSS('_inc/css/admin.css');
 echo'
 <html>
 <head>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
 	<noscript><meta http-equiv="refresh" content="0;url=/_inc/noscript.php"></noscript>
-	<script type="text/javascript" src="'.$Template->javascriptUrl().'"></script>
 	<link rel="stylesheet" href="'.$Template->cssUrl().'"/>
 	<title>Furasta.Org '.$Template->display('title').'</title>
 </head>
@@ -53,12 +50,16 @@ echo'
 		<div id="container">
 			<div id="container-right">
 				<div id="main">';
-				$error=$Template->display('systemError');
-				if($error!='')
-					echo '
-					<div id="system_error">
-                                                <img src="/_inc/img/"'.$error.'
-					</div>';
+	                        $error=$Template->display('systemError');
+        	                if($error!='')
+                	                echo '
+                        	                <div id="system-error" style="position:absolute;margin-left:15%;width:40%">
+                                	                <img
+                                        	        src="/_inc/img/alert-logo.png"
+                                                	style="float:left"/><p>'.$error.'</p>
+                    	                            <br style="clear:both"/>
+                        	                </div>';
+
 echo '
 					<div id="right">
 						'.$Template->display('content').'
@@ -77,6 +78,9 @@ echo '
 		</div>
 	</div>
 </body>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
+<script type="text/javascript" src="'.$Template->javascriptUrl().'"></script>
 </html>
 ';
 

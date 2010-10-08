@@ -1,5 +1,7 @@
 <?php
 
+$Template->diagnosticJavascript=1;
+
 /**
  * New Page, Furasta.Org
  *
@@ -25,8 +27,14 @@ $conds = array(
 
 $valid = validate( $conds, "#pages-edit", 'edit-save' );
 
+/**
+ * set up post form validation 
+ */
 if( isset( $_POST[ 'new-save' ] ) ){
 
+	/**
+	 * read $_POST variables 
+	 */
         $name = addslashes( $_POST[ 'Name' ] );
         $type = addslashes( $_POST[ 'Type' ] );
         $template = addslashes( $_POST[ 'Template' ] );
@@ -37,40 +45,72 @@ if( isset( $_POST[ 'new-save' ] ) ){
         $parent = (int) $_POST[ 'Parent' ];
         $perm = (int) $_POST[ 'perm' ];
 
-        query('insert into '.PAGES.' values ("","'.$name.'","'.$content.'","'.$slug.'","'.$template.'","'.$type.'","'.date("Y-m-d
-	").'","'.$_SESSION['user']['name'].'","","'.$parent.'","'.$perm.'","'.$home.'","'.$navigation.'")');
+	/**
+	 * make sure a duplicate pagename isn't being created 
+	 */
+	if( single( 'select id from ' . PAGES . ' where name="' . $name .'"', 'id' ) == false ){
 
-        cache_clear( 'PAGES' );
-        header( 'location: pages.php?page=edit&status=new&id=' . mysql_insert_id( ) );
+		/**
+		 * save page to database 
+		 */
+        	query('insert into '.PAGES.' values ("","'.$name.'","'.$content.'","'.$slug.'","'.$template.'","'.$type.'","'.date("Y-m-d
+		").'","'.$_SESSION['user']['name'].'","","'.$parent.'","'.$perm.'","'.$home.'","'.$navigation.'")');
+
+		/**
+		 * clear pages cache and redirect to edit pages
+		 */	
+        	cache_clear( 'PAGES' );
+
+	        header( 'location: pages.php?page=edit&status=new&id=' . mysql_insert_id( ) );
+	}
+	else
+		$Template->add( 'systemError', 'Cannot have duplicate pagenames.' );
 }
 
+
+/**
+ * page specific javascript 
+ */
 $javascript = '
 $(document).ready(function(){
 
+        /**
+         * prepare and begin loading page type 
+         */
         var type=$("#pages-type-content").attr("type");
 
         $("#pages-type-content").html("Loading... <img src=\"/_inc/img/loading.gif\"/>");
 
         loadPageType(type,0);
 
-        var parent=$("#select-parent :selected").text();
+	/**
+	 * initial url load, also loads url from querystring parent 
+	 */
+	var parent = queryString( "parent" );
 
-        if(parent!="---"){
+	if( parent != "" )
 
-                var url=$("#slug-put").val();
+		getUrl( "" );
 
-                url=url+"/"+parent.replace(/\s/g,"-")+"/";
+	/**
+	 * set up page url when parent select box is changed
+	 */
+        $( "#select-parent" ).change( function(){
 
-                $("#slug-url").text(url);
+		var pagename = $( "#page-name" ).attr( "value" );
 
-                $("#slug-put").attr("value",url);
+		getUrl( pagename );
 
-                $("#slug-url").attr("href",url);
+	});
 
-        }
-
+	/**
+	 * allow page options to be displayed 
+	 */
         $("#options-link").click(displayOptions);
 
+	/**
+	 * load a new page type if page type select box is changed 
+	 */
         $("#edit-type").change(function(){
 
                 $("#pages-type-content").html("Loading... <img src=\"/_inc/img/loading.gif\"/>");
@@ -81,33 +121,21 @@ $(document).ready(function(){
 
         });
 
-        $("#pages-permissions").click(function(){  });
 
+        /**
+         * load url when key is typed 
+         */
         $("#page-name").keyup(function(){
 
-                var result=slugCheck($("#page-name").attr("value"));
+                var pagename = slugCheck( $( "#page-name" ).attr( "value" ) );
 
-                if(result==false)
+                if( pagename == false )
 
                         $("#page-name").addClass("error");
 
-                else{
+                else
 
-                        var parent=$("#select-parent :selected").text();
-
-                        var host="http://"+window.location.hostname+"/";
-
-                        $("#page-name").removeClass("error");
-
-                        var fullUrl=(parent=="---")?host+result:host+parent.replace(/\s/g,"-")+"/"+result;
-
-                        $("#slug-url").html(fullUrl);
-
-                        $("#slug-url").attr("href",fullUrl);
-
-                        $("#slug-put").attr("value",result);
-
-                }
+			getUrl( pagename );
 
         });
 
@@ -118,14 +146,13 @@ $(document).ready(function(){
  * Load javascript files 
  */
 $Template->loadJavascript( '_inc/js/jquery/tinymce.min.js' );
-$Template->loadJavascript( '_inc/js/tiny_mce.js' );
+//$Template->loadJavascript( '_inc/js/tiny_mce.js' );
 $Template->loadJavascript( 'FURASTA_ADMIN_PAGES_NEW', $javascript );
 
 
 /**
  * begin setup of the page 
  */
-
 $url = 'http://' . $_SERVER[ 'SERVER_NAME' ];
 
 $content = '
@@ -194,12 +221,12 @@ while( $row = mysql_fetch_assoc( $query ) )
         $pages[ $row[ 'parent' ] ][ ] = $row;
 
 $parent = addslashes( @$_GET[ 'parent' ] );
-if( $parent == ''){
-        $content .= '<option selected="selected" value="0">---</option>';
+if( $parent == '' ){
+        $content .= '<option selected="selected" parent="0" value="0">---</option>';
         $content .= list_parents( 0, $pages, 0, 0 );
 }
 else{
-        $content .= '<option value="0">---</option>';
+        $content .= '<option value="0" parent="0">---</option>';
         $content .= list_parents( 0, $pages, 0, $parent );
 }
 

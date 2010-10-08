@@ -61,6 +61,19 @@ function verify_user($id){
 	return $query;
 }
 
+/**
+ * list_parents 
+ * 
+ * orderes the parent select box in order of parents
+ * with indentation
+ *
+ * @param int $id 
+ * @param array $pages 
+ * @param int $level 
+ * @param mixed $default 
+ * @access public
+ * @return void
+ */
 function list_parents($id,$pages,$level,$default){
         $num=0;
         if(!isset($pages[$id]))
@@ -69,7 +82,7 @@ function list_parents($id,$pages,$level,$default){
 	$margin=$level*10;
         foreach($pages[$id] as $page){
 		$def=($default!=0&&$page['id']==$default)?' selected="selected"':'';
-		$list.='<option value="'.$page['id'].'"'.$def.' style="margin-left:'.$margin.'px;">'.$page['name'].'</option>';;
+		$list.='<option value="'.$page['id'].'"'.$def.' style="margin-left:'.$margin.'px;" class="' . $page['parent'] . '">'.$page['name'].'</option>';;
                 $list.=list_parents($page['id'],$pages,$level+1,$default);
         }
         return $list;
@@ -88,23 +101,28 @@ function get_page_url($pages,$id){
 	return $url;
 }
 
-function list_pages($id,$pages,$level=0){
-        $num=0;
-        if(!isset($pages[$id]))
+function list_pages( $id, $pages, $level=0 ){
+
+        $num = 0;
+
+        if( !isset( $pages[ $id ] ) )
                 return;
+
         $list='';
-        foreach($pages[$id] as $page){
+        foreach( $pages[ $id ] as $page ){
                 $num++;
-                $href='<a href="pages.php?page=edit&id='.$page['id'].'" class="list-link" style="display:inline">';
+                $href='<a href="pages.php?page=edit&id='.$page['id'].'" class="list-link">';
                 $class=($level==0)?'':' class="child-of-node-'.$page['parent'].' children"';
                 $list.='<tr id="node-'.$page['id'].'"'.$class.'>
+                        	<td class="pages-table-left"><input type="checkbox" value="' . $page[ 'id' ] . '" name="trash-box"/></td>
                                 <td class="first">'.$href.$page['name'].'</a></td>
                                 <td>'.$href.$page['user'].'</a></td>
                                 <td>'.$href.$page['type'].'</a></td>
-                                <td>'.$href.$page['edited'].'</a></td>
+                                <td>' . $href. date( "d/m/y", strtotime( $page[ 'edited' ] ) ) . '</a></td>
                                 <td><a href="pages.php?page=new&parent='.$page['id'].'"><img src="/_inc/img/new-page-small.png" title="New Sub Page" alt="New Sub Page"/></a></td>
-                                <td><a href="#" id="'.$page['id'].'" class="delete"><img src="/_inc/img/delete.png" title="Delete Page" alt="Delete Page"/></a></td>
+	                        <td><a href="#" id="' . $page[ 'id' ] . '" class="delete"><img src="/_inc/img/trash-small.png" title="Delete Page" alt="Delete Page"/></a></td>
                         </tr>';
+
                 $list.=list_pages($page['id'],$pages,1);
         }
         return $list;

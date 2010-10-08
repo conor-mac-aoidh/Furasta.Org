@@ -13,27 +13,28 @@
  * @package    admin_pages
  */
 
+/**
+ * include define - furasta setup 
+ */
 include '../../_inc/define.php';
 
-$type=@$_GET['type'];
-$id=(int)@$_GET['id'];
 
-if($type!='Normal'){
-	echo $Plugins->adminPageType($type,$id);
-	exit;
+/**
+ * set up $_GET variables 
+ */
+$type = @$_GET[ 'type' ];
+$id = (int) @$_GET[ 'id' ];
+
+if( $type == 'Normal' ){
+	if( $id != 0 )
+		$content = stripslashes( single( 'select content from ' . PAGES . ' where id= ' . $id, 'content' ) );
+
+		echo '
+			<script type="text/javascript" src="/_inc/js/tiny_mce.js"></script>
+			<textarea id="page-content" name="PageContent" class="tinymce" style="width:100%">' . @$content . '</textarea>
+		';
 }
-else{
-	if($id!=0){
-		$Page=new Page($id);
-		$content=stripslashes($Page->about('content'));
-	}
+else
+        echo $Plugins->adminPageType( $type, $id );
 
-	echo '
-                <script type="text/javascript" src="/_inc/js/tinymce.jquery.min.js"></script>
-                <script type="text/javascript" src="/_inc/js/tiny_mce.js"></script>
-
-                <textarea id="page-content" name="PageContent" class="tinymce" style="width:100%">'.@$content.'</textarea>
-               ';
-	exit;
-}
 ?>

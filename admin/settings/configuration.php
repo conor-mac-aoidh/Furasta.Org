@@ -11,8 +11,7 @@
  * @package    admin_settings
  */
 
-$head='
-<script type="text/javascript">
+$javascript='
 $(document).ready(function(){
         $("#help-index").click(function(){
                 fHelp("Ticking this box will force search engines such as Google, Yahoo etc not to index this website. This option should be enabled to make the website more private, though people will still be able to access it through direct URLs.");
@@ -28,9 +27,9 @@ $(document).ready(function(){
                         return false;
         });
 });
-</script>';
+';
 
-$Template->add('head',$head);
+$Template->loadJavascript('FURASTA_ADMIN_SETTINGS_CONFIGURATION',$javascript);
 
 $maintenance=($SETTINGS['maintenance']==1)?'CHECKED':'';
 $index=($SETTINGS['index']==1)?'CHECKED':'';

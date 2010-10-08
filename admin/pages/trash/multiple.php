@@ -19,11 +19,11 @@ $boxes=explode(',',$boxes);
 switch($function){
 	case 'Restore':
 		foreach($boxes as $id){
-			query('insert into '.PAGES.' select NULL,name,content,slug,NULL,NULL,edited,user,position,NULL,perm,NULL,display from '.TRASH.' where id='.$id,true);
+			query('insert into '.PAGES.' select NULL,name,content,slug,"Default","Normal",edited,user,position,"0",perm,"0",display from '.TRASH.' where id='.$id,true);
 			query('delete from '.TRASH.' where id='.$id,true);
 		}
 		cache_clear('PAGES');
-		sitemap_rewrite();
+//		die(print_r($boxes));
 	break;
 	case 'Delete':
 		foreach($boxes as $id)

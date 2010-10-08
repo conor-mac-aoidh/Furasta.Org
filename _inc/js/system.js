@@ -9,17 +9,18 @@
  * @version    1.0
  */
 
-function rowColor(){
-	$(".row-color tr").each(function(){
-		if($(this).hasClass('even')){
-                        $(this).removeClass('even');
-		}
-		else if($(this).hasClass('odd')){
-			$(this).removeClass('odd');
-		}
-	});
-	$(".row-color tr:even").addClass("even");
-	$(".row-color tr:odd").addClass("odd");
+/**
+ * rowColor 
+ * 
+ * adds odd and even classes to trs in all tables
+ * with the row-color class
+ *
+ * @access public
+ * @return void
+ */
+function rowColor( ){
+	$( ".row-color tr:even" ).removeClass( "odd" ).addClass( "even" );
+	$( ".row-color tr:odd" ).removeClass( "even" ).addClass( "odd" );
 }
 
 function fAlert(message){
@@ -73,20 +74,47 @@ function checkConnection(details){
  * @access public
  * @return void
  */
-function fetch( url, put ){
+function fetch( url, callback, param ){
 	$.ajax({
 		url	:	url,
-		timeout	:	500,
+		timeout	:	5000,
 		success	:	function( html ){
 					if( html == '1' )
 						fAlert( 'There has been an unknown error. Please refresh the page and try again.' );
-					else if( put != null )
-						$( put ).html( html );
-					rowColor();
+
+					else if( callback != null )
+						callback( param, html );
+
 				},
 		error	:	function( ){
 					fAlert( 'There has been an error processing your request. Please <a href="javascript:window.location.reload()">refresh the page</a> and try again. ' );
-					$( put ).html( '<i>content not loaded</i>' );
+					if( callback != null )
+						callback( param, "content not loaded" );
+
 				}
 	});
 }
+
+/**
+ * queryString
+ *
+ * returns the value of the querystring requested
+ * with the name var
+ * 
+ * @param string name of querystring section to return
+ * @access public
+ * @return string
+ */
+function queryString( name ){
+	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+	var regexS = "[\\?&]"+name+"=([^&#]*)";
+	var regex = new RegExp( regexS );
+	var results = regex.exec( window.location.href );
+	if( results == null )
+		return "";
+  	else
+    		return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+
+

@@ -1,24 +1,18 @@
 # TODO list for Furasta.Org v1.0 Beta 2 #
 
 1. Combine images used on every page into one image. new line for repeating images
-3. Add pagated tables to trash and pages (only say 60 pages per page). Also make tables resizable, and save their width.
 4. Add User Groups, possibly get rid of the new user page and turn it into a jquery alert?
 5. Fix page permissions, and user permissions. will be more complex with groups. make a numbered system similar to 0700,0777 to specify permissions
 6. Complete the auto-update feature, and possibly allow for system wide 'alerts' which will appear on every page.
 7. Create an email function which sends HTML emails with a default Furasta.Org template, including images.
 8. Add plugin $importance var
-9. Change the pages options section to an AJAX request, most people will not use it and it is quite intensive creating parent lists etc, yet not enough used or large enough to be cached.
 10. Develop a few plugins to test, and adjust, the plugin architecture: File Manager (*), News Plugin (with RSS), something else..
-11. Do something to solve all the javascript code, try and genralise it somehow so it can be re-used rather than loads of 'once-offs'. all.php
 16. get rid of the admin/post dir - that was a stupid idea!
 17. Finish the password reminder!
-18. List Pages - add expand, contract all buttons
-19. Edit Pages and New Pages, fix the url preview tree inconsistancies
 20. Add custom error handler to the smarty template engine.
 21. Add system wide alerts, such as update etc.
 22. change the location of the backup folder to inside the _user dir and create that dir during installation.
 24. Add page saved, updated whatever message
-25. Add gzip compression as part of $Template class.
 
 * figure something out about the _user directory. Maybe put it outside the web directory, but then will have to move the settings.php file as it must have a static location. Anyway it is required for plugins which need to store files.
 
@@ -37,3 +31,4 @@
 9. Possibly feature that when you register a new user on your website it also registers/allows you access to forum.furasta.org, bugs.furasta.org, and possibly developer.furasta.org. The later still tbc
 10. Possibly, add an option for scheduled backups, and add a restore from backup feature, or even better add a browse backups feature like Time Machine, although could be some space issues!
 11. Possibly create a power-law graph for the caching system to establish what should and should not be graphed
+12. make pages,trash and possibly plugins pages pagated

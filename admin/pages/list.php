@@ -15,17 +15,59 @@
  * @todo finish the sortable below 
  */
 $javascript = '
-$(document).ready(function(){
+$(document).ready( function( ){
 	/**
 	 * set up the treetable for the pages table
 	 */
-	$("#pages").treeTable();
+	$( "#pages" ).treeTable({
+
+		treeColumn: 1,
+
+		initialState: "expanded" 
+
+	});
+
+	/**
+	 * configure expand/collapse all button
+	 */
+	$( "#treeTable-toggle" ).click( function( ){
+
+		if( $( "#pages" ).hasClass( "expanded" ) ){
+
+			$( "#pages tr.parent" ).each( function( ){
+
+	                        if( !$( this ).hasClass( "children" ) && $( this ).hasClass( "expanded" ) )
 	
+        	                        $( this ).removeClass( "expanded" ).collapse( );
+
+			});
+
+			$( "#pages" ).removeClass( "expanded" ).addClass( "collapsed" );
+
+		}
+		else{
+
+                        $( "#pages tr.parent" ).each( function( ){
+
+                                if( $( this ).hasClass( "collapsed" ) )
+       
+                                        $( this ).expand( );
+
+                        });
+
+                        $( "#pages" ).removeClass( "collapsed" ).addClass( "expanded" );
+
+		}
+
+	});
+
 	/**
 	 *  make the pages table trs sortable
 	 *  @todo finish this!
 	 */
 	$("#pages tbody").sortable({
+
+		containment: "parent",
 
 		update:function(){
 
@@ -42,11 +84,15 @@ $(document).ready(function(){
 
 		fConfirm("Are you sure you want to trash this page?",function(element){
 
-			element.parent().parent().fadeOut("slow");
+			element.parent().parent().fadeOut( function( ){
 
-			rowColor();
+				$( this ).remove( );
 
-			fetch("/_inc/ajax.php?file=admin/pages/delete.php&id="+element.attr("id"));
+				rowColor( );
+
+			});
+
+			fetch( "/_inc/ajax.php?file=admin/pages/delete.php&id="+element.attr("id") );
 
 		},$(this));
 
@@ -74,6 +120,39 @@ $(document).ready(function(){
                 }       
 
          });
+
+	/**
+	 * handle the multiple submit button 
+	 */
+        $(".p-submit").click(function(){
+
+                var action=$(".select-"+$(this).attr("id")).val();
+
+                if(action=="---")
+
+                        return false;
+
+                var boxes=[];
+
+                $("#pages input[name=trash-box]:checked").each(function() {
+
+                        boxes.push($(this).val());
+
+                });
+
+                var boxes=boxes.join(",");
+
+                if(boxes=="")
+
+                        return false;
+
+                fConfirm(
+			"Are you sure you want to perform a multiple " + action + "?",
+			function( ){
+				window.location = "pages.php?page=list&action=multiple&act="+action+"&boxes="+boxes;
+			}
+		);
+        });
 
 });
 ';
@@ -105,17 +184,23 @@ $content = '
 
 <div id="options-bar" style="margin-top:20px">
         <div id="options-bar-right" style="float:right">
-                1 2 3
+		<select name="action" class="trash-select select-p_1">
+			<option default="default">---</option>
+			<option>Trash</option>
+		</select> 
+		<input id="p_1" class="p-submit submit" type="submit" value="Go"/>
         </div>
 	<div id="options-bar-left">
-		[expand all] [contract all]
+		<a href="#" id="treeTable-toggle">
+			<img src="/_inc/img/expand-collapse-all.jpg"/>
+		</a>
 	</div>
 </div>
 
-<table id="pages" class="row-color">
+<table id="pages" class="row-color expanded">
 
 	<tr class="top_bar">
-		<th>
+		<th class="pages-table-left">
 			<input type="checkbox" class="checkbox-all" all=""/>
 		</th>
 		<th>Name</th>
@@ -130,31 +215,35 @@ $content = '
 /**
  * fetch the pages info from the db and list the pages 
  */
-$query = query( 'select id,name,type,edited,user,parent from ' . PAGES );
-while( $row = mysql_fetch_array( $query ) ){
-        $id = $row[ 'id' ];
-        $href = '<a href="pages.php?page=edit&id=' . $id . '" class="list-link">';
-	$class = ( $row[ 'parent' ] == 0 ) ? '' : ' class="child-of-node-' . $row[ 'parent' ] . '"';
-        $content .= '<tr id="node-' . $id . '"' . $class . '>
-                        <td class="small"><input type="checkbox" value="' . $row[ 'id' ] . '" name="trash-box"/></td>
-                        <td class="first">' . $href . $row[ 'name' ] . '</a></td>
-                        <td>' . $href . $row[ 'user' ] . '</a></td>
-                        <td>' . $href . $row[ 'type' ] . '</a></td>
-                        <td>' . $href . $row[ 'edited' ] . '</a></td>
-                        <td><a href="pages.php?page=new&parent=' . $id . '"><img src="/_inc/img/new-page-small.png" title="New Sub Page" alt="New Sub Page"/></a></td>
-                        <td><a href="#" id="' . $id . '" class="delete"><img src="/_inc/img/trash-small.png" title="Delete Page" alt="Delete Page"/></a></td>
-                </tr>';
+
+$pages=array();
+$query=query('select id,name,type,edited,user,parent from '.PAGES.' order by position,name desc');
+while($row=mysql_fetch_assoc($query)){
+	$pages[$row['parent']][]=$row;
 }
+
+$content .= list_pages( 0, $pages );
 
 $content .= '
 	<tr>
-		<th>
+		<th class="pages-table-left">
 			<input type="checkbox" class="checkbox-all" all=""/>
 		</th>
 		<th colspan="6"></th>
 	</tr>
 
-</table>';
+</table>
+
+<div style="float:right;margin-top:10px">
+	<select name="action" class="trash-select select-p_2">
+		<option default="default">---</option>
+		<option>Trash</option>
+	</select> 
+	<input id="p_2" class="p-submit submit" type="submit" value="Go"/>
+</div>
+
+<br style="clear:both"/>
+';
 
 
 /**

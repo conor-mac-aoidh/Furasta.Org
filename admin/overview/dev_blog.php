@@ -15,10 +15,7 @@
  */
 
 
-$ajax=@$_GET['ajax'];
-
-if($ajax=='on')
-	require '../../_inc/define.php';
+require '_inc/define.php';
 
 $elements=rss_fetch('http://blog.macaoidh.name/tag/furasta-org/feed/');
 $items=array();
@@ -41,6 +38,6 @@ for($i=0;$i<=2;$i++){
 		}
 	}
 }
-
 cache('FURASTA_RSS_DEVBLOG',json_encode($items),'RSS');
+
 ?>

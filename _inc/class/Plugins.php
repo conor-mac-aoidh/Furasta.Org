@@ -43,7 +43,7 @@ class Plugins{
 	 * @var array
 	 * @access public
 	 */
-	public $plugins=array();
+	public $plugins = array();
 
         /**
          * getInstance 
@@ -79,16 +79,22 @@ class Plugins{
 	/**
 	 * register 
 	 * 
-	 * Function through which plugins are registered.
+	 * Function through which plugins are registered. Plugins
+	 * must be registered for the CMS to even recognise them.
 	 *
 	 * @param mixed $plugin , the name of the plugin
 	 * @access public
 	 * @return bool true or void
 	 */
-	public function register($plugin){
-		if(!in_array($plugin,$this->plugins)){
-			if(isset($plugin->name)&&isset($plugin->version)){
-				array_push($this->plugins,$plugin);
+	public function register( $plugin ){
+
+		/**
+		 * check if plugin being registered is defined already,
+		 * if its a new plugin check that the manditory vars are set
+		 */
+		if( !in_array( $plugin, $this->plugins ) ){
+			if( isset( $plugin->name ) && isset( $plugin->version ) ){
+				array_push( $this->plugins, $plugin );
 				return true;
 			}
 			error('The plugin '.get_class($plugin).' must define at least the name and version variables. Please contact bugs@macaoidh.name for further details.','Plugin Error');
@@ -109,8 +115,12 @@ class Plugins{
 	public function refactor(){
 		$plugins=array();
 		foreach($this->plugins as $plugin){
-			//to do
+			if( isset( $plugin->importance ) )
+				$plugins[ $plugin->importance ] = $plugin;
+			else
+				$plugins[ '1' ] = $plugin;
 		}
+		//die( print_r( $plugins ) );
 	}
 
 	/**
