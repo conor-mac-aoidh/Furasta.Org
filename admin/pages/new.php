@@ -64,7 +64,7 @@ if( isset( $_POST[ 'new-save' ] ) ){
 	        header( 'location: pages.php?page=edit&status=new&id=' . mysql_insert_id( ) );
 	}
 	else
-		$Template->add( 'systemError', 'Cannot have duplicate pagenames.' );
+		$Template->runtimeError( '4', $name );
 }
 
 

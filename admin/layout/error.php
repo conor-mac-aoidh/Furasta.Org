@@ -14,13 +14,11 @@
 ob_start('ob_gzhandler');
 header('Content-Type: text/html; charset=UTF-8');
 
-$Template->loadCSS('_inc/css/admin.css');
-
 echo'
 <html>
 <head>
         <noscript><meta http-equiv="refresh" content="0;url=/_inc/noscript.php"></noscript>
-        <link rel="stylesheet" href="'.$Template->cssUrl().'"/>
+        <link rel="stylesheet" href="/_inc/css/admin.css"/>
 	<title>'.$Template->display('title').'</title>
 </head>
 <body>
@@ -63,7 +61,7 @@ echo '
 </body>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="'.$Template->javascriptUrl().'"></script>
+	'.$Template->display('head').'
 </html>
 ';
 

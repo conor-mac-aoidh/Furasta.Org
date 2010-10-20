@@ -49,18 +49,8 @@ echo'
 		</div>
 		<div id="container">
 			<div id="container-right">
-				<div id="main">';
-	                        $error=$Template->display('systemError');
-        	                if($error!='')
-                	                echo '
-                        	                <div id="system-error" style="position:absolute;margin-left:15%;width:40%">
-                                	                <img
-                                        	        src="/_inc/img/alert-logo.png"
-                                                	style="float:left"/><p>'.$error.'</p>
-                    	                            <br style="clear:both"/>
-                        	                </div>';
-
-echo '
+				<div id="main">
+					' . $Template->displayErrors( ) . '
 					<div id="right">
 						'.$Template->display('content').'
 					</div>
@@ -73,7 +63,7 @@ echo '
 		</div>
 		<div id="bottom">
                         <p class="right"><a href="settings.php?page=users&id='.$_SESSION['user']['id'].'">'.$_SESSION['user']['name'].'</a> - Status: '.$_SESSION['user']['user_group'].'</p>
-			<p class="left">&copy; <a href="http://furasta.org">Furasta.Org</a> | <a href="http://furasta.org/Support">Support</a> | <a href="http://furasta.org/Feature-Requests">Feature Requests</a></p>
+			<p class="left">&copy; <a href="http://furasta.org">Furasta.Org</a> | <a href="http://forum.furasta.org">Forum</a> | <a href="http://bugs.furasta.org">Bug Tracker</a></p>
 			<br style="clear:both"/>
 		</div>
 	</div>

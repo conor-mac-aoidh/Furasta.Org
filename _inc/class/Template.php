@@ -41,7 +41,7 @@ class Template {
 	 * @var mixed
 	 * @access public
 	 */
-	public $diagnosticJavascript=0;
+	public $diagnosticJavascript = 0;
 
         /**
          * title 
@@ -51,13 +51,22 @@ class Template {
          */
         public $title='';
 
+
+	/**
+	 *  runtineError
+	 *
+	 * @var array
+	 * @access public
+	 */
+	public $runtimeError = array( );
+
         /**
          * system_error 
          * 
          * @var string
          * @access public
          */
-        public $systemError='';
+        public $systemError;
 
         /**
          * menu 
@@ -184,6 +193,78 @@ class Template {
                 return $this->$type;
 	}
 
+	/**
+	 * runtimeError 
+	 * 
+	 * register a runtime error by passing an id of the error
+	 * in the language file
+	 *
+	 * @param int $id of error in language file
+	 * @param params $params optional, can be string or array with multiple params
+	 * @access public
+	 * @return bool
+	 * @todo add multiple language support, major re-jigging required
+	 *       for that, add plugin language file support
+	 */
+	public function runtimeError( $id, $params = false ){
+
+		require_once HOME . 'admin/lang/en.php';
+
+		if( !isset( $lang_en[ $id ] ) ){
+			$this->runtimeError{ $id } = 'An unknown error occured.';
+			return false;
+		}
+
+		$error = $lang_en[ $id ];
+
+
+		/**
+		 * if params var is present replace occurances
+		 * of %i with var. can take an array of vars 
+		 */
+		if( $params != false ){
+
+			if( is_array( $params ) ){
+				for( $i = 0; $i <= count( $params ); $i++ )
+					$error = str_replace( '%' . $i, $params[ $i ] );
+
+			}
+			else
+				$error = str_replace( '%1', $params );
+				
+		}
+
+		$this->runtimeError{ $id } = $error;
+
+		return true;	
+
+	}
+
+	/**
+	 * displayErrors
+	 *
+	 * displays both runtime and system errors 
+	 * 
+	 * @access public
+	 * @return string
+	 * @todo change to display different class for runtime and system errors
+	 */
+	public function displayErrors( ){
+
+		if( count( $this->runtimeError ) == 0 )
+			return '';
+
+		$errors = '<div id="system-error">
+				<img src="/_inc/img/alert-logo.png" style="float:left"/>';
+
+		foreach( $this->runtimeError as $key => $error )
+			$errors .= '<div class="runtime-errors" id="error-' . $key . '">' . $error . '</div>';
+
+		return ( $errors .= '<br style="clear:both"/></div>' );
+	}
+	
+	
+
         /**
          * loadJavascript 
          * 
@@ -208,7 +289,7 @@ class Template {
         }
 
         /**
-         * javascriptUrl 
+         * javascriptUrl
          * 
          * @access public
          * @return string

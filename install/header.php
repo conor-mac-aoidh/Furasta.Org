@@ -20,7 +20,7 @@ require $function_dir.'db.php';
 if(file_exists(HOME.'.settings.php'))
 	error('You can\'t install Furasta CMS because it is already installed. If you would like to re-install then simply remove the <i>../.settings.php</i> file and reload this page.','Already Installed!');
 
-$Template=new Template();
+$Template = Template::getInstance( );
 
 $head='
 <script type="text/javascript" src="/_inc/js/system.js"></script>

@@ -18,9 +18,13 @@ $(document).ready(function(){
 
                 fConfirm("Are you sure you want to permenantly delete this page?",function(element){
 
-                        element.parent().parent().fadeOut("slow");
+                        element.parent().parent().fadeOut( function( ){
 
-                        rowColor();
+				$( this ).remove( );
+
+				rowColor( );
+
+			});
 
                         fetch("/_inc/ajax.php?file=admin/pages/trash/delete.php&id="+element.attr("id"));
 
@@ -32,9 +36,13 @@ $(document).ready(function(){
 
                 fConfirm("Are you sure you want to restore this page? Certain features have not been preserved, such as page parent, type, and template settings.",function(element){
 
-                        element.parent().parent().fadeOut("slow");
+                        element.parent().parent().fadeOut( function( ){
 
-                        rowColor();
+				$( this ).remove( );
+
+				rowColor( );
+
+			});
 
                         fetch("/_inc/ajax.php?file=admin/pages/trash/restore.php&id="+element.attr("id"));
 

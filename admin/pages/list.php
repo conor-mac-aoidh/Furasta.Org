@@ -1,5 +1,5 @@
 <?php
-
+$Template->diagnosticJavascript=1;
 /**
  * List Pages, Furasta.Org
  *
@@ -62,20 +62,94 @@ $(document).ready( function( ){
 	});
 
 	/**
+	 *  set helper for sortable objects
+	 */
+	var fixHelper = function( e, ui ) {
+
+		ui.children( ).each( function( ) {
+
+			$( this ).width( $( this ).width( ) );
+
+		});
+
+		return ui;
+
+	};
+
+	/**
 	 *  make the pages table trs sortable
 	 *  @todo finish this!
 	 */
 	$("#pages tbody").sortable({
 
-		containment: "parent",
+		containment: ".parent",
+
+		helper:	fixHelper,
 
 		update:function(){
 
-			alert($("#pages tr").sortable("serialize"));
+			rowColor();
+
+			//alert($("#pages tr").sortable("serialize"));
+
+			alert( "parents test" );
 
 		}
 
 	});
+
+	$( "#pages tbody tr.children" ).each( function(){
+
+
+		var row = $( this ).attr( "class" ).match( /child-of-node\-.+?\b/);
+
+		var parent = String( row ).split( "-" );
+
+		parent = parent[ parent.length - 1 ];
+
+		parent = "#node-" + parent;
+
+		if( !$( parent ).hasClass( "furasta-sortable" ) ){
+
+			console.log( parent + "   ." + row );
+
+			$( "#pages tbody").sortable({
+
+				containment: "." + row,
+
+				helper: fixHelper,
+
+				update: function( ){
+
+					rowColor();
+
+					alert( "childern test" );
+
+				}
+
+			});
+
+			$( parent ).addClass( "furasta-sortable" );
+
+		}
+
+	});
+
+                        $( "#pages tbody").sortable({
+
+                                containment: ".child-of-node-61",
+
+                                helper: fixHelper,
+
+                                update: function( ){
+
+                                        rowColor();
+
+                                        alert( "childern test" );
+
+                                }
+
+                        });
 
 	/**
 	 *  delete page when delete button is pressed
@@ -222,6 +296,8 @@ while($row=mysql_fetch_assoc($query)){
 	$pages[$row['parent']][]=$row;
 }
 
+//$content .= list_pages( 0, $pages );
+
 $content .= list_pages( 0, $pages );
 
 $content .= '
@@ -229,7 +305,7 @@ $content .= '
 		<th class="pages-table-left">
 			<input type="checkbox" class="checkbox-all" all=""/>
 		</th>
-		<th colspan="6"></th>
+		<th colspan="6">&nbsp;</th>
 	</tr>
 
 </table>

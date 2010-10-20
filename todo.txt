@@ -4,7 +4,6 @@
 4. Add User Groups, possibly get rid of the new user page and turn it into a jquery alert?
 5. Fix page permissions, and user permissions. will be more complex with groups. make a numbered system similar to 0700,0777 to specify permissions
 6. Complete the auto-update feature, and possibly allow for system wide 'alerts' which will appear on every page.
-7. Create an email function which sends HTML emails with a default Furasta.Org template, including images.
 8. Add plugin $importance var
 10. Develop a few plugins to test, and adjust, the plugin architecture: File Manager (*), News Plugin (with RSS), something else..
 16. get rid of the admin/post dir - that was a stupid idea!
@@ -13,10 +12,11 @@
 21. Add system wide alerts, such as update etc.
 22. change the location of the backup folder to inside the _user dir and create that dir during installation.
 24. Add page saved, updated whatever message
-
-* figure something out about the _user directory. Maybe put it outside the web directory, but then will have to move the settings.php file as it must have a static location. Anyway it is required for plugins which need to store files.
+25. Create bugs@furasta.org and support@furasta.org emails
 
 # TODO list for Furasta.Org v1.0 - General Release #
+
+1. bug fixes, small refinements etc
 
 # TODO list for Furasta.Org v1.1 #
 

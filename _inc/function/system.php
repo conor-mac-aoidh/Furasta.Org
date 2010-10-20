@@ -57,26 +57,52 @@ function error($error,$title='Error'){
  * @access public
  * @return bool
  */
-function email($to,$subject,$message){
-	$headers='From: support@furasta.org'."\r\n".'Reply-To: support@furasta.org'."\r\n";
-	$headers.='X-Mailer: PHP/' .phpversion()."\r\n";
-	$headers.='MIME-Version: 1.0'."\r\n";
-	$headers.='Content-Type: text/html; charset=ISO-8859-1'."\r\n";
-	$message='
-	<html>
-	<body>
-	<div id="content">
-		'.$message.'
-	        Thanks
-	        ---
-	        Furasta.Org
-        	http://furasta.org
-	        support@furasta.org
-	</div>
-	</body>
-	</html>
-	';
-	return mail($to,$subject,$message,$headers);
+function email( $to, $subject, $message ){
+
+
+        /**
+         * set up mail headers 
+         */
+        $headers='From: Support - Furasta.Org <support@furasta.org>'."\r\n".'Reply-To: support@furasta.org'."\r\n";
+        $headers.='X-Mailer: PHP/' .phpversion()."\r\n";
+        $headers.='MIME-Version: 1.0'."\r\n";
+        $headers.='Content-Type: text/html; charset=ISO-8859-1'."\r\n";
+
+        $message='
+        <div style="margin:0;text-align:center;background:#eee;font:1em Myriad Pro,Arial,Sans Serif;color:#333;border:1px solid transparent">
+        <div id="container" style="width:92%;background:#fff;border:1px solid #999;margin:20px auto 0 auto">                <div id="container-top" style="border-top:1px solid transparent">
+                        <div id="header" style="margin:25px auto 0 auto;height:100px;width:92%;background:#2a2a2a">                                <img style="float:left;max-width:100%" src="http://files.furasta.org/images/email/email-header-logo.png"/>                        </div>
+                </div>
+                <div id="container-right" style="border-top:1px solid transparent;border-bottom:1px solid transparent">
+                        <div id="main" style="text-align:left;margin:25px auto;width:92%;border-top:1px solid transparent">
+                               <div id="right">
+
+                                        ' . $message . '
+                                        <br/>
+                                        Thanks <br/>
+                                        --- <br/>                                        Furasta.Org <br/>                                        <a style="text-decoration:none" href="http://furasta.org">http://furasta.org</a> <br/>
+                                        <a style="text-decoration:none" href="mailto:support@furasta.org">support@furasta.org</a> <br/>
+                                        <br/>
+                                        <table>
+                                                <tr>                                                        <th colspan="2">Need help working the CMS?</th>
+                                                        <th colspan="2">Want to report a bug?</th>                                                </tr>                                                <tr>
+                                                        <td><img src="http://files.furasta.org/images/email/email-footer-forum.jpg"></td>                                                        <td><a href="http://forum.furasta.org">http://forum.furasta.org</a><p>Visit the forum where you can ask questions about any aspect of the system. You can even add feature requests!</p></td>
+                                                        <td><img src="http://files.furasta.org/images/email/email-footer-bugs.jpg"></td>
+                                                        <td><a href="http://bugs.furasta.org">http://bugs.furasta.org</a><p>Using the Bug Tracker you can log a bug and it will be 
+completed depending on its priority.</p></td>
+                                                <tr>
+                                        </table>                                </div>                        </div>
+                </div>
+        </div>
+        <div id="bottom" style="width:92%;margin:0 auto;text-align:left">
+                <p style="float:left;color:#050;font-size:13px">&copy; <a href="http://furasta.org" style="text-decoration:none;color:#050;font-size:13px">Furasta.Org</a> | <a href="http://forum.furasta.org" style="text-decoration:none;color:#050;font-size:13px">Forum</a> | <a href="http://bugs.furasta.org" style="text-decoration:none;color:#050;font-size:13px">Bug Tracker</a></p>
+                <br style="clear:both"/>
+        </div>
+        </div>
+        ';
+
+        return mail( $to, $subject, $message, $headers );
+
 }
 
 /**
@@ -365,7 +391,7 @@ function validate($conds,$selector,$post){
         if(count($required_f)!=0){
 		foreach($required_f as $field){
 			if($_POST[$field]==''){
-				$Template->add('system_error','The '.htmlspecialchars($field).' is a required field, please do not leave it blank.');
+				$Template->runtimeError( '5', htmlspecialchars($field) );
 				return false;				
 			}	
 		}
@@ -374,7 +400,7 @@ function validate($conds,$selector,$post){
 	if(count($email_f)!=0){
                 foreach($required_f as $field){
                         if(!filter_var($_POST[$field],FILTER_VALIDATE_EMAIL)){
-                                $Template->add('system_error','Please enter a valid email in the '.htmlspecialchars($field).' field.');
+                                $Template->runtimeError( '6', htmlspecialchars($field) );
                                 return false;
                         }
                 }
@@ -383,8 +409,7 @@ function validate($conds,$selector,$post){
         if(count($pattern_f)!=0){
                 foreach($pattern_f as $field=>$regex){
 			if(!isset($_POST[$regex[0]])||preg_match($regex[1],$_POST[$regex[0]])){
-                                $Template->add('system_error','The
-				'.htmlspecialchars($regex[0]).' field is not valid.');
+                                $Template->runtimeError( '7', htmlspecialchars($regex[0]) );
 				return false;
 			}
 		}
@@ -393,10 +418,7 @@ function validate($conds,$selector,$post){
         if(count($minlength_f)!=0){
 		foreach($minlength_f as $field=>$length){
 			if(!isset($_POST[$length[0]])||strlen($_POST[$length[0]])<$length[1]){
-                                $Template->add('system_error','The
-				'.htmlspecialchars($length[0]).' field must be
-				at least '.htmlspecialchars($length[1]).'
-				characters long.');
+                                $Template->runtimeError( '8', array( htmlspecialchars($length[0]), htmlspecialchars($length[1]) ) );
 				return false;
 			}
 		}
@@ -405,9 +427,7 @@ function validate($conds,$selector,$post){
 	if(count($match_f)!=0){
 		foreach($match_f as $field=>$match){
 			if(!isset($_POST[$match[0]])||!isset($_POST[$match[1]])||$_POST[$match[1]]!=$_POST[$match[0]]){
-				$Template->add('system_error','The
-				'.htmlspecialchars($match[0]).' must match the
-				'.htmlspecialchars($match[1]).' field.');
+				$Template->runtimeError( '9', array( htmlspecialchars($match[0]), htmlspecialchars($match[1]) ) );
 				return false;
 			}
 		}

@@ -108,11 +108,14 @@ function list_pages( $id, $pages, $level=0 ){
         if( !isset( $pages[ $id ] ) )
                 return;
 
+        if( $level != 0 )
+                $list = '<table>';
+
         $list='';
         foreach( $pages[ $id ] as $page ){
                 $num++;
                 $href='<a href="pages.php?page=edit&id='.$page['id'].'" class="list-link">';
-                $class=($level==0)?'':' class="child-of-node-'.$page['parent'].' children"';
+                $class=($level==0)?' class="parent"':' class="child-of-node-'.$page['parent'].' children "';
                 $list.='<tr id="node-'.$page['id'].'"'.$class.'>
                         	<td class="pages-table-left"><input type="checkbox" value="' . $page[ 'id' ] . '" name="trash-box"/></td>
                                 <td class="first">'.$href.$page['name'].'</a></td>
@@ -123,8 +126,12 @@ function list_pages( $id, $pages, $level=0 ){
 	                        <td><a href="#" id="' . $page[ 'id' ] . '" class="delete"><img src="/_inc/img/trash-small.png" title="Delete Page" alt="Delete Page"/></a></td>
                         </tr>';
 
-                $list.=list_pages($page['id'],$pages,1);
+                $list.=list_pages($page['id'],$pages,$level + 1);
         }
+
+        if( $level != 0 )
+                $list = '</table>';
+
         return $list;
 }
 

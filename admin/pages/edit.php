@@ -21,9 +21,12 @@ if( $id == 0 )
 
 
 /**
- * get the status if isset 
+ * get the error if isset 
  */
-$status = @$_GET[ 'status' ];
+$error = @$_GET[ 'error' ];
+
+if( $error != '' )
+	$Template->runtimeError( $error );
 
 /**
  * set up javascript and php form validation
@@ -56,20 +59,25 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
         $parent = (int) $_POST[ 'Parent' ];
         $perm = (int) $_POST[ 'perm' ];
 
-	/**
-	 * update database with edited page 
-	 */
-	query('update '.PAGES.' set
-	name="'.$name.'",content="'.$content.'",slug="'.$slug.'",template="'.$template.'",type="'.$type.'",edited="'.date('Y-m-d
-	G:i:s').'",user="'.$User->about('name').'",parent='.$parent.',perm="'.$perm.'",home='.$home.',display='.$navigation.'
-	where id='.$id,true);
+        if( num( 'select id from ' . PAGES . ' where name="' . $name .'"') <= 1 ){
 
-	/**
-	 * clear pages cache and set status as edited 
-	 */
-	cache_clear( 'PAGES' );
+		/**
+		 * update database with edited page 
+		 */
+		query('update '.PAGES.' set
+		name="'.$name.'",content="'.$content.'",slug="'.$slug.'",template="'.$template.'",type="'.$type.'",edited="'.date('Y-m-d
+		G:i:s').'",user="'.$User->about('name').'",parent='.$parent.',perm="'.$perm.'",home='.$home.',display='.$navigation.'
+		where id='.$id,true);
 
-	$status = 'edited';
+		/**
+		 * clear pages cache and set status as edited 
+		 */
+		cache_clear( 'PAGES' );
+
+		$Template->runtimeError( '1' );
+	}
+	else
+		$Template->runtimeError( '4', $name );
 }
 
 $Page = row( 'select * from fr_pages where id= ' . $id );
@@ -165,25 +173,6 @@ $(document).ready(function(){
 $Template->loadJavascript( '_inc/js/jquery/tinymce.min.js' );
 $Template->loadJavascript( '_inc/js/tiny_mce.js' );
 $Template->loadJavascript( 'FURASTA_ADMIN_PAGES_EDIT', $javascript );
-
-/**
- * recognise page updates etc 
- */
-
-if( $status != '' ){
-
-	switch( $status ){
-
-		case 'updated':
-			$Template->add( 'systemError', '<p>page updated</p>' );
-		break;
-		case 'new':
-			$Template->add( 'systemError', '<p>page created</p>' );
-		break;
-
-	}
-
-}
 
 $url = 'http://' . $_SERVER[ 'SERVER_NAME' ];
 
