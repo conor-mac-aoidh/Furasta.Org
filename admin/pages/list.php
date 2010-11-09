@@ -15,6 +15,109 @@ $Template->diagnosticJavascript=1;
  * @todo finish the sortable below 
  */
 $javascript = '
+function toggleGroupedChildren( id ){
+
+	$( "#" + id ).toggleClass( "grouped" );
+
+	var splitID = String( id ).split( "-" );
+
+	splitID = splitID[ splitID.length -1 ];
+
+        var children = $( ".child-of-node-" + splitID );
+
+	if( children ){
+
+	        children.each(function( ){
+
+			$( this ).toggleClass( "grouped" );
+
+                	if( $( this ).hasClass( "parent" ) ){
+
+                        	var parent = $( this ).attr( "id" );
+
+	                        parent = String( parent ).split( "-" );
+        
+        	                parent = parent[ parent.length - 1 ];
+
+                	        toggleGroupedChildren( parent );
+
+	                }
+
+        	});
+	}
+}
+
+function reclassifyItem( item ){
+
+                var prevID = $( item ).prev( ).attr( "id" );
+
+                var prev = $( "#" + prevID );
+
+                var prevParentID = prev.attr( "class" ).match( /child-of-node\-.+?\b/ );
+
+		var parent = item.attr( "class" ).match( /child-of-node\-.+?\b/ );
+		
+                if( prev.hasClass( "parent" ) && prev.hasClass( "expanded" ) ){
+
+                        prevID = String( prevID ).split( "-" );
+        
+                        prevID = prevID[ prevID.length - 1 ];
+
+                        item.addClass( "child-of-node-" + prevID );
+
+                        var padding = prev.children( "td" ).eq( "1" ).css( "padding-left" );
+                        padding = parseInt( padding.substring( 0, padding.length - 2 ) ) + 19;
+
+                        item.children( "td" ).eq( 1 ).css( "padding-left", padding );
+
+                }
+                else if( prevParentID != null ){
+
+                        prevParentID = String( prevParentID ).split( "-" );
+        
+                        prevParentID = prevParentID[ prevParentID.length -1 ];
+
+                        item.addClass( "child-of-node-" + prevParentID );
+
+                        var padding = prev.children( "td" ).eq( "1" ).css( "padding-left" );
+                        padding = parseInt( padding.substring( 0, padding.length - 2 ) );
+
+                        item.children( "td" ).eq( 1 ).css( "padding-left", padding );
+
+                }
+                else{
+
+                        var classes = item.attr( "class" ).split( /\s+/ );
+
+                        for( var i = 0; i < classes.length; i++ ){
+
+                                if( classes[ i ].match( /child-of-node\-.+?\b/ ) )
+
+                                        item.removeClass( classes[ i ] );
+
+                        }
+
+			if( parent != null ){
+
+                                        var parentID = String( parent ).split( "-" );
+					parentID = parentID[ parentID.length - 1 ];
+
+                                        if( $( ".child-of-node-" + parentID ).length == 0 ){
+
+						$( "#node-" + parentID ).removeClass( "parent" );
+
+						$( "#node-" +parentID + " td span.expander" ).remove( );
+
+					}
+
+			}
+
+                        item.children( "td" ).eq( 1 ).css( "padding-left", "5px" );
+
+                }
+
+}
+
 $(document).ready( function( ){
 	/**
 	 * set up the treetable for the pages table
@@ -66,11 +169,111 @@ $(document).ready( function( ){
 	 */
 	var fixHelper = function( e, ui ) {
 
-		ui.children( ).each( function( ) {
+		ui.children( ).each( function( ){
 
 			$( this ).width( $( this ).width( ) );
 
 		});
+
+		return ui;
+
+	};
+
+        /**
+         *  set sorter for sortable objects
+         */
+        var fixSorter = function( e, ui ) {
+
+		if ( $( "#list-pages-dropbox tr" ).length ){
+
+			var offset = ui.item.offset( );
+
+			$( "#list-pages-dropbox" ).css({
+				left: ( offset.left ) + "px",
+				top: ( offset.top + 30 ) + "px"
+			});
+		}
+	};
+
+
+        /**
+         *  set starter for sortable objects
+         */
+        var fixStarter = function( e, ui ) {
+
+		$(".holder").css("height", ui.item.height());
+
+		if( $( ui.item ).hasClass( "parent" ) ){
+
+			toggleGroupedChildren( $( ui.item ).attr( "id" ) );
+
+			console.log( $( ".grouped" ).index( ui.item ) );
+
+			ui.item.data( "i", $( ".grouped" ).index( ui.item ) );
+
+			$( ".grouped:not(.holder)" ).not( ui.item ).each( function( ){
+
+				var content = $( this );
+
+				content.children( ).each( function( ){
+
+					$( this ).width( $( this ).width( ) );
+
+				});
+
+				$( this ).data( "n", $( "tr:not(.holder)" ).index( this ) );
+
+				content.appendTo( "#list-pages-dropbox" );
+
+			});
+								
+			$( "#pages tbody" ).sortable( "refresh" );
+							
+			$( "#list-pages-dropbox" ).show( );
+							
+			$( ".holder" ).css( "height", ( ( $( "#list-pages-dropbox tr" ).length + 1 ) * ui.item.outerHeight( ) ) + "px" );
+
+		}
+
+	};
+
+	/**
+	 * set stoper for sortable objects
+	 */
+	var fixStoper = function( e, ui ){
+
+		if ( $( "#list-pages-dropbox tr" ).length ){
+
+			$( "#list-pages-sortable" ).hide( );
+
+				ui.item.after( $( "#list-pages-dropbox tr" ) );
+							
+				var pos = ui.item.data( "i" );
+
+				console.log( pos );
+
+				if ( pos > 0 ) ui.item.insertAfter( $( "#pages tbody .grouped" ) [ pos ] );
+
+//				console.log( $( "#pages tbody .grouped" ) [ pos ] );
+
+				reclassifyItem( ui.item );
+
+				$( ".grouped" ).each( function( ){
+
+					reclassifyItem( $( this ) );
+
+				});
+
+				toggleGroupedChildren( $( ui.item ).attr( "id" ) );
+
+				$( "#pages tbody" ).sortable( "refresh" );
+
+				rowColor( );
+
+//				return ui;
+		}
+
+		reclassifyItem( ui.item );
 
 		return ui;
 
@@ -82,74 +285,25 @@ $(document).ready( function( ){
 	 */
 	$("#pages tbody").sortable({
 
-		containment: ".parent",
+		forcePlaceholderSize: true,
+
+		placeholder: "holder",
 
 		helper:	fixHelper,
+
+		stop: fixStoper,
+
+		start: fixStarter,
+
+		sort: fixSorter,
 
 		update:function(){
 
 			rowColor();
 
-			//alert($("#pages tr").sortable("serialize"));
-
-			alert( "parents test" );
-
 		}
 
-	});
-
-	$( "#pages tbody tr.children" ).each( function(){
-
-
-		var row = $( this ).attr( "class" ).match( /child-of-node\-.+?\b/);
-
-		var parent = String( row ).split( "-" );
-
-		parent = parent[ parent.length - 1 ];
-
-		parent = "#node-" + parent;
-
-		if( !$( parent ).hasClass( "furasta-sortable" ) ){
-
-			console.log( parent + "   ." + row );
-
-			$( "#pages tbody").sortable({
-
-				containment: "." + row,
-
-				helper: fixHelper,
-
-				update: function( ){
-
-					rowColor();
-
-					alert( "childern test" );
-
-				}
-
-			});
-
-			$( parent ).addClass( "furasta-sortable" );
-
-		}
-
-	});
-
-                        $( "#pages tbody").sortable({
-
-                                containment: ".child-of-node-61",
-
-                                helper: fixHelper,
-
-                                update: function( ){
-
-                                        rowColor();
-
-                                        alert( "childern test" );
-
-                                }
-
-                        });
+	}).disableSelection( );
 
 	/**
 	 *  delete page when delete button is pressed
@@ -238,6 +392,8 @@ $Template->loadJavascript( '_inc/js/jquery/treeTable.min.js' );
 $Template->loadJavascript( 'FURASTA_ADMIN_PAGES_LIST', $javascript );
 
 $content = '
+<div id="list-pages-dropbox"></div>
+
 <span style="float:right">
 	<a href="pages.php?page=new">
 		<img src="/_inc/img/new-page.png" style="float:left"/>

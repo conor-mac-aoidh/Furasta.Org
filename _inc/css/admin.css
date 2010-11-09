@@ -22,8 +22,8 @@ table{ width:100%;border-spacing:0;margin-top:15px }
 table tr td{ padding:6px }
 table tr td.first{ min-width:30% }
 table tr th{ height:30px;text-align:left;padding:2px 6px;color:#fff;font-size:13px;background:url(/_inc/img/th.png) repeat-x !important }
-table tr.even{ background:#ded }
-table tr.odd{ background:#fff }
+.even{ background:#ded }
+.odd{ background:#fff }
 .half-table{ width:50% }
 
 /* admin template style */
@@ -148,6 +148,7 @@ table#add-user{ width:60%;text-align:left;margin:0 auto }
 table#perm{ width:50%;text-align:left;margin:0 auto }
 #pages{ margin-top:0 }
 #options-bar-left a:focus{ outline:none }
+#list-pages-dropbox{ display:none;position:absolute }
 
 .pages-table-left{ padding:6px 15px 6px 6px;width:25px }
 .treeTable tr td .expander{ background-position:left center;background-repeat:no-repeat;cursor:pointer;padding:0;zoom:1 }

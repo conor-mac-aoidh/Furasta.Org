@@ -13,6 +13,7 @@
 22. change the location of the backup folder to inside the _user dir and create that dir during installation.
 24. Add page saved, updated whatever message
 25. Create bugs@furasta.org and support@furasta.org emails
+26. Make it so can be installed in any sub directory
 
 # TODO list for Furasta.Org v1.0 - General Release #
 
@@ -32,3 +33,4 @@
 10. Possibly, add an option for scheduled backups, and add a restore from backup feature, or even better add a browse backups feature like Time Machine, although could be some space issues!
 11. Possibly create a power-law graph for the caching system to establish what should and should not be graphed
 12. make pages,trash and possibly plugins pages pagated
+13. convert list pages sortable into a jquery plugin - extention of jquery ui. possibly do the same with overview items sortable thing

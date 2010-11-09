@@ -68,6 +68,9 @@ function email( $to, $subject, $message ){
         $headers.='MIME-Version: 1.0'."\r\n";
         $headers.='Content-Type: text/html; charset=ISO-8859-1'."\r\n";
 
+	/**
+	 * message template 
+	 */
         $message='
         <div style="margin:0;text-align:center;background:#eee;font:1em Myriad Pro,Arial,Sans Serif;color:#333;border:1px solid transparent">
         <div id="container" style="width:92%;background:#fff;border:1px solid #999;margin:20px auto 0 auto">                <div id="container-top" style="border-top:1px solid transparent">
@@ -101,6 +104,9 @@ completed depending on its priority.</p></td>
         </div>
         ';
 
+	/**
+	 * return success of mail function 
+	 */
         return mail( $to, $subject, $message, $headers );
 
 }
