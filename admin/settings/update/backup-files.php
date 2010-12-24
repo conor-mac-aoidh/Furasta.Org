@@ -33,7 +33,7 @@ function zip_files($files,$dir=''){
 
 zip_files($files);
 
-$zip->output(HOME.'backup/file-backup.zip');
+$zip->output(USERFILES.'backup/file-backup.zip');
 
 die('ok');
 ?>

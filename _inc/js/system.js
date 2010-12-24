@@ -19,8 +19,8 @@
  * @return void
  */
 function rowColor( ){
-	$( ".row-color tr:even" ).removeClass( "odd" ).addClass( "even" );
-	$( ".row-color tr:odd" ).removeClass( "even" ).addClass( "odd" );
+	$( ".row-color tr:even" ).not( ":hidden" ).removeClass( "odd" ).addClass( "even" );
+	$( ".row-color tr:odd" ).not( ":hidden" ).removeClass( "even" ).addClass( "odd" );
 }
 
 function fAlert(message){
@@ -32,7 +32,7 @@ function fAlert(message){
 
 
 function fConfirm(message,callback,param){
-        $('#dialog').html('<div id="dialog-content">'+message+'</div><div id="dialog-alert-logo">&nbsp;</div>');
+        $('#dialog').html('<div id="dialog-content">'+message+'</div><div id="dialog-confirm-logo">&nbsp;</div>');
         $('#dialog').attr('title','Are You Sure?');
         $('#dialog').dialog({ modal: true,buttons:{ Cancel:function(){ $(this).dialog('close'); },Yes:function(){ callback(param);$(this).dialog('close'); } },hide:'fade',show:'fade',resizeable:false });
         $('#dialog').dialog("open");
@@ -40,7 +40,7 @@ function fConfirm(message,callback,param){
 
 function fHelp(message){
         $('#dialog').html('<div id="dialog-content">'+message+'</div><div id="dialog-help-logo">&nbsp;</div>');
-        $('#dialog').attr('title','Help');
+        $('#dialog').attr('title','Information');
         $('#dialog').dialog({ modal: true,buttons:{ Close:function(){ $(this).dialog('close'); }},hide:'fade',show:'fade',resizeable:false });
         $('#dialog').dialog("open");
 }

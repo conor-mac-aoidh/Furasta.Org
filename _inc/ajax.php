@@ -15,20 +15,42 @@
  * @version    1.0
  */
 
-if(isset($_GET['no_config'])){
-	define('START_TIME',microtime(true));
-	define('HOME',substr(dirname(__FILE__),0,-4));
+/**
+ * checks if config and login are required
+ */
+if( isset( $_GET[ 'no_config' ] ) ){
+	/**
+	 * basic script setup - database connection,
+	 * .settings contstants but no libraries 
+	 */
+	define( 'START_TIME', microtime( true ) );
+	define( 'HOME', substr( dirname( __FILE__ ), 0, -4 ) );
+
+	require HOME . '.settings.php';
+
+	if( ! ( $connect = mysql_connect( $DB[ 'host' ], $DB[ 'user' ], $DB[ 'pass' ] ) ) )
+        	die( 'The MySQL connection details are incorrect. The hostname, username or password are incorrect.' );
+
+	if( ! mysql_select_db( $DB['name'], $connect ) )
+        	die( 'Cannot connect to the MySQL database. Please make sure that the database name is correct.' );
 }
-else
+else{
+	/**
+	 * normal setup script - database connection,
+	 * .settings constants, libraries
+	 * NB: define.php is run so plugins are loaded etc
+	 *     also must be logged in 
+	 */
 	include 'define.php';
 
-if(!is_logged_in($_SESSION['user']['id']))
-	die('Please login to access this content.');
+	if(!is_logged_in($_SESSION['user']['id']))
+		die('Please login to access this content.');
+}
 
-$file=HOME.@$_GET['file'];
+$file = HOME . @$_GET[ 'file' ];
 
-if(!file_exists($file))
-	die('The file at <i>'.$file.'</i> does not exist.');
+if( !file_exists( $file ) )
+	die( 'The file at <i>' . $file . '</i> does not exist.' );
 
 require $file;
 

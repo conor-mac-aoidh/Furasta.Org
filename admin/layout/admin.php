@@ -15,6 +15,9 @@
 ob_start('ob_gzhandler');
 header('Content-type: text/html; charset: UTF-8');
 
+/**
+ * load javascript and CSS files 
+ */
 $Template->loadJavascript( '_inc/js/jquery/multi-ddm.min.js' );
 $Template->loadJavascript( '_inc/js/admin/admin.js' );
 $Template->loadJavascript( '_inc/js/system.js' );
@@ -22,12 +25,20 @@ $Template->loadJavascript( '_inc/js/validate.js' );
 
 $Template->loadCSS('_inc/css/admin.css');
 
+/**
+ * filter page content - plugins 
+ */
+$content = $Plugins->filter( 'admin', 'filter_page_content', $Template->display( 'content' ) );
+
+/**
+ * begin output 
+ */
 echo'
 <html>
 <head>
 	<noscript><meta http-equiv="refresh" content="0;url=/_inc/noscript.php"></noscript>
 	<link rel="stylesheet" href="'.$Template->cssUrl().'"/>
-	<title>Furasta.Org '.$Template->display('title').'</title>
+	<title>' . $Template->display( 'title' ) . ' - Furasta.Org</title>
 </head>
 <body>
 <div id="dialog">&nbsp;</div>
@@ -41,9 +52,9 @@ echo'
 		<div id="header">
 			<div id="menu">
 				<ul id="full-menu">
-					<li><a href="../" id="title">&nbsp;</a></li>
-					'.$Template->display('menu').'
-					<li id="right-item"><a href="logout.php" id="logout">&nbsp;</a></li>
+                                        <li><a href="../" id="title">&nbsp;</a></li>
+                                        '.$Template->display('menu').'
+                                        <li id="right-item"><a href="logout.php" id="logout">&nbsp;</a></li>
 				</ul>
 			</div>
 		</div>
@@ -52,7 +63,7 @@ echo'
 				<div id="main">
 					' . $Template->displayErrors( ) . '
 					<div id="right">
-						'.$Template->display('content').'
+						'. $content .'
 					</div>
 				</div>
 			</div>
@@ -62,7 +73,7 @@ echo'
 			</div>
 		</div>
 		<div id="bottom">
-                        <p class="right"><a href="settings.php?page=users&id='.$_SESSION['user']['id'].'">'.$_SESSION['user']['name'].'</a> - Status: '.$_SESSION['user']['user_group'].'</p>
+                        <p class="right"><a href="settings.php?page=edit-users&id='.$_SESSION['user']['id'].'">'.$_SESSION['user']['name'].'</a> - Group: <a href="settings.php?page=edit-groups&name='.$_SESSION['user']['group'].'">'.$_SESSION['user']['group'].'</a></p>
 			<p class="left">&copy; <a href="http://furasta.org">Furasta.Org</a> | <a href="http://forum.furasta.org">Forum</a> | <a href="http://bugs.furasta.org">Bug Tracker</a></p>
 			<br style="clear:both"/>
 		</div>

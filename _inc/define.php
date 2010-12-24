@@ -59,10 +59,19 @@ if( ! mysql_select_db( $DB['name'], $connect ) )
  */
 session_start( );
 
+/**
+ * get instance of plugins class, load plugin files
+ * and register plugins
+ */
 $Plugins = Plugins::getInstance( );
 
-foreach( $PLUGINS as $plugin )
-	require HOME . '_plugins/' . $plugin . '/plugin.php';
+foreach( $PLUGINS as $plugin ){
+	require HOME . '_plugins/' . str_replace( ' ', '-', $plugin ) . '/plugin.php';
 
-$Plugins->refactor( );
+	/**
+	 * register the $plugin array from the plugins file
+	 */
+	$Plugins->register( $plugin );
+}
+//$Plugins->refactor( );
 ?>

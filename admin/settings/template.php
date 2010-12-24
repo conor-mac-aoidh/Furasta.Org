@@ -40,7 +40,7 @@ $(document).ready(function(){
 $Template->add('head',$head);
 
 $content='
-<img src="/_inc/img/template.png" style="float:left"/> <h1 class="image-left">Template</h1></span>
+<span class="header-img" id="header-Template">&nbsp;</span><h1 class="image-left">Template</h1></span>
 <br/>
 <ul id="template">
 ';

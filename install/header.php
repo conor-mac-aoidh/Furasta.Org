@@ -52,22 +52,23 @@ session_start();
  * @return string
  */
 function calculate_url(){
-	$url='http';
+        $url='http';
 
-	if($_SERVER['HTTPS']=='on')
-		$url.='s';
+        if($_SERVER['HTTPS']=='on')
+                $url.='s';
 
-	$url.='://'.$_SERVER['SERVER_NAME'];
+        $url.='://'.$_SERVER['SERVER_NAME'];
 
-	if($_SERVER['SERVER_PORT']!='80')
-  		$url.=':'.$_SERVER['SERVER_PORT'];
+        if($_SERVER['SERVER_PORT']!='80')
+                $url.=':'.$_SERVER['SERVER_PORT'];
 
-	$end=explode('/',$_SERVER['REQUEST_URI']);
-	array_pop($end);
-	$url.=implode('/',$end);
+        $end=explode('/',$_SERVER['REQUEST_URI']);
+        array_pop($end);
+        $url.=implode('/',$end);
 
-	$url=substr($url,0,-7);	
+        $url=substr($url,0,-7);
 
-	return $url;
+        return $url;
 }
+
 ?>

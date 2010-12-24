@@ -169,7 +169,7 @@ $content .= '<br style="clear:both"/>';
  */
 
 $Template->add( 'content', $content );
-$Template->add( 'title', '- Overview' );
+$Template->add( 'title', 'Overview' );
 
 require 'footer.php';
 ?>

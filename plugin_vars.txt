@@ -1,21 +1,79 @@
-# variables #
+# array keys
+$plugin = array(
+	'name' => '',
+	'description' => '',
+	'version' => '',
+	'email' => '',
+	'href' => '',
+	'importance' => '',
 
-$name
-$description
-$version
-$email
-$href
-$importance
-$adminPageType
-$frontendTemplateFunction
+	# admin functions
+	'admin'=> array(
+		# $menu_array, $url
+		'filter_menu' => 'function_name'
+		'filter_menu' => array( 'classname', 'methodname' ),
 
-# functions #
+		'page_type' => array(
+			'name' => '',
 
-adminMenu($menu_array,$url)
-adminPageType($page_id)
-adminPage()
-adminOverviewItem()
-frontendPageType($Page)
-frontendTemplateFunction($Page)
-htaccess($htaccess)
-robots($robots)
+			# $page_array
+			'function' => 'function_name',
+			'function' => array( 'classname', 'methodname' )
+		),
+
+		'page' => 'function_name',
+		'page' => array( 'classname', 'methodname' ),
+
+		'on_load' => 'function_name',
+		'on_load' => array( 'classname', 'methodname' ),
+
+                'on_finish' => 'function_name',
+                'on_finish' => array( 'classname', 'methodname' ),
+
+                'filter_page_content' => 'function_name',
+                'filter_page_content' => array( 'classname', 'methodname' ),
+
+                'overview_item' => 'function_name',
+                'overview_item' => array( 'classname', 'methodname' ),
+
+	),
+
+	# frontend functions
+	'frontend' => array(
+		# $page_array
+                'page_type' => 'function_name',
+                'page_type' => array( 'classname', 'methodname' ),
+
+                'on_load' => 'function_name',
+                'on_load' => array( 'classname', 'methodname' ),
+
+                'on_finish' => 'function_name',
+                'on_finish' => array( 'classname', 'methodname' ),
+
+		'template_function' => array(
+			'name' => '',
+
+			# $page_array
+	                'function' => 'function_name',
+        	        'function' => array( 'classname', 'methodname' ),
+		),
+
+	),
+
+	# sitewide functions
+	'general' => array(
+
+		# $htaccess
+                'filter_htaccess' => 'function_name',
+                'filter_htaccess' => array( 'classname', 'methodname' ),
+
+		# $robots
+                'filter_robots' => 'function_name',
+                'filter_robots' => array( 'classname', 'methodname' ),
+
+		# $settings
+                'filter_settings_rewrite' => 'function_name',
+                'filter_settings_rewrite' => array( 'classname', 'methodname' ),
+	),
+
+);

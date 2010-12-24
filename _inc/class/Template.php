@@ -15,6 +15,48 @@
 
 /**
  * Template
+ *
+ * The Template class manages all output in the
+ * admin area. Instead of outputing in a procedural
+ * way, this class stores all output as it is 
+ * registered and then outputs it all at the end of
+ * execution. The class also compresses the outputed
+ * content.
+ *
+ * USING THE CLASS
+ *
+ * There are different areas of the template that
+ * you can output code to:
+ *
+ * title - the title of the page
+ * menu - the menu of the page
+ * content - the main content area of the page
+ *
+ * You can add output to these areas like so:
+ *
+ * $Template->add( 'title', 'Admin Page Name' );
+ *
+ * This class is used so that at any stage of
+ * execution you can add output to any part of
+ * the template, rather than doing everything
+ * strictly proceduarily.
+ *
+ * As well as handling html this class handles CSS
+ * and javascript. It packs javascript, compresses
+ * CSS and caches it.
+ *
+ * CSS VARIABLES
+ *
+ * This class currently only makes one variable
+ * available in CSS but this may be expanded on
+ * in the future.
+ *
+ * %SITEURL%
+ * to load images properly the %SITEURL% var
+ * should be used. The CSS will be parsed by
+ * this class and that var will be replaced
+ * with the value of the site url if present.
+ * 
  * 
  * @package admin_template
  * @author Conor Mac Aoidh <conormacaoidh@gmail.com> 
@@ -226,11 +268,11 @@ class Template {
 
 			if( is_array( $params ) ){
 				for( $i = 0; $i <= count( $params ); $i++ )
-					$error = str_replace( '%' . $i, $params[ $i ] );
+					$error = str_replace( '%' . $i, $params[ $i ], $error );
 
 			}
 			else
-				$error = str_replace( '%1', $params );
+				$error = str_replace( '%1', $params, $error );
 				
 		}
 
@@ -255,7 +297,7 @@ class Template {
 			return '';
 
 		$errors = '<div id="system-error">
-				<img src="/_inc/img/alert-logo.png" style="float:left"/>';
+				<span id="dialog-alert-logo" style="float:left">&nbsp;</span>';
 
 		foreach( $this->runtimeError as $key => $error )
 			$errors .= '<div class="runtime-errors" id="error-' . $key . '">' . $error . '</div>';
@@ -266,7 +308,20 @@ class Template {
 	
 
         /**
-         * loadJavascript 
+         * loadJavascript
+	 *
+	 * This function is used to load javascript files
+	 * or a string of javascript without the script tags.
+	 *
+	 * To add a file:
+	 * $Template->loadJavascript( 'path/to/file' );
+	 *
+	 * To add a string of javascript:
+	 * $Template->loadJavascript( 'UNIQUE_NAME_TO_IDENTIFY_CODE', $code );
+	 *
+	 * The unique name above will be used to create the
+	 * unique URL later. The names should follow the
+	 * scripts purpose, such as FURASTA_ADMIN_PAGES_LIST
          * 
          * @param string $name 
          * @param string $content optional
@@ -290,6 +345,10 @@ class Template {
 
         /**
          * javascriptUrl
+	 *
+	 * Returns a unique URL to load which will
+	 * contain all of the javascript loaded
+	 * during runtime.
          * 
          * @access public
          * @return string
@@ -325,11 +384,18 @@ class Template {
 			}
                 }
 
-                return '/_inc/js/js.php?' . $cache_file;
+                return SITEURL . '_inc/js/js.php?' . $cache_file;
         }
 
 	/*
-         * loadCSS 
+         * loadCSS
+	 *
+	 * Works with the same syntax and principal as
+	 * the loadJavascript function above, except
+	 * this function uses compression rather than packing.
+	 *
+	 * note: the compression is actually done in the
+	 * cssUrl function
          * 
          * @param string $name 
          * @param string $content optional
@@ -353,6 +419,10 @@ class Template {
 
         /**
          * cssUrl 
+	 *
+	 * Returns a unique URL to load which
+	 * will contain all of the CSS added
+	 * during runtime.
          * 
          * @access public
          * @return string
@@ -367,7 +437,6 @@ class Template {
 
                 foreach( $sources as $source => $contents ){
                         $content .= $contents;
-			die( $contents );
                         array_push( $files, $source );
                 }
 
@@ -385,10 +454,17 @@ class Template {
 			 */
     			$content = str_replace( array( "\r\n", "\r", "\n", "\t", '  ', '    ', '    ' ), '', $content );
 
+			/**
+			 * makes the SITEURL constant available
+			 * in CSS so that images can be loaded
+			 * properly
+			 */
+			$content = str_replace( '%SITEURL%', SITEURL, $content );
+
                         cache( $cache_file, $content, 'CSS');
                 }
 
-                return '/_inc/css/css.php?' . $cache_file;
+                return SITEURL . '_inc/css/css.php?' . $cache_file;
         }
 
 }

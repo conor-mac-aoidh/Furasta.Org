@@ -20,7 +20,8 @@ function query($query,$alert=false){
 }
 
 function num($query,$alert=false){
-	$num=mysql_num_rows($query);
+	$result=mysql_query($query);
+	$num=mysql_num_rows($result);
         if(!$num&&$alert==true)
 		error('There has been a problem executing this MySQL num query:<br/><br/>'.htmlspecialchars($query).'<br/><br/><b>MySQL Error:</b> '.mysql_error(),'MySQL Error');
 	return $num;

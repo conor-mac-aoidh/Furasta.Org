@@ -13,20 +13,30 @@
 
 require 'header.php';
 
-$page=addslashes(@$_GET['page']);
+/**
+ * check if user can view page 
+ */
+if( $_SESSION[ 'user' ][ 'perm' ][ 0 ] == '0' )
+	error( 'You have insufficient privelages to view this page. Please contact one of the administrators.', 'Permissions Error' ); 
 
-switch($page){
+$page = addslashes( @$_GET[ 'page' ] );
+
+switch( $page ){
 	case 'groups':
-		require HOME.'admin/users/groups.php';
+                $Template->add( 'title', 'Groups' );
+		require HOME . 'admin/users/groups.php';
 	break;
 	case 'edit-group':
-		require HOME.'admin/users/edit-group.php';
+                $Template->add( 'title', 'Edit Group' );
+		require HOME . 'admin/users/edit-group.php';
 	break;
 	case 'edit-users':
-		require HOME.'admin/users/edit-users.php';
+                $Template->add('title','Edit User');
+		require HOME . 'admin/users/edit-users.php';
 	break;
 	default:
-		require HOME.'admin/users/users.php';
+                $Template->add( 'title', 'Users' );
+		require HOME . 'admin/users/users.php';
 }
 
 require 'footer.php';

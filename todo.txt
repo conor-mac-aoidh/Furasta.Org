@@ -1,6 +1,5 @@
 # TODO list for Furasta.Org v1.0 Beta 2 #
 
-1. Combine images used on every page into one image. new line for repeating images
 4. Add User Groups, possibly get rid of the new user page and turn it into a jquery alert?
 5. Fix page permissions, and user permissions. will be more complex with groups. make a numbered system similar to 0700,0777 to specify permissions
 6. Complete the auto-update feature, and possibly allow for system wide 'alerts' which will appear on every page.
@@ -11,13 +10,14 @@
 20. Add custom error handler to the smarty template engine.
 21. Add system wide alerts, such as update etc.
 22. change the location of the backup folder to inside the _user dir and create that dir during installation.
-24. Add page saved, updated whatever message
 25. Create bugs@furasta.org and support@furasta.org emails
-26. Make it so can be installed in any sub directory
 
 # TODO list for Furasta.Org v1.0 - General Release #
 
 1. bug fixes, small refinements etc
+2. begin phase in of javascript language files
+3. complete support for installing in sub directorys
+4. ensure CSS cross-browser compatability
 
 # TODO list for Furasta.Org v1.1 #
 
@@ -28,9 +28,10 @@
 5. Add user description/about page, possibly frontend profile?
 6. Add proper frontend editing support via frontendEditor plugin
 7. Add plugin updater
-8  Language support
+8  complete language support phase in, in both php and javascript. add $Template->error( ) method which would execute the error function using language files
 9. Possibly feature that when you register a new user on your website it also registers/allows you access to forum.furasta.org, bugs.furasta.org, and possibly developer.furasta.org. The later still tbc
 10. Possibly, add an option for scheduled backups, and add a restore from backup feature, or even better add a browse backups feature like Time Machine, although could be some space issues!
 11. Possibly create a power-law graph for the caching system to establish what should and should not be graphed
 12. make pages,trash and possibly plugins pages pagated
-13. convert list pages sortable into a jquery plugin - extention of jquery ui. possibly do the same with overview items sortable thing
+13. convert list pages sortable into a jquery plugin - extention of jquery ui
+14. add icons.png to the $Template class - so that its cached or otherwise created on load, should have ability to add images from plugins. should use GD and check if its installed

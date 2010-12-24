@@ -23,65 +23,73 @@ if(!is_logged_in($_SESSION['user']['id']))
 else
         $User=new User($_SESSION['user']['id']);
 
-$cache_file='FURASTA_ADMIN_MENU';
+/**
+ * execute the onload plugin functions 
+ */
+$Plugins->hook( 'admin', 'on_load' );
 
-if(cache_exists($cache_file,'PAGES'))
-	$menu=json_decode(cache_get($cache_file,'PAGES'));
+$cache_file = 'FURASTA_ADMIN_MENU_' . $_SESSION[ 'user' ][ 'id' ];
+
+if(cache_exists($cache_file,'USERS'))
+	$menu=json_decode(cache_get($cache_file,'USERS'));
 else{
+	$url = SITEURL . 'admin/';
+
 	$menu_items=array(
 		'Overview'=>array(
-			'url'=>'/admin/index.php',
+			'url'=>$url . 'index.php',
 		),
 		'Pages'=>array(
-			'url'=>'/admin/pages.php',
+			'url'=>$url . 'pages.php',
 			'submenu'=>array(
 				'Edit Pages'=>array(
-						'url'=>'/admin/pages.php?page=list',
+						'url'=>$url . 'pages.php?page=list',
 				),
 				'New Page'=>array(
-						'url'=>'/admin/pages.php?page=new',
+						'url'=>$url . 'pages.php?page=new',
 				),
 				'Trash'=>array(
-						'url'=>'/admin/pages.php?page=trash',
+						'url'=>$url . 'pages.php?page=trash',
 				),
 			),
 		),
-		'Users'=>array(
-			'url'=>'/admin/users.php',
+		'Users & Groups'=>array(
+			'url'=>$url . 'users.php',
 			'submenu'=>array(
 				'Edit Users'=>array(
-					'url'=>'/admin/users.php?page=users',
+					'url'=>$url . 'users.php?page=users',
 				),
 				'Edit Groups'=>array(
-					'url'=>'/admin/users.php?page=groups',
+					'url'=>$url . 'users.php?page=groups',
 				),
 			),
 		),
 		'Settings'=>array(
-			'url'=>'/admin/settings.php',
+			'url'=>$url . 'settings.php',
 			'submenu'=>array(
 				'Configuration'=>array(
-					'url'=>'/admin/settings.php?page=configuration',
+					'url'=>$url . 'settings.php?page=configuration',
 				),
 				'Template'=>array(
-						'url'=>'/admin/settings.php?page=template',
+						'url'=>$url . 'settings.php?page=template',
 				),
 				'Plugins'=>array(
-						'url'=>'/admin/settings.php?page=plugins',
+						'url'=>$url . 'settings.php?page=plugins',
 				),
 				'Update'=>array(
-						'url'=>'/admin/settings.php?page=update',
+						'url'=>$url . 'settings.php?page=update',
 				),
 			),
 		),
 	);
 
-	$menu_items=$Plugins->adminMenu($menu_items);
+	if( $_SESSION[ 'user' ][ 'perm' ][ 2 ] == 1 )
+		$menu_items=$Plugins->adminMenu($menu_items);
 
 	$menu=display_menu($menu_items);
 
         $menu_items_cache=json_encode($menu);
-        cache($cache_file,$menu_items_cache,'PAGES');
+        cache($cache_file,$menu_items_cache,'USERS');
 }
 
 $Template->add('menu',$menu);
@@ -90,10 +98,15 @@ $javascript='
 $(document).ready(function(){
         rowColor();
         $("#menu ul").dropDownMenu({timer:1500,parentMO:"parent-hover"});
-        var path=location.pathname;
-        if(path=="/admin"||path=="/admin/"){
+        var link=window.location.href.split( "?" );
+	var path = link[ 0 ];
+        if(path=="' . SITEURL . 'admin"||path=="' . SITEURL . 'admin/"){
                 $("#Overview").addClass("current");
         }
+	else if( path == "' . SITEURL . 'admin/plugin.php" ){
+		link = link[ 1 ].split(/[=&]+/);
+		$( "#" + link[ 1 ] ).addClass( "current" );
+	}
         else{
                 $("#menu li a[href=\'"+path+"\']").addClass("current");
         }

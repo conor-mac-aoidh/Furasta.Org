@@ -15,20 +15,27 @@ require 'header.php';
 
 $page=addslashes(@$_GET['page']);
 
-if(isset($_POST))
-	require 'post/settings.php';
+/**
+ * check if user can view page 
+ */
+if( $_SESSION[ 'user' ][ 'perm' ][ 1 ] == '0' )
+        error( 'You have insufficient privelages to view this page. Please contact one of the administrators.', 'Permissions Error' );
 
 switch($page){
 	case 'template':
+		$Template->add( 'title', 'Template' );
 		require 'settings/template.php';
 	break;
 	case 'plugins':
+		$Template->add( 'title', 'Plugins' );
 		require 'settings/plugins.php';
 	break;
 	case 'update':
+		$Template->add( 'title', 'Update' );
 		require 'settings/update.php';
 	break;
 	default:
+		$Template->add( 'title', 'Configuration' );
 		require 'settings/configuration.php';
 }
 

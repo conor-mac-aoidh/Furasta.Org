@@ -25,8 +25,8 @@ $array=array(
 
 $cache_file='FURASTA_OVERVIEW_ITEMS_STATUS_'.$_SESSION['user']['id'];
 
-if(cache_exists($cache_file,'OVERVIEW_ITEMS')){
-	$items=json_decode(cache_get($cache_file,'OVERVIEW_ITEMS'),true);
+if(cache_exists($cache_file,'USERS')){
+	$items=json_decode(cache_get($cache_file,'USERS'),true);
 	
 	if(array_key_exists($id,$items)){
 		$items[$id]=$status;
@@ -36,7 +36,7 @@ if(cache_exists($cache_file,'OVERVIEW_ITEMS')){
 		$array=array_merge($array,$items);
 }
 
-cache($cache_file,json_encode($array),'OVERVIEW_ITEMS');
+cache($cache_file,json_encode($array),'USERS');
 
 die('0');
 ?>

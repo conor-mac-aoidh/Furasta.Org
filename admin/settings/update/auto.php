@@ -12,9 +12,8 @@
  * @package    admin_settings
  */
 
-$head='
-<script type="text/javascript">
-	$(function() {
+$javascript='
+$(function() {
 		$("#tabs").tabs({
 			ajaxOptions:{
 				error:function(xhr,status,index,anchor) {
@@ -22,14 +21,13 @@ $head='
 				}
 			}
 		});
-	});
-</script>
+});
 ';
-$Template->add('head',$head);
+$Template->loadJavascript( 'FURASTA_ADMIN_SETTINGS_UPDATE', $javascript );
 
 
 $content='
-<span><a href="settings.php?page=update&action=auto"><img src="/_inc/img/update.png" class="left"/> <h1 class="image-left">Core Update</h1></a></span>
+<span><span class="header-img" id="header-Auto-Update">&nbsp;</span><h1 class="image-left">Core Update</h1></span>
 <br/>
 
 <div id="tabs">

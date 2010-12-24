@@ -119,8 +119,8 @@ function list_pages( $id, $pages, $level=0 ){
                                 <td>'.$href.$page['user'].'</a></td>
                                 <td>'.$href.$page['type'].'</a></td>
                                 <td>' . $href. date( "d/m/y", strtotime( $page[ 'edited' ] ) ) . '</a></td>
-                                <td><a href="pages.php?page=new&parent='.$page['id'].'"><img src="/_inc/img/new-page-small.png" title="New Sub Page" alt="New Sub Page"/></a></td>
-	                        <td><a href="#" id="' . $page[ 'id' ] . '" class="delete"><img src="/_inc/img/trash-small.png" title="Delete Page" alt="Delete Page"/></a></td>
+                                <td><a href="pages.php?page=new&parent='.$page['id'].'"><span class="admin-menu-img" id="New-Page-img" title="New Sub Page" alt="New Sub Page">&nbsp;</span></a></td>
+	                        <td><a id="' . $page[ 'id' ] . '" class="delete link"><span class="admin-menu-img" id="Trash-img" title="Delete Page" alt="Delete Page">&nbsp;</span></a></td>
                         </tr>';
 
                 $list.=list_pages($page['id'],$pages,$level + 1);
@@ -130,6 +130,16 @@ function list_pages( $id, $pages, $level=0 ){
 }
 
 function display_menu($menu_items){
+
+	/**
+	 * remove items if user has insufficent permissions
+	 */
+	if( $_SESSION[ 'user' ][ 'perm' ][ 0 ] == '0' )
+		unset( $menu_items[ 'Users & Groups' ] );
+
+	if( $_SESSION[ 'user' ][ 'perm' ][ 1 ] == '0' )
+		unset( $menu_items[ 'Settings' ] );
+
 	$list='';
 	foreach($menu_items as $item){
 		$name=reset(array_keys($menu_items,$item));
@@ -149,6 +159,51 @@ function display_menu($menu_items){
 
 	}
 	return $list;
+}
+
+/**
+ * pages_array
+ *
+ * returns a cached version of the pages array in the format
+ * $pages[ id ] = name; it also has system restricted pagenames
+ * at the end of the array
+ * 
+ * @access public
+ * @return array
+ */
+function pages_array( ){
+
+	$cache_file = 'FURASTA_ADMIN_PAGES_ARRAY';
+
+	if( cache_is_good( $cache_file, 'PAGES' ) )
+		return json_decode( cache_get( $cache_file, 'PAGES' ) );	
+
+	/**
+	 * get page names from database 
+	 */
+	$pages = array( );
+	$query = mysql_query( 'select id,name from ' . PAGES );
+
+	while( $row = mysql_fetch_array( $query ) ){
+		$pages[ $row[ 'id' ] ] = $row[ 'name' ];	
+	}
+
+	/**
+	 * system names already in use 
+	 */
+	$pages[] = 'admin';
+	$pages[] = 'install';
+	$pages[] = '_inc';
+	$pages[] = '_www';
+	$pages[] = '_plugins';
+	$pages[] = '_user';
+
+	/**
+	 * cache and return pages array
+	 */
+	cache( $cache_file, json_encode( $pages ), 'PAGES' ); 
+
+	return $pages;
 }
 
 ?>

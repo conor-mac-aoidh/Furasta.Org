@@ -24,8 +24,7 @@ function frontend_menu(){
 		while($row=mysql_fetch_assoc($query))
 		        $pages[$row['parent']][]=$row;
 
-		$url='http://'.$_SERVER["SERVER_NAME"].'/';
-		$order=frontend_list_pages(0,$pages,0,$url);
+		$order=frontend_list_pages(0,$pages,0,SITEURL);
 
                 cache($cache_file,json_encode($order),'PAGES');
         }
@@ -45,6 +44,16 @@ function frontend_list_pages($id,$pages,$level,$url){
 		$list.='</li>';
         }
         return $list.='</ul>';
+}
+
+function frontend_page_tree( ){
+
+	return '<h1>test</h1>';
+
+}
+
+function frontend_css_url( $params ){
+	return;
 }
 
 ?>

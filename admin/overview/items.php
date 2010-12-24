@@ -38,6 +38,7 @@ switch( $overview_item ){
 		        <tr><td>Pages:</td><td>' . count( rows( 'select id from ' . PAGES ) ) . '</td></tr>
 		        <tr><td>Trash:</td><td>' . count( rows( 'select id from ' . TRASH ) ) . '</td></tr>
 		        <tr><td>Users:</td><td>' . count( rows( 'select id from ' . USERS ) ) . '</td></tr>
+			<tr><td>Groups:</td><td>' . count( rows( 'select id from ' . GROUPS ) ) . '</td></tr>
 		        <tr><td>Theme:</td><td>' . $template[ 'Name' ] . '</td></tr>
 		        <tr><td>Furasta.Org Version:</td><td>' . VERSION . '</td></tr>
 		</table>';

@@ -14,12 +14,14 @@
 ob_start('ob_gzhandler');
 header('Content-Type: text/html; charset=UTF-8');
 
+$Template->loadCSS('_inc/css/admin.css');
+
 echo'
 <html>
 <head>
         <noscript><meta http-equiv="refresh" content="0;url=/_inc/noscript.php"></noscript>
-        <link rel="stylesheet" href="/_inc/css/admin.css"/>
-	<title>'.$Template->display('title').'</title>
+        <link rel="stylesheet" href="' . $Template->cssUrl( ) . '"/>
+	<title>' . $Template->display( 'title' ) . ' - Furasta.Org</title>
 </head>
 <body>
 <div id="dialog">&nbsp;</div>
@@ -36,17 +38,8 @@ echo'
 	</div>
 	<div id="container">
 		<div id="container-right">
-			<div id="main">';
-			$error=$Template->display('systemError');
-			if($error!='')
-				echo '
-                                        <div id="system-error">
-						<img
-						src="/_inc/img/alert-logo.png"
-						style="float:left"/><p>'.$error.'</p>
-						<br style="clear:both"/>
-					</div>';
-echo '
+			<div id="main">
+					' . $Template->displayErrors( ) . '
 					<div id="right">
 						'.$Template->display('content').'
 					</div>
@@ -61,7 +54,7 @@ echo '
 </body>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
-	'.$Template->display('head').'
+	<script type="text/javascript" src="' . $Template->javascriptUrl( ) . '"></script>
 </html>
 ';
 

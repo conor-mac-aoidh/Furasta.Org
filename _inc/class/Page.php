@@ -1,5 +1,7 @@
 <?php
 
+######### SET FOR DELETION - DO NOT RELY ON THIS CLASS ##########
+
 /**
  * Page Class, Furasta.Org
  *

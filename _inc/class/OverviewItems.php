@@ -65,38 +65,41 @@ class OverviewItems{
 	 */
 	function __construct( ){
 
-                #################### CHANGE TO GET INSTANCE ############################
-
-  //              global $Plugins;
-//                $items = $Plugins->adminOverviewItems( );
-
-                #######################################################################
-
-		$Plugins = Plugins::getInstance( );
-		$items = $Plugins->adminOverviewItems( );
-
-		$items = array_merge( $items, array(
-			array(
-				'name'	=>	'Website Overview',
-				'id'	=>	'website-overview',
-				'status'=>	'open'
-			),
-			array(
+                /**
+                 * enable default overview items 
+                 */
+                $items = array(
+                        array(
+                                'name'  =>      'Website Overview',
+                                'id'    =>      'website-overview',
+                                'status'=>      'open'
+                        ),
+                        array(
                                 'name'  =>      'Recently Edited',
                                 'id'    =>      'recently-edited',
                                 'status'=>      'open'
-			),
-			array(
+                        ),
+                        array(
                                 'name'  =>      'Recently Trashed',
                                 'id'    =>      'recently-trashed',
                                 'status'=>      'open'
-			),
-			array(
-                                'name'  =>      'Furasta Development Blog',
-                                'id'    =>      'furasta-devblog',
-                                'status'=>      'open'
-			)
-		) );
+                        ),
+               //         array(
+                 //               'name'  =>      'Furasta Development Blog',
+                   //             'id'    =>      'furasta-devblog',
+                     //           'status'=>      'open'
+                       // )
+                );
+
+		/**
+		 * check if user has permission to use
+		 * plugins, if so add plugin overview
+		 * items
+		 */
+		if( $_SESSION[ 'user' ][ 'perm' ][ 2 ] == 1 ){
+			$Plugins = Plugins::getInstance( );
+			$items = array_merge( $Plugins->adminOverviewItems( ) , $items );
+		}
 
 		$this->items = $items;
 
@@ -116,8 +119,8 @@ class OverviewItems{
 
                 $cache_file = 'FURASTA_OVERVIEW_ITEMS_STATUS_' . $_SESSION[ 'user' ][ 'id' ];
 
-                if( cache_exists( $cache_file, 'OVERVIEW_ITEMS' ) ){
-                        $items_status = json_decode( cache_get( $cache_file, 'OVERVIEW_ITEMS' ) );
+                if( cache_exists( $cache_file, 'USERS' ) ){
+                        $items_status = json_decode( cache_get( $cache_file, 'USERS' ) );
 
 			foreach( $items as $item => $value ){
 				foreach( $items_status as $key => $status ){
@@ -131,14 +134,14 @@ class OverviewItems{
 
 		$cache_file = 'FURASTA_OVERVIEW_ITEMS_' . $_SESSION[ 'user' ][ 'id' ];
 
-		if( cache_exists( $cache_file, 'OVERVIEW_ITEMS' ) )
-			$order = json_decode( cache_get( $cache_file, 'OVERVIEW_ITEMS' ), true );
+		if( cache_exists( $cache_file, 'USERS' ) )
+			$order = json_decode( cache_get( $cache_file, 'USERS' ), true );
 		else{
 		        $order = array(
 	                	'1' => array( 'website-overview', 'recently-trashed' ),
         		        '2' => array( 'recently-edited', 'furasta-devblog' )
 		        );
-			cache( $cache_file, json_encode( $order ), 'OVERVIEW_ITEMS' );
+			cache( $cache_file, json_encode( $order ), 'USERS' );
 		}
 		
 		$ordered = array( );

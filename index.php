@@ -15,13 +15,13 @@
 
 require '_inc/define.php';
 
-if($SETTINGS['maintenance']==1&&!verify_user($_SESSION['user_id']))
+if($SETTINGS['maintenance']==1&&!is_logged_in($_SESSION['user_id']))
 	error($SETTINGS['site_title'].' is undergoing maintenance. It should be back to normal shortly.','Maintenance');
 
 $page=@$_GET['page'];
 
 if($page=='')
-	$id=0;
+	$id=single('select id from '.PAGES.' where home=1','id');
 else{
         $array=explode('/',$page);
         if(end($array)=='')
@@ -29,10 +29,10 @@ else{
         $slug=addslashes(end($array));
 	$id=single('select id from '.PAGES.' where slug="'.$slug.'"','id');
 	if($id==false)
-		error('Page not found.<br/><a href="/">Return to Website.</a>','404 - Page Not Found');
+		require HOME . '_inc/404.php';
 }
 
-$Page=new Page($id);
+$Page = row( 'select * from ' . PAGES . ' where id=' . $id );
 
 require HOME.'_inc/smarty.php';
 

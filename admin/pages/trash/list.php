@@ -103,7 +103,7 @@ $Template->loadJavascript( 'FURASTA_ADMIN_PAGES_TRASH_LIST', $javascript );
 
 $content='
 <span class="right"><select name="action" class="trash-select select-p_1"><option default="default">---</option><option>Restore</option><option>Delete</option></select> <input id="p_1" class="p-submit submit" type="submit" value="Go"/></span>
-<span><img src="/_inc/img/trash.png" style="float:left"/> <h1 class="image-left">Trash</h1></span>
+<span><span class="header-img" id="header-Trash">&nbsp;</span> <h1 class="image-left">Trash</h1></span>
 <br/>';
 
 $rows=rows('select id,name,type,edited,user from '.TRASH);
@@ -120,8 +120,8 @@ else{
 	                        <td>'.$row['user'].'</td>
         	                <td>'.$row['type'].'</td>
                 	        <td>'.$row['edited'].'</td>
-                        	<td><a href="#" id="'.$row['id'].'" class="restore"><img src="/_inc/img/new-page-small.png" title="Restore Page" alt="Restore Page"/></a></td>
-	                        <td><a href="#" id="'.$row['id'].'" class="delete"><img src="/_inc/img/delete.png" title="Delete Page" alt="Delete Page"/></a></td>
+                        	<td><a id="'.$row['id'].'" class="restore link"><span class="admin-menu-img" id="New-Page-img" title="Restore Page" alt="Restore Page">&nbsp;</span></a></td>
+	                        <td><a id="'.$row['id'].'" class="delete link"><span class="admin-menu-img" id="delete-img" title="Delete Page" alt="Delete Page">&nbsp;</span></a></td>
         	        </tr>';
 	}
 	$content.='<tr><th><input type="checkbox" class="checkbox-all" all=""/><th></th><th colspan="6"></th></tr></table>';

@@ -1,5 +1,5 @@
 <?php
-$Template->diagnosticJavascript=1;
+
 /**
  * List Pages, Furasta.Org
  *
@@ -161,6 +161,8 @@ $(document).ready( function( ){
                         $( "#pages" ).removeClass( "collapsed" ).addClass( "expanded" );
 
 		}
+
+		rowColor( );
 
 	});
 
@@ -396,7 +398,7 @@ $content = '
 
 <span style="float:right">
 	<a href="pages.php?page=new">
-		<img src="/_inc/img/new-page.png" style="float:left"/>
+		<span class="header-img" id="header-New-Page">&nbsp;</span>
 		<h1 class="image-left">
 			New Page
 		</h1>
@@ -404,7 +406,7 @@ $content = '
 </span>
 
 <span>
-	<img src="/_inc/img/pages.png" style="float:left"/>
+	<span class="header-img" id="header-Edit-Pages">&nbsp;</span>
 	<h1 class="image-left">
 		Pages
 	</h1>

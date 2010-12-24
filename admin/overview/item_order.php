@@ -25,7 +25,7 @@ $ordered['2']=explode(',',$columns[1]);
 
 $cache_file='FURASTA_OVERVIEW_ITEMS_'.$_SESSION['user']['id'];
 
-cache($cache_file,json_encode($ordered),'OVERVIEW_ITEMS');
+cache($cache_file,json_encode($ordered),'USERS');
 
 die('0');
 ?>

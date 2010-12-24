@@ -21,8 +21,8 @@
  * @access protected
  * @return bool
  */
-function __autoload($class_name){
-	return require_once HOME.'_inc/class/'.$class_name.'.php';
+function __autoload( $class_name ){
+	return require_once HOME . '_inc/class/' . $class_name . '.php';
 }
 	
 /**
@@ -40,7 +40,7 @@ function error($error,$title='Error'){
 	$Template=Template::getInstance(true);
 	$Template->add('content','<h1>'.$title.'</h1>');
 	$Template->add('content','<p>'.$error.'</p>');
-	$Template->add('title','Fatal Error - Furasta.Org');
+	$Template->add('title','Fatal Error');
 	require HOME.'admin/layout/error.php';
 	exit;
 }
@@ -121,7 +121,9 @@ completed depending on its priority.</p></td>
  * @return bool
  */
 function htaccess_rewrite(){
-	global $Plugins,$SETTINGS;
+	global $SETTINGS;
+
+	$Plugins = Plugins::getInstance( );
 
 	if(function_exists('apache_get_modules')){
 		$modules=apache_get_modules();
@@ -149,7 +151,8 @@ function htaccess_rewrite(){
 		"AddCharset utf-8 .xml\n".
 		"AddCharset utf-8 .css\n".
                 "AddCharset utf-8 .php";
-	$htaccess=$Plugins->about('htaccess',$htaccess);
+
+	$htaccess = $Plugins->filter( 'general', 'filter_htaccess', $htaccess );
 
 	file_put_contents(HOME.'.htaccess',$htaccess);
 	$_url='http://'.$_SERVER["SERVER_NAME"].'/';
@@ -163,7 +166,7 @@ function htaccess_rewrite(){
 		"Disallow: /_user\n".
 		"Sitemap: ".$_url."sitemap.xml";
 
-		$robots=$Plugins->about('robots',$robots);
+		$robots = $Plugins->filter( 'general', 'filter_robots', $robots );
 	}
         else{
                 $robots=
@@ -240,6 +243,13 @@ $DB=array(
 
 ?>
 ';
+
+	/**
+	 * plugins - filter the contents of the file 
+	 */
+	$Plugins = Plugins::getInstance( );
+
+	$filecontents = $Plugins->filter( 'general', 'filter_settings', $filecontents );
 
 	file_put_contents(HOME.'.settings.php',$filecontents) or error('You must grant <i>0777</i> write access to the <i>'.HOME.'</i> directory for <a href="http://furasta.org">Furasta.Org</a> to function correctly. Please do so then reload this page to save the settings.','Runtime Error');	
 
@@ -366,6 +376,7 @@ function validate($conds,$selector,$post){
         $email_f=array();
         $pattern_f=array();
         $minlength_f=array();
+	$url_f=array();
         $match_f=array();
 
         foreach($conds as $selector=>$cond){
@@ -388,6 +399,9 @@ function validate($conds,$selector,$post){
                                 case "match":
                                         array_push($match_f,array($selector,$value));
                                 break;
+				case 'url':
+					array_push($url_f,$selector);
+				break;
                         }
                 }
         }
@@ -404,7 +418,7 @@ function validate($conds,$selector,$post){
 	}
 
 	if(count($email_f)!=0){
-                foreach($required_f as $field){
+                foreach($email_f as $field){
                         if(!filter_var($_POST[$field],FILTER_VALIDATE_EMAIL)){
                                 $Template->runtimeError( '6', htmlspecialchars($field) );
                                 return false;
@@ -438,6 +452,18 @@ function validate($conds,$selector,$post){
 			}
 		}
 	}
+
+	if(count($url_f)!=0){
+		$urlregex = "^(https?|ftp)\:\/\/([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*(\:[0-9]{2,5})?(\/([a-z0-9+\$_-]\.?)+)*\/?(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)?(#[a-z_.-][a-z0-9+\$_.-]*)?\$";
+
+		foreach($url_f as $field){
+			if(!eregi($urlregex,$_POST[$field])){
+				$Template->runtimeError( '10' );
+				return false;
+			}
+		}
+	}
+
         return true;
 }
 

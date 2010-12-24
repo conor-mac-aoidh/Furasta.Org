@@ -19,7 +19,6 @@ $id = (int) @$_GET[ 'id' ];
 if( $id == 0 )
         header( 'location pages.php?action=new' );
 
-
 /**
  * get the error if isset 
  */
@@ -39,7 +38,7 @@ $conds = array(
 	)
 );
 
-$valid=validate($conds,"#pages-edit",'edit-save');
+$valid = validate( $conds, "#pages-edit", 'edit-save' );
 
 /**
  * read post information and edit page if applicable
@@ -59,7 +58,17 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
         $parent = (int) $_POST[ 'Parent' ];
         $perm = (int) $_POST[ 'perm' ];
 
-        if( num( 'select id from ' . PAGES . ' where name="' . $name .'"') <= 1 ){
+	/**
+	 * get pages_array and remove current page
+	 */
+	$pages_array = pages_array( );
+	unset( $pages_array[ $id ] );
+
+        /**
+         * check if pagename exists already or if page name
+	 * clashes with system pagename
+         */
+        if( in_array( $name, $pages_array ) == false ){
 
 		/**
 		 * update database with edited page 
@@ -82,6 +91,17 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
 
 $Page = row( 'select * from fr_pages where id= ' . $id );
 
+/**
+ * check user has permission to edit page 
+ /
+$perm = explode( '|', $Page[ 'perm' ] );
+
+if( strpos( ',', $perm ) )
+	$perm = explode( ',', $Page[ 1 ] );
+
+if( !in_array( $_SESSION[ 'user' ][ 'group' ], $perm ) )
+        error( 'You have insufficient privelages to edit this page. Please contact one of the administrators.', 'Permissions Error' );
+*/
 /**
  * @todo below: finish page delete! 
  */
@@ -164,6 +184,40 @@ $(document).ready(function(){
 		
 	});
 
+	var saveFunction = function( ){
+
+		alert( "test" );
+
+	};
+
+	$( "#page-permissions" ).click( function( ){
+
+                $( "#page-permissions-dialog" ).dialog({
+
+                        modal:  true,
+
+                        width:  "500px",
+
+                        buttons: {
+        
+                                "Close": function( ) { $( this ).dialog( "close" ); },
+
+                                "Save": saveFunction,
+
+                        },
+
+                        hide:   "fade",
+
+                        show:   "fade",
+
+                        resizeable:     false
+
+                });
+
+                $( "#page-permissions-dialog" ).dialog( "open" );
+
+	});
+
 });
 ';
 
@@ -177,15 +231,63 @@ $Template->loadJavascript( 'FURASTA_ADMIN_PAGES_EDIT', $javascript );
 $url = 'http://' . $_SERVER[ 'SERVER_NAME' ];
 
 $content='
-<span style="float:right"><a href="pages.php?page=new&parent='.$Page['id'].'" id="new-subpage"><img src="/_inc/img/new-page.png" style="float:left"/> <h1 class="image-left">New Subpage</h1></a></span>
-<span><img src="/_inc/img/pages.png" style="float:left"/> <h1 class="image-left">Edit Pages</h1></span>
+<div id="page-permissions-dialog" title="Page Permissions" style="display:none">
+        <div id="complete-message" style="display:none"></div>
+        <form id="page-permissions-content">
+                <table style="margin-top:0">
+		        <tr><td colspan="4"><h3>Who can view this page:</h3></td></tr>
+			<tr>
+				<td><input type="radio" class="checkbox" name="who-can-see" value="everyone"/> Everyone</td>
+			</tr>
+			<tr>
+				<td><input type="radio" class="checkbox" name="who-can-see" value="selected"/> Selected Groups:</td>
+			</tr>
+			<tr>';
+
+$groups = rows( 'select name from ' . GROUPS );
+
+for( $i = 0; $i < count( $groups ); $i++ ){
+	$content .= '<td><input disabled="disabled" type="checkbox" class="checkbox" name="see-groups" value="' . $groups[ $i ][ 'name' ] . '"/> ' . $groups[ $i ][ 'name' ] . '</td>';
+
+	if( ( $i + 1 ) % 3 == 0 && ( $i + 1 ) < count( $groups ) )
+		$content .= '</tr><tr>';
+}
+
+$content .='
+			</tr>
+			<tr><td colspan="4"><h3>Who can edit this page:</h3></td></tr>
+                        <tr>
+                                <td><input type="radio" class="checkbox" name="who-can-see" value="everyone"/>All Groups</td>
+                        </tr>
+                        <tr>
+                                <td><input type="radio" class="checkbox" name="who-can-see" value="selected"/> Selected Groups:</td>
+                        </tr>
+                        <tr>';
+
+$groups = rows( 'select name from ' . GROUPS );
+
+for( $i = 0; $i < count( $groups ); $i++ ){
+        $content .= '<td><input type="checkbox" class="checkbox" name="see-groups" value="' . $groups[ $i ][ 'name' ] . '"/> ' . $groups[ $i ][ 'name' ] . '</td>';
+
+        if( ( $i + 1 ) % 3 == 0 && ( $i + 1 ) < count( $groups ) )
+                $content .= '</tr><tr>';
+}
+
+$content .='
+			</tr>
+                </table>
+        </form>
+</div>
+
+<span style="float:right"><a href="pages.php?page=new&parent='.$Page['id'].'" id="new-subpage"><span class="header-img" id="header-New-Page">&nbsp;</span><h1 class="image-left">New Subpage</h1></a></span>
+<span><span class="header-img" id="header-Edit-Pages">&nbsp;</span><h1 class="image-left">Edit Pages</h1></span>
 <br/>
 <form method="post" id="pages-edit">
 	<table id="page-details">
 		<tr>
                         <td class="small">Name:</td>
 			<td><input type="text" name="Name" id="page-name" value="'.$Page['name'].'"/></td>
-			<td class="options"><a href="#" id="options-link">Show Options</a></td>
+			<td class="options"><a id="options-link">Show Options</a></td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
@@ -267,7 +369,7 @@ else{
 }
 
 $content.='
-				<td class="small"><a href="#" id="pages-permissions">Permissions</a><input type="hidden" name="perm" value=""/></td>
+				<td class="small"><a class="link" id="page-permissions">Permissions</a><input type="hidden" name="perm" value=""/></td>
 			</tr>
 		</table>
 	</div>

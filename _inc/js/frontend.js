@@ -10,7 +10,7 @@
  */
 
 $(document).ready(function(){
-	$('#menu ul').dropDownMenu({timer:1500,parentMO:'parent-hover',childMO:'child-hover1'});
+	$('.furasta-menu-0').dropDownMenu({timer:1500,parentMO:'parent-hover',childMO:'child-hover1'});
 	var base=parent.location.protocol+'//'+window.location.hostname;
         var path=document.URL;
         if(path==base||path==base+'/')

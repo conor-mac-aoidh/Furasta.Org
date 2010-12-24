@@ -37,12 +37,17 @@ $pagecontent='
 ';
 
 query('drop table if exists '.$pages);
-query('create table '.$pages.' (id int auto_increment primary key,name text,content text,slug text,template text,type text,edited date,user text,position int,parent int,perm int,home int,display int)');
-query('insert into '.$pages.' values(0,"Home","'.$pagecontent.'","Home","Default","Normal","'.date('Y-m-d').'","Installer",1,0,0,1,1)');
+query('create table '.$pages.' (id int auto_increment primary key,name text,content text,slug text,template text,type text,edited date,user text,position int,parent int,perm text,home int,display int)');
+query('insert into '.$pages.' values(0,"Home","'.$pagecontent.'","Home","Default","Normal","'.date('Y-m-d').'","Installer",1,0,"|",1,1)');
 
 query('drop table if exists '.$users);
 query('create table '.$users.' (id int auto_increment primary key,name text,email text,password text,homepage text,user_group text,hash text,reminder text)');
-query('insert into '.$users.' values(0,"'.$_SESSION['user']['name'].'","'.$_SESSION['user']['email'].'","'.$_SESSION['user']['pass'].'","","Admin","'.$hash.'","")',true);
+query('insert into '.$users.' values(0,"'.$_SESSION['user']['name'].'","'.$_SESSION['user']['email'].'","'.$_SESSION['user']['pass'].'","","Administrators","'.$hash.'","")');
+
+query( 'drop table if exists ' . $groups );
+query( 'create table ' . $groups . ' ( id int auto_increment primary key, name text, privellages text )' );
+query( 'insert into ' . $groups . ' values ( "", "Administrators", "1,1,1" )' );
+query( 'insert into ' . $groups . ' values ( "", "Users", "0,0,1" )' );
 
 query('drop table if exists '.$trash);
 query('create table '.$trash.' (id int auto_increment primary key,name text,content text,slug text,template text,type text,edited date,user text,position int,parent int,perm text,home int,display int)');
@@ -83,6 +88,13 @@ file_put_contents(HOME.'.settings.php',$filecontents) or error('Please grant <i>
 
 $cache_dir=$user_files.'files';
 $files_dir=$user_files.'cache';
+$backup_dir = $user_files . 'backup';
+
+if( !is_dir( $user_files ) )
+	mkdir( $user_files );
+
+if( !is_dir( $backup_dir ) )
+	mkdir( $backup_dir );
 
 if(!is_dir($cache_dir))
 	mkdir($cache_dir);
