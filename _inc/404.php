@@ -15,7 +15,7 @@
 
 header('Content-Type: text/html; charset=UTF-8');
 
-$Plugins->frontendOnLoad( );
+$Plugins->hook( 'frontend', 'on_load' );
 
 $smarty_dir=HOME.'_inc/Smarty/';
 

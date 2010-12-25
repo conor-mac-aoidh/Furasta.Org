@@ -31,59 +31,44 @@ $valid = validate( $conds, "#login", 'login' );
 /**
  * Check if form submitted, or if cookie is present
  */
-
-if(isset($_POST['login'])&&$valid==true){
-	$_SESSION['user']['email']=addslashes($_POST['Email']);
-	$pass=md5($_POST['Password']);
-	$remember=addslashes($_POST['Remember']);
-	$check=1;
+if( isset( $_POST[ 'login' ] ) && $valid == true ){
+	$email = addslashes( $_POST['Email'] );
+	$pass = md5( $_POST[ 'Password' ] );
+	$remember = addslashes( $_POST[ 'Remember' ] );
+	$check = 1;
 }
-elseif(isset($_COOKIE['furasta']['email']) && isset($_COOKIE['furasta']['password'])){
-        $_SESSION['user']['email']=$_COOKIE['furasta']['email'];
-        $pass=$_COOKIE['furasta']['password'];
-        $remember=1;
-        $check=1;
+elseif( isset( $_COOKIE[ 'furasta' ][ 'email' ] ) && isset( $_COOKIE[ 'furasta' ][ 'password' ] ) ){
+        $email = $_COOKIE[ 'furasta' ][ 'email' ];
+        $pass = $_COOKIE[ 'furasta' ][ 'password' ];
+        $remember = 1;
+        $check = 1;
 }
 
 /**
  * Confirm cookie/post data
  */
+if( @$check == 1 ){
 
-if(@$check==1){
-	$query=mysql_query('select id,name,user_group from '.USERS.' where email="'.$_SESSION['user']['email'].'" and password="'.$pass.'" and hash="activated"');
-	$num=mysql_num_rows($query);
-	if($num!=1){
-        	$result=mysql_query('select id from '.USERS.' where email="'.$_SESSION['user']['email'].'" and password="'.$pass.'"');
-		$num_res=mysql_num_rows($result);
-		if($num_res==1)
-			$error=$Template->runtimeError( '11' );
-		else
-			$error=$Template->runtimeError( '12' );
+	$User = new User( );
+
+	$login = $User->login( $email, $pass, $remember );
+
+	if( $login == true ){
+
+		/**
+		 * if remember is set then set cookie
+		 */
+		if( $remember == 1 )
+			$User->setCookie( );
+
+                header( 'location: ' . SITEURL . 'admin/index.php' );
 	}
 
-	if(!isset($error)){
-		$array=mysql_fetch_array($query);
-		$_SESSION['user']['id']=$array['id'];
-		$_SESSION['user']['name']=$array['name'];
-		$_SESSION['user']['group']=$array['user_group'];
-
-		$perms = single( 'select perm from ' . GROUPS . ' where name="' . $array[ 'user_group' ] . '"', 'perm' );
-
-		$_SESSION[ 'user' ][ 'perm' ] = explode( ',', $perms );
-
-		if($remember==1){
-		        setcookie('furasta[email]',$_SESSION['user']['email'],time()+3600*24*7);
-        		setcookie('furasta[password]',$pass,time()+3600*24*7);
-		}
-       
-		header('location: index.php');
-	}
 }
 
 /*
  * Display the login template and javascript
  */
-
 $javascript='
 $(document).ready(function(){
 

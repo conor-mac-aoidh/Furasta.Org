@@ -10,13 +10,12 @@
  * @version    1.0
  */
 
-session_start();
-session_destroy();
+require '../_inc/class/User.php';
 
-if(isset($_COOKIE['furasta']['email']) && isset($_COOKIE['furasta']['password'])){
-	setcookie('furasta[email]','',time()-3600);
-	setcookie('furasta[password]','',time()-3600);
-}
+$User = User::getInstance( );
+
+$User->logout( );
+$User->destroyCookie( );
 
 header('location: index.php');
 

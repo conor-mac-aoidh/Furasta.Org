@@ -12,16 +12,15 @@
  */
 
 require '../_inc/define.php';
-require $function_dir.'admin.php';
+require $function_dir . 'admin.php';
 
-$admin_dir=HOME.'admin/';
+$admin_dir = HOME . 'admin/';
 
-$Template=Template::getInstance();
+$Template = Template::getInstance( );
+$User = User::getInstance( );
 
-if(!is_logged_in($_SESSION['user']['id']))
+if( !$User->verify( ) )
         require 'login.php';
-else
-        $User=new User($_SESSION['user']['id']);
 
 /**
  * execute the onload plugin functions 

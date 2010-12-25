@@ -84,11 +84,11 @@ class OverviewItems{
                                 'id'    =>      'recently-trashed',
                                 'status'=>      'open'
                         ),
-               //         array(
-                 //               'name'  =>      'Furasta Development Blog',
-                   //             'id'    =>      'furasta-devblog',
-                     //           'status'=>      'open'
-                       // )
+                        array(
+                                'name'  =>      'Furasta Development Blog',
+                                'id'    =>      'furasta-devblog',
+                                'status'=>      'open'
+                        )
                 );
 
 		/**

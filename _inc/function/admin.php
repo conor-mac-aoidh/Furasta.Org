@@ -48,20 +48,6 @@ function parse_template_file($file){
 }
 
 /**
- * verify_user 
- * 
- * Checks if user $id is present in the database
- *
- * @param mixed $id of user
- * @access public
- * @return string
- */
-function verify_user($id){
-	$query=mysql_query('select name from '.USERS.' where id='.addslashes($id));
-	return $query;
-}
-
-/**
  * list_parents 
  * 
  * orderes the parent select box in order of parents

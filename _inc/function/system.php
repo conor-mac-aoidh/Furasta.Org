@@ -466,21 +466,4 @@ function validate($conds,$selector,$post){
 
         return true;
 }
-
-/**
- *
- * is_logged_in
- *
- * Used to check whether a particular user id is valid or
- * to check if a $_SESSION['user']['id'] is valid, ie is the
- * user logged in.
- *
- * @param int $id
- * @access public
- * @return bool
- */
-
-function is_logged_in($id){
-	return row('select name from '.USERS.' where id='.addslashes($id));
-}
 ?>

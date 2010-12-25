@@ -43,8 +43,10 @@ else{
 	 */
 	include 'define.php';
 
-	if(!is_logged_in($_SESSION['user']['id']))
-		die('Please login to access this content.');
+	$User = new User( );
+
+	if( !$User->verify( ) )
+		die( 'Please login to access this content.' );
 }
 
 $file = HOME . @$_GET[ 'file' ];
