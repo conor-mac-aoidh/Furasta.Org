@@ -1,13 +1,9 @@
 # TODO list for Furasta.Org v1.0 Beta 2 #
 
-4. Add User Groups, possibly get rid of the new user page and turn it into a jquery alert?
-5. Fix page permissions, and user permissions. will be more complex with groups. make a numbered system similar to 0700,0777 to specify permissions
 6. Complete the auto-update feature, and possibly allow for system wide 'alerts' which will appear on every page.
-8. Add plugin $importance var
 10. Develop a few plugins to test, and adjust, the plugin architecture: File Manager (*), News Plugin (with RSS), something else..
 16. get rid of the admin/post dir - that was a stupid idea!
 17. Finish the password reminder!
-20. Add custom error handler to the smarty template engine.
 21. Add system wide alerts, such as update etc.
 22. change the location of the backup folder to inside the _user dir and create that dir during installation.
 25. Create bugs@furasta.org and support@furasta.org emails
@@ -18,6 +14,7 @@
 2. begin phase in of javascript language files
 3. complete support for installing in sub directorys
 4. ensure CSS cross-browser compatability
+5. add plugin $importance var
 
 # TODO list for Furasta.Org v1.1 #
 
@@ -30,7 +27,6 @@
 7. Add plugin updater
 8  complete language support phase in, in both php and javascript. add $Template->error( ) method which would execute the error function using language files
 9. Possibly feature that when you register a new user on your website it also registers/allows you access to forum.furasta.org, bugs.furasta.org, and possibly developer.furasta.org. The later still tbc
-10. Possibly, add an option for scheduled backups, and add a restore from backup feature, or even better add a browse backups feature like Time Machine, although could be some space issues!
 11. Possibly create a power-law graph for the caching system to establish what should and should not be graphed
 12. make pages,trash and possibly plugins pages pagated
 13. convert list pages sortable into a jquery plugin - extention of jquery ui

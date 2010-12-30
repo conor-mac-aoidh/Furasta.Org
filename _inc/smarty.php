@@ -36,12 +36,16 @@ foreach($plugin_functions as $function)
  * assign values to smarty variables 
  */
 
+############# TODO add title and description meta tags #######
 $meta='
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
 <script type="text/javascript" src="' . SITEURL . '_inc/js/jquery/multi-ddm.min.js"></script>
 <script type="text/javascript" src="' . SITEURL . '_inc/js/frontend.js"></script>
 <link rel="stylesheet" type="text/css" href="' . SITEURL . '_inc/css/frontend.css"/>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Furasta.Org ' . VERSION . '" />
+<link rel="shortcut icon" href="' . SITEURL . '_inc/img/favicon.ico" />
 ';
 $smarty->assign('metadata',$meta);
 

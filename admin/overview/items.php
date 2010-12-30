@@ -71,7 +71,6 @@ switch( $overview_item ){
 		if( cache_is_good( $cache_file, '60 * 60 * 24 * 3', 'RSS' ) )
         		$items = json_decode( cache_get( $cache_file, 'RSS' ), true );
 		else{
-//			die('1');
 			$elements = rss_fetch( 'http://blog.macaoidh.name/tag/furasta-org/feed/' );
 			$items = array( );
 
@@ -94,7 +93,7 @@ switch( $overview_item ){
         			}
 			}
 
-			cache( 'FURASTA_RSS_DEVBLOG ', json_encode( $items ), 'RSS' );
+			cache( $cache_file, json_encode( $items ), 'RSS' );
 		}
 
 		echo '<table class="row-color">';

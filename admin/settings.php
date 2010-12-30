@@ -18,7 +18,7 @@ $page=addslashes(@$_GET['page']);
 /**
  * check if user can view page 
  */
-if( $_SESSION[ 'user' ][ 'perm' ][ 1 ] == '0' )
+if( !$User->hasPerm( 's' ) )
         error( 'You have insufficient privelages to view this page. Please contact one of the administrators.', 'Permissions Error' );
 
 switch($page){

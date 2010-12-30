@@ -16,7 +16,7 @@ require 'header.php';
 /**
  * check if user can view page 
  */
-if( $_SESSION[ 'user' ][ 'perm' ][ 0 ] == '0' )
+if( !$User->hasPerm( 'u' ) )
 	error( 'You have insufficient privelages to view this page. Please contact one of the administrators.', 'Permissions Error' ); 
 
 $page = addslashes( @$_GET[ 'page' ] );

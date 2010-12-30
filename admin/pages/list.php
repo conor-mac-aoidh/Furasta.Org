@@ -314,15 +314,24 @@ $(document).ready( function( ){
 
 		fConfirm("Are you sure you want to trash this page?",function(element){
 
-			element.parent().parent().fadeOut( function( ){
+			fetch( "/_inc/ajax.php?file=admin/pages/delete.php&id="+element.attr("id"), function( element, html ){
 
-				$( this ).remove( );
+				if( html == "perm" )
+					fAlert( "You have insufficient privelages to delete this page." );
 
-				rowColor( );
+				else{
 
-			});
+		                        element.parent().parent().fadeOut( "slow", function( ){
 
-			fetch( "/_inc/ajax.php?file=admin/pages/delete.php&id="+element.attr("id") );
+                		                $( this ).remove( );
+
+                                		rowColor( );
+
+                        		});
+
+				}
+
+			}, element );
 
 		},$(this));
 
@@ -449,12 +458,10 @@ $content = '
  */
 
 $pages=array();
-$query=query('select id,name,type,edited,user,parent from '.PAGES.' order by position,name desc');
+$query=query('select id,name,type,edited,user,parent,home,perm from '.PAGES.' order by position,name desc');
 while($row=mysql_fetch_assoc($query)){
 	$pages[$row['parent']][]=$row;
 }
-
-//$content .= list_pages( 0, $pages );
 
 $content .= list_pages( 0, $pages );
 

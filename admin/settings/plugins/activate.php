@@ -11,21 +11,26 @@
  * @package    admin_settings
  */
 
-$p_name=@$_GET['p_name'];
+$p_name = addslashes( @$_GET[ 'p_name' ] );
 
-if(!plugin_exists($p_name))
-	error('Plugin does not exist. Please contact bugs@furasta.org for more details.','Plugin Error');
+if( !plugin_exists( $p_name ) )
+	error( 'Plugin does not exist. Please contact bugs@furasta.org for more details.', 'Plugin Error' );
 
-array_push($PLUGINS,$p_name);
+array_push( $PLUGINS, $p_name );
 
-settings_rewrite($SETTINGS,$DB,$PLUGINS);
+/**
+ * rewrite settings file with new plugin array 
+ */
+settings_rewrite( $SETTINGS, $DB, $PLUGINS );
 
-cache_clear();
+cache_clear( );
 
-$file=HOME.'_plugins/'.$p_name.'/install.php';
-if(file_exists($file))
+/**
+ * run plugin install file 
+ */
+$file = HOME . '_plugins/' . $p_name . '/install.php';
+if( file_exists( $file ) )
 	require $file;
 
 header('location: settings.php?page=plugins');
-
 ?>

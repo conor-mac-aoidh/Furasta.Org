@@ -90,27 +90,28 @@ $plugins = $Plugins->registeredPlugins( );
  * load inactive plugins and merge $plugin array to registerd plugins array 
  */
 foreach( $p_inactive as $plugin_file ){
+	if( in_array( $plugin_file, $PLUGINS ) || !is_dir( HOME . '_plugins/' . $plugin_file ) )
+		continue;
 
-	if( !in_array( $plugin_file, $PLUGINS ) && is_dir( HOME . '_plugins/' . $plugin_file ) ){
-	        require HOME . '_plugins/' . $plugin_file . '/plugin.php';
+	require HOME . '_plugins/' . $plugin_file . '/plugin.php';
 
-		/**
-		 * merge plugin array with plugins array
-		 */
-		array_merge( $plugins, $plugin );
-	}
+	/**
+	 * merge plugin array with plugins array
+	 */
+	$plugins[] = $plugin;
 
 }
 
 foreach( $plugins as $plugin){
         $num++;
-	$status=(in_array($plugin[ 'name' ],$PLUGINS))?'<a href="settings.php?page=plugins&action=deactivate&p_name='.$plugin[ 'name' ].'">De-activate</a>':'<a href="settings.php?page=plugins&action=activate&p_name='.$plugin[ 'name' ].'">Activate</a>';
+	$p_name = str_replace( ' ', '-', $plugin[ 'name' ] );
+	$status=(in_array($p_name,$PLUGINS))?'<a href="settings.php?page=plugins&action=deactivate&p_name='.$p_name.'">De-activate</a>':'<a href="settings.php?page=plugins&action=activate&p_name='.$p_name.'">Activate</a>';
         $content.='<tr>
                         <td class="small"><input type="checkbox" class="p-box" value="'.$plugin[ 'name' ].'" name="trash-box"/></td>
                         <td class="first">' . $plugin[ 'name' ] . '</a></td>
                         <td>' . @$plugin[ 'description' ] . '</a></td>
 			<td>' . $status . '</td>
-                        <td><a href="settings.php?page=plugins&action=delete&p_name='.$plugin[ 'name' ].'"><span class="admin-menu-img" id="delete-img" title="Delete User" alt="Delete User">&nbsp;</span></a></td>
+                        <td><a href="settings.php?page=plugins&action=delete&p_name='. str_replace( ' ', '-', $p_name ) .'"><span class="admin-menu-img" id="delete-img" title="Delete User" alt="Delete User">&nbsp;</span></a></td>
                 </tr>';
 }
 

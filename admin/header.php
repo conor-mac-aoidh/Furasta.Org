@@ -82,8 +82,7 @@ else{
 		),
 	);
 
-	if( $_SESSION[ 'user' ][ 'perm' ][ 2 ] == 1 )
-		$menu_items=$Plugins->adminMenu($menu_items);
+	$menu_items=$Plugins->adminMenu($menu_items);
 
 	$menu=display_menu($menu_items);
 

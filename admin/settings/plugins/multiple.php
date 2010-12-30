@@ -13,61 +13,86 @@
  * @package    admin_settings
  */
 
-$action=@$_GET['act'];
-$boxes=@$_GET['boxes'];
-$boxes=explode(',',$boxes);
+$action= @$_GET[ 'act' ];
+$boxes = @$_GET[ 'boxes' ];
+$boxes = explode( ',', $boxes );
 
-switch($action){
+/**
+ * switch between possible actions 
+ */
+switch( $action ){
 	case 'Activate':
-		foreach($boxes as $box){
-                        if(!in_array($box,$PLUGINS)){
-				array_push($PLUGINS,$box);
+		foreach( $boxes as $box ){
+                        if( !in_array( $box, $PLUGINS ) ){
+				/**
+				 * add plugin to plugin array
+				 */
+				array_push( $PLUGINS, $box );
 
-				$file=HOME.'_plugins/'.$box.'/install.php';
-				if(file_exists($file))
+				/**
+				 * run plugin install file
+				 */
+				$file = HOME . '_plugins/' . $box . '/install.php';
+				if( file_exists( $file ) )
 				        require $file;
 			}
 		}
 	break;
 	case 'Deactivate':
-		foreach($boxes as $box){
-                        if(in_array($box,$PLUGINS)){
-                                $PLUGINS=array_flip($PLUGINS);
-				unset($PLUGINS[$box]);
-				$PLUGINS=array_flip($PLUGINS);
+		foreach( $boxes as $box ){
+                        if( in_array( $box, $PLUGINS ) ){
+                                /**
+                                 * remove plugin from plugin array 
+                                 */
+                                $PLUGINS = array_flip( $PLUGINS );
+				unset( $PLUGINS[ $box ] );
+				$PLUGINS = array_flip( $PLUGINS );
 
-				$file=HOME.'_plugins/'.$box.'/uninstall.php';
-				if(file_exists($file))
+				/**
+				 * run plugin uninstall script
+				 */
+				$file = HOME . '_plugins/' . $box . '/uninstall.php';
+				if( file_exists( $file ) )
 				        require $file;
 			}
 		}
 	break;
 	case 'Delete':
-		foreach($boxes as $box){
-			$dir=HOME.'_plugins/'.$box;
+		foreach( $boxes as $box ){
+			$dir = HOME . '_plugins/' . $box;
 
-
-			$file=HOME.'_plugins/'.$box.'/uninstall.php';
-			if(file_exists($file))
+			/**
+			 * run uninstall script
+			 */
+			$file = HOME . '_plugins/' . $box . '/uninstall.php';
+			if( file_exists( $file ) )
 			        require $file;
 
-			if(is_dir($dir))
-			        remove_dir($dir);
+			/**
+			 * remove plugin files
+			 */
+			if( is_dir( $dir ) )
+			        remove_dir( $dir );
 
-			if(in_array($box,$PLUGINS)){
-                                $PLUGINS=array_flip($PLUGINS);
-                                unset($PLUGINS[$box]);
-                                $PLUGINS=array_flip($PLUGINS);
+			/**
+			 * remove plugin from plugins array
+			 */
+			if( in_array( $box, $PLUGINS ) ){
+                                $PLUGINS = array_flip( $PLUGINS );
+                                unset( $PLUGINS[ $box ] );
+                                $PLUGINS = array_flip( $PLUGINS );
 			}
 		}
 	break;
 	default:
-		error('Please contact bugs@macaoidh.name','Unknown Error');
+		error( 'Please contact bugs@macaoidh.name', 'Unknown Error' );
 }
 
-settings_rewrite($SETTINGS,$DB,$PLUGINS);
+/**
+ * rewrite settings file and clear cache 
+ */
+settings_rewrite( $SETTINGS, $DB, $PLUGINS );
+cache_clear( );
 
-cache_clear();
-
-header('location: settings.php?page=plugins');
+header( 'location: settings.php?page=plugins' );
 ?>

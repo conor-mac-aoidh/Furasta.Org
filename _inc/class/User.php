@@ -34,17 +34,37 @@
  * $User = User::getInstance( );
  * 
  * if( $User->hasPerm( $string ){
- *   // user has permission to access this area
+ *   // user has permission to access this of the system
  * }
  * 
  * The string above can be anything from the table below,
  * or if plugins are installed there may be other
  * keys - refer to the plugin documentation for details on
  * that.
- * @todo complete the table below
- * +---------------+-------------------------+
- * | 
  * 
+ * +---------------+-------------------------+
+ * |      e        |      edit pages         |
+ * |      c        |      create pages       |
+ * |      d        |      delete pages       |
+ * |      t        |      manage trash       |
+ * |      o        |      order pages        | // @todo make order pages perms work
+ * |      s	   |	  edit settings	     |
+ * |      u	   |      edit users	     |
+ * +---------------+-------------------------+
+ * 
+ * The class can also be used to check if the user has
+ * permission to edit a certain page. The function accepts
+ * an array of page permissions, or the string of perms
+ * directly from the database.
+ *
+ * if( $User->pagePerm( $perm_array ) ){
+ *   // user has permission to access page
+ * }
+ *
+ * When using the pagePerm function it handles group
+ * permissions as well internally, so there is no need
+ * to run hasPerm if pagePerm is run.
+ *
  * @package user_management
  * @author Conor Mac Aoidh <conormacaoidh@gmail.com> 
  * @license http://furasta.org/licence.txt The BSD License
@@ -101,6 +121,14 @@ class User{
 	 * @access public
 	 */
 	public $group;
+
+	/**
+	 * group_name 
+	 * 
+	 * @var string
+	 * @access public
+	 */
+	public $group_name;
 
 	/**
 	 * perm 
@@ -199,15 +227,26 @@ class User{
 		$this->name = $array[ 'name' ];
 		$this->group = $array[ 'user_group' ];
 
-		/**
-		 * get user group permissions
-		 */
-		$perms = single( 'select perm from ' . GROUPS . ' where name="' . $array[ 'user_group' ] . '"', 'perm' );
+		if( $array[ 'user_group' ] != '_superuser' ){
+			/**
+			 * get user group permissions and group name
+			 */
+			$group = row( 'select name, perm from ' . GROUPS . ' where id="' . $array[ 'user_group' ] . '"' );
 
-		$perm = explode( ',', $perms );
+			$perm = explode( ',', $group[ 'perm' ] );
+
+			$group_name = $group[ 'name' ];
+		}
+		else{
+			$perm = '';
+			$group_name = '_superuser';
+		}
 
 		$_SESSION[ 'user' ][ 'perm' ] = $perm;
-		$this->perm = $perms;
+		$this->perm = $perm;
+
+		$_SESSION[ 'user' ][ 'group_name' ] = $group_name;
+		$this->group_name = $group_name;
 
 		return true;
 
@@ -248,7 +287,8 @@ class User{
 		 */
 		$this->id = $verify[ 'id' ];
 		$this->name = $verify[ 'name' ];
-		$this->group = $verify[ 'group' ];
+		$this->group = $verify[ 'user_group' ];
+		$this->group_name = $_SESSION[ 'user' ][ 'group_name' ];
 		$this->perm = $_SESSION[ 'user' ][ 'perm' ];
 
 		return true;
@@ -288,10 +328,12 @@ class User{
 	 * @access public
 	 * @return void
 	 */
-	public function logout( ){
+	public static function logout( ){
 
 		session_start( );
 		session_destroy( );
+
+		self::destroyCookie( );
 
 	}
 
@@ -303,7 +345,7 @@ class User{
 	 * @access public
 	 * @return bool
 	 */
-	public function destroyCookie( ){
+	public static function destroyCookie( ){
 
 		/**
 		 * set negative expire time
@@ -335,18 +377,70 @@ class User{
 	public function hasPerm( $perm ){
 
 		/**
+		 * if user is super user bypass all permissions 
+		 */
+		if( $this->group == '_superuser' )
+			return true;
+
+		/**
 		 * searches the perm array to check
 		 * if user has perm and returns bool
 		 * value
 		 */
-		return in_array( $perm, $this->perm );
+		if( in_array( $perm, $this->perm ) )
+			return true;
 
+		return false;
 	}
 
-	public function can_edit_page( $id ){
+	/**
+	 * pagePerm
+	 * 
+	 * used to check if the user has permission
+	 * to access the page, pass the pages permissions 
+	 * array
+	 * 
+	 * @param string or array $perm 
+	 * @access public
+	 * @return bool
+	 */
+	public function pagePerm( $perm ){
 
-		// do stuff here
+		/**
+		 *  if user is super user bypass all permissions
+		 */
+		if( $this->group == '_superuser' )
+			return true;
 
+		/**
+		 * if perm string from database is given,
+		 * break it down 
+		 */
+		if( !is_array( $perm ) ){
+			$perm = explode( '|', $perm );
+
+			$perm = explode( ',', $perm[ 1 ] );
+		}
+
+		/**
+		 * if no perms are set for page, then everyone
+		 * can edit it assuming they have group edit
+		 * perms
+		 */
+		if( empty( $perm ) || empty( $perm[ 0 ] ) )
+			return $this->hasPerm( 'e' );
+
+		/**
+		 * check if user id is in the array of allowed
+		 * ids to edit page 
+		 */
+		if( in_array( $this->id, $perm ) )
+			return true;
+
+		/**
+		 * user cannot edit page
+		 */
+		return false;
 	}
 
 }

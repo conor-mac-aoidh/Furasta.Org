@@ -1,19 +1,14 @@
 <?php
 
 /**
- * Logout, Furasta.Org
+ * FILENAME, Furasta.Org
  *
- * Destorys session, and cookies if applicable.
+ * DESCRIPTION
  *
  * @author     Conor Mac Aoidh <conormacaoidh@gmail.com>
  * @license    http://furasta.org/licence.txt The BSD License
  * @version    1.0
+ * @package    
  */
-
-require '../_inc/class/User.php';
-
-User::logout( );
-
-header('location: index.php');
 
 ?>

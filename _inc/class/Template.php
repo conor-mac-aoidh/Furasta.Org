@@ -370,6 +370,13 @@ class Template {
                 $cache_file = md5( implode( '', $files ) );
 
 		/**
+		 * makes the SITEURL constant available
+		 * in JavaScript so that files etc can
+		 * be loaded properly
+		 */
+		$content = str_replace( '%SITEURL%', SITEURL, $content );
+
+		/**
 		 * check if diagnostic javascript is enabled
 		 * and if so do not compress data
 		 */

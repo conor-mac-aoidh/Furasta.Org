@@ -12,6 +12,19 @@
  * @package    admin_pages
  */
 
+/**
+ * make sure ajax script was loaded and user is
+ * logged in 
+ */
+if( !defined( 'AJAX_LOADED' ) || !defined( 'AJAX_VERIFIED' ) )
+        die( );
+
+/**
+ * check if user has permission to delete pages
+ */
+if( !$User->hasPerm( 'd' ) )
+	die( 'perm' );
+
 $id=addslashes(@$_GET['id']);
 if($id=='')
 	exit;

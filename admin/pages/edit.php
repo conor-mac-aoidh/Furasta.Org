@@ -71,11 +71,18 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
         if( in_array( $name, $pages_array ) == false ){
 
 		/**
+		 * if page is set as home page remove home
+		 * tag from previous home page
+		 */
+		if( $home == 1 )
+			query( 'update ' . PAGES . ' set home=0 where home=1' );
+
+		/**
 		 * update database with edited page 
 		 */
 		query('update '.PAGES.' set
 		name="'.$name.'",content="'.$content.'",slug="'.$slug.'",template="'.$template.'",type="'.$type.'",edited="'.date('Y-m-d
-		G:i:s').'",user="'.$User->about('name').'",parent='.$parent.',perm="'.$perm.'",home='.$home.',display='.$navigation.'
+		G:i:s').'",user="'.$User->name.'",parent='.$parent.',perm="'.$perm.'",home='.$home.',display='.$navigation.'
 		where id='.$id,true);
 
 		/**
@@ -92,16 +99,12 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
 $Page = row( 'select * from fr_pages where id= ' . $id );
 
 /**
- * check user has permission to edit page 
- /
-$perm = explode( '|', $Page[ 'perm' ] );
+ * check user has permission to edit pages
+ * in general, then check for this page
+ */
+if( !$User->hasPerm( 'e' ) && !$User->pagePerm( $Page[ 'perm' ] ) )
+	error( 'You have insufficient privelages to edit this page. Please contact one of the administrators.', 'Permissions Error' );
 
-if( strpos( ',', $perm ) )
-	$perm = explode( ',', $Page[ 1 ] );
-
-if( !in_array( $_SESSION[ 'user' ][ 'group' ], $perm ) )
-        error( 'You have insufficient privelages to edit this page. Please contact one of the administrators.', 'Permissions Error' );
-*/
 /**
  * @todo below: finish page delete! 
  */
@@ -313,12 +316,12 @@ foreach($options as $option){
 		$content.='<option value="'.$option.'">'.$option.'</option>';
 }
 
-$homepage=($Page['home']==1)?' checked="checked"':'';
+$homepage=($Page['home']==1)?'value="NA" checked="checked" disabled="disabled"':' value="1"';
 
 $content.='
 				</select></td>
 				<td class="small">Is Home Page:</td>
-				<td><input type="checkbox" value="1" name="Homepage"'.$homepage.'/></td>
+				<td><input type="checkbox" name="Homepage"'.$homepage.'/></td>
 			</tr>
 			<tr>
 				<td class="small">Template:</td>

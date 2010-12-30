@@ -66,7 +66,7 @@ session_start( );
 $Plugins = Plugins::getInstance( );
 
 foreach( $PLUGINS as $plugin ){
-	require HOME . '_plugins/' . str_replace( ' ', '-', $plugin ) . '/plugin.php';
+	require HOME . '_plugins/' . $plugin . '/plugin.php';
 
 	/**
 	 * register the $plugin array from the plugins file

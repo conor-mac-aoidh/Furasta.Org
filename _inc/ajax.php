@@ -16,6 +16,11 @@
  */
 
 /**
+ * used to test is the ajax load script was exectued 
+ */
+define( 'AJAX_LOADED', true );
+
+/**
  * checks if config and login are required
  */
 if( isset( $_GET[ 'no_config' ] ) ){
@@ -47,7 +52,15 @@ else{
 
 	if( !$User->verify( ) )
 		die( 'Please login to access this content.' );
+
+	/**
+	 * use to test if ajax script is run and user
+	 * is verified as logged in
+	 */
+	define( 'AJAX_VERIFIED', true );
 }
+
+
 
 $file = HOME . @$_GET[ 'file' ];
 

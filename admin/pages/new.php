@@ -50,10 +50,19 @@ if( isset( $_POST[ 'new-save' ] ) && $valid == true ){
 	if( in_array( $name, pages_array( ) ) == false ){
 
 		/**
+		 * if page should be new home page then remove
+		 * home tag from previous home page
+		 */
+		if( $home == 1 )
+			query( 'update ' . PAGES . ' set home=0 where home=1' );
+		elseif( $home == 'NA' )
+			$home = 1;
+
+		/**
 		 * save page to database 
 		 */
         	query('insert into '.PAGES.' values ("","'.$name.'","'.$content.'","'.$slug.'","'.$template.'","'.$type.'","'.date("Y-m-d
-		").'","'.$_SESSION['user']['name'].'","","'.$parent.'","'.$perm.'","'.$home.'","'.$navigation.'")');
+		").'","'.$User->name.'","","'.$parent.'","'.$perm.'","'.$home.'","'.$navigation.'")');
 
 		/**
 		 * clear pages cache and redirect to edit pages
@@ -275,8 +284,6 @@ $content .='
                         </tr>
                         <tr>';
 
-$groups = rows( 'select name from ' . GROUPS );
-
 for( $i = 0; $i < count( $groups ); $i++ ){
         $content .= '<td><input disabled="disabled" type="checkbox" class="checkbox" name="edit-groups" value="' . $groups[ $i ][ 'name' ] . '"/> ' . $groups[ $i ][ 'name' ] . '</td>';
 
@@ -368,7 +375,7 @@ else{
 $type = ( @$_GET[ 'type' ] == '' ) ? 'Normal' : @$_GET[ 'type '];
 
 $content .= '
-				<td class="small"><a class="link" id="page-permissions">Permissions</a><input type="hidden" name="perm" value=""/></td>
+				<td class="small"><a class="link" id="page-permissions">Permissions</a><input type="hidden" name="perm" value="|"/></td>
 			</tr>
 		</table>
 	</div>

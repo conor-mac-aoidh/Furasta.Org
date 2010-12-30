@@ -89,6 +89,8 @@ function get_page_url($pages,$id){
 
 function list_pages( $id, $pages, $level=0 ){
 
+	$User = User::getInstance( );
+
         $num = 0;
 
         if( !isset( $pages[ $id ] ) )
@@ -96,18 +98,21 @@ function list_pages( $id, $pages, $level=0 ){
 
         $list='';
         foreach( $pages[ $id ] as $page ){
-                $num++;
-                $href = '<a href="pages.php?page=edit&id='.$page['id'].'" class="list-link">';
-                $class = ( $level == 0 ) ? ' ':' class="child-of-node-'.$page['parent'].'"';
-                $list .= '<tr id="node-'.$page['id'].'"'.$class.'>
-                        	<td class="pages-table-left"><input type="checkbox" value="' . $page[ 'id' ] . '" name="trash-box"/></td>
-                                <td class="first">'.$href.$page['name'].'</a></td>
-                                <td>'.$href.$page['user'].'</a></td>
-                                <td>'.$href.$page['type'].'</a></td>
-                                <td>' . $href. date( "d/m/y", strtotime( $page[ 'edited' ] ) ) . '</a></td>
-                                <td><a href="pages.php?page=new&parent='.$page['id'].'"><span class="admin-menu-img" id="New-Page-img" title="New Sub Page" alt="New Sub Page">&nbsp;</span></a></td>
-	                        <td><a id="' . $page[ 'id' ] . '" class="delete link"><span class="admin-menu-img" id="Trash-img" title="Delete Page" alt="Delete Page">&nbsp;</span></a></td>
-                        </tr>';
+		if( $User->pagePerm( $page[ 'perm' ] ) ){
+	                $num++;
+        	        $href = '<a href="pages.php?page=edit&id='.$page['id'].'" class="list-link">';
+                	$class = ( $level == 0 ) ? ' ':' class="child-of-node-'.$page['parent'].'"';
+			$delete = ( $page[ 'home' ] == 1 ) ? '' : '<a id="' . $page[ 'id' ] . '" class="delete link"><span class="admin-menu-img" id="Trash-img" title="Delete Page" alt="Delete Page">&nbsp;</span></a>';
+	                $list .= '<tr id="node-'.$page['id'].'"'.$class.'>
+        	                	<td class="pages-table-left"><input type="checkbox" value="' . $page[ 'id' ] . '" name="trash-box"/></td>
+                	                <td class="first">'.$href.$page['name'].'</a></td>
+                        	        <td>'.$href.$page['user'].'</a></td>
+	                                <td>'.$href.$page['type'].'</a></td>
+        	                        <td>' . $href. date( "d/m/y", strtotime( $page[ 'edited' ] ) ) . '</a></td>
+                	                <td><a href="pages.php?page=new&parent='.$page['id'].'"><span class="admin-menu-img" id="New-Page-img" title="New Sub Page" alt="New Sub Page">&nbsp;</span></a></td>
+	                	        <td>' . $delete . '</td>
+	                        </tr>';
+		}
 
                 $list.=list_pages($page['id'],$pages,$level + 1);
         }
@@ -120,10 +125,18 @@ function display_menu($menu_items){
 	/**
 	 * remove items if user has insufficent permissions
 	 */
-	if( $_SESSION[ 'user' ][ 'perm' ][ 0 ] == '0' )
+	$User = User::getInstance( );
+
+	if( !$User->hasPerm( 't' ) )
+		unset( $menu_items[ 'Pages' ][ 'submenu' ][ 'Trash' ] );
+
+	if( !$User->hasPerm( 'c' ) )
+		unset( $menu_items[ 'Pages' ][ 'submenu' ][ 'New Page' ] );
+
+	if( !$User->hasPerm( 'u' ) )
 		unset( $menu_items[ 'Users & Groups' ] );
 
-	if( $_SESSION[ 'user' ][ 'perm' ][ 1 ] == '0' )
+	if( !$User->hasPerm( 's' ) )
 		unset( $menu_items[ 'Settings' ] );
 
 	$list='';

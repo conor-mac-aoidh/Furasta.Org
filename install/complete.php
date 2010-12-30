@@ -42,12 +42,11 @@ query('insert into '.$pages.' values(0,"Home","'.$pagecontent.'","Home","Default
 
 query('drop table if exists '.$users);
 query('create table '.$users.' (id int auto_increment primary key,name text,email text,password text,homepage text,user_group text,hash text,reminder text)');
-query('insert into '.$users.' values(0,"'.$_SESSION['user']['name'].'","'.$_SESSION['user']['email'].'","'.$_SESSION['user']['pass'].'","","Administrators","'.$hash.'","")');
+query('insert into '.$users.' values(0,"'.$_SESSION['user']['name'].'","'.$_SESSION['user']['email'].'","'.$_SESSION['user']['pass'].'","","_superuser","'.$hash.'","")');
 
 query( 'drop table if exists ' . $groups );
 query( 'create table ' . $groups . ' ( id int auto_increment primary key, name text, privellages text )' );
-query( 'insert into ' . $groups . ' values ( "", "Administrators", "1,1,1" )' );
-query( 'insert into ' . $groups . ' values ( "", "Users", "0,0,1" )' );
+query( 'insert into ' . $groups . ' values ( "", "Users", "e,c,d,t,o,s,u" )' );
 
 query('drop table if exists '.$trash);
 query('create table '.$trash.' (id int auto_increment primary key,name text,content text,slug text,template text,type text,edited date,user text,position int,parent int,perm text,home int,display int)');

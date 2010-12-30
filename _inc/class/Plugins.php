@@ -65,6 +65,9 @@
  *               'filter_page_content' => 'function_name',
  *               'filter_page_content' => array( 'classname', 'methodname' ),
  *
+ *		 'filter_group_permissions' => 'function_name',
+ *               'filter_group_permissions' => array( 'classname', 'methodname' ),
+ *
  *               'overview_item' => array(
  *                       'name' => '',
  *
@@ -268,7 +271,7 @@ class Plugins{
 				/**
 				 * default method using functions
 				 */
-				if( function_exists( $plugin[ 'admin' ][ 'menu' ] ) )
+				if( function_exists( $plugin[ 'admin' ][ 'filter_menu' ] ) )
 	                        	$menu = call_user_func_array( $plugin[ 'admin' ][ 'filter_menu' ], array( $menu, $url ) );
 
 				/**
@@ -576,8 +579,10 @@ class Plugins{
                         /**
                          * using methods 
                          */
-                        elseif( method_exists( @$plugin[ $area ][ $name ][ 0 ], @$plugin[ $area ][ $name ][ 1 ] ) )
-                                call_user_func( $plugin[ $area ][ $name ], $params );
+                        elseif( method_exists( @$plugin[ $area ][ $name ][ 0 ], @$plugin[ $area ][ $name ][ 1 ] ) ){
+				die( $plugin[ $area ][ $name ][0] );
+                           //     call_user_func( $plugin[ $area ][ $name ], $params );
+			}
 
 		}
 

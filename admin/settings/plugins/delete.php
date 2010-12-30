@@ -13,28 +13,40 @@
  * @package    admin_settings
  */
 
-$p_name=@$_GET['p_name'];
+$p_name= addslashes( @$_GET[ 'p_name' ] );
 
-if(!plugin_exists($p_name))
-        error('Plugin does not exist. Please contact bugs@furasta.org for more details.','Plugin Error');
+if( !plugin_exists( $p_name ) )
+        error( 'Plugin does not exist. Please contact bugs@furasta.org for more details.', 'Plugin Error' );
 
-$plugin_dir=HOME.'_plugins/'.$p_name;
-$file=$plugin_dir.'/uninstall.php';
-if(file_exists($file))
+/**
+ * run uninstall script 
+ */
+$plugin_dir = HOME . '_plugins/' . $p_name;
+$file = $plugin_dir . '/uninstall.php';
+if( file_exists( $file ) )
         require $file;
 
-remove_dir($plugin_dir);
+/**
+ * remove the plugin's files 
+ */
+remove_dir( $plugin_dir );
 
-$new_plugs=array();
-foreach($PLUGINS as $plugin){
-        if($plugin==$p_name)
+/**
+ * remove the plugin from plugin array 
+ */
+$new_plugs = array( );
+foreach( $PLUGINS as $plugin ){
+        if( $plugin == $p_name )
                 continue;
-        array_push($new_plugs,$plugin);
+        array_push( $new_plugs, $plugin );
 }
 
-settings_rewrite($SETTINGS,$DB,$new_plugs);
+/**
+ * write new settings to file 
+ */
+settings_rewrite( $SETTINGS, $DB, $new_plugs );
 
-cache_clear();
+cache_clear( );
 
 header('location: settings.php?page=plugins');
 

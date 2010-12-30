@@ -283,7 +283,7 @@ function validUrl( fields, errorHandler ){
                 loc.removeClass('error');
                 if(errors==0){
                         var filter=/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
-                        if(filter.test(loc.val())==false){
+                        if( filter.test( loc.val( ) ) == false && loc.val( ) != "" ){
                                 errors='Please enter a valid URL.';
                                 loc.addClass('error');
                         }

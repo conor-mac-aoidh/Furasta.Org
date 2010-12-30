@@ -22,7 +22,13 @@
  * @return bool
  */
 function __autoload( $class_name ){
-	return require_once HOME . '_inc/class/' . $class_name . '.php';
+
+	$file = HOME . '_inc/class/' . $class_name . '.php';
+
+	if( file_exists( $file ) )
+		return require_once HOME . '_inc/class/' . $class_name . '.php';
+
+	return false;
 }
 	
 /**
@@ -267,6 +273,9 @@ $DB=array(
  * @return bool
  */
 function remove_dir($dir){
+	if( !is_dir( $dir ) )
+		return false;
+
 	$objects=scandir($dir);
 	foreach($objects as $object){
 		if($object!='.'&&$object!='..'){
@@ -292,6 +301,9 @@ function remove_dir($dir){
  * @return array
  */
 function scan_dir($dir){
+	if( !is_dir( $dir ) )
+		return false;
+
 	$files=scandir($dir);
 
 	$dirs=array();
@@ -319,7 +331,6 @@ function scan_dir($dir){
  */
 function rss_fetch( $url, $tagname = 'item' ){
 
-	/** @todo ajax cache renewal */
 	$dom = new DOMdocument( );
 	$dom->load( $url );
 	$elements = $dom->getElementsByTagName( $tagname );
@@ -457,7 +468,7 @@ function validate($conds,$selector,$post){
 		$urlregex = "^(https?|ftp)\:\/\/([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*(\:[0-9]{2,5})?(\/([a-z0-9+\$_-]\.?)+)*\/?(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)?(#[a-z_.-][a-z0-9+\$_.-]*)?\$";
 
 		foreach($url_f as $field){
-			if(!eregi($urlregex,$_POST[$field])){
+			if(!eregi($urlregex,$_POST[$field]) && $_POST[$field] != ''){
 				$Template->runtimeError( '10' );
 				return false;
 			}

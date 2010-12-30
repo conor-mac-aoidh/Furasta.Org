@@ -14,10 +14,11 @@
  */
 
 /**
- * include define - furasta setup 
+ * make sure ajax script was loaded and user is
+ * logged in 
  */
-include '../../_inc/define.php';
-
+if( !defined( 'AJAX_LOADED' ) || !defined( 'AJAX_VERIFIED' ) )
+        die( );
 
 /**
  * set up $_GET variables 
