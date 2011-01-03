@@ -83,7 +83,7 @@ class Template {
 	 * @var mixed
 	 * @access public
 	 */
-	public $diagnosticJavascript = 1;
+	public $diagnosticJavascript = 0;
 
         /**
          * title 
@@ -101,14 +101,6 @@ class Template {
 	 * @access public
 	 */
 	public $runtimeError = array( );
-
-        /**
-         * system_error 
-         * 
-         * @var string
-         * @access public
-         */
-        public $systemError;
 
         /**
          * menu 
@@ -157,16 +149,6 @@ class Template {
 	 * @access public
 	 */
 	public $cssSources=array();
-
-        /**
-         * __construct 
-         * 
-         * @access private
-         * @return bool
-         */
-        private function __construct(){
-                return ( $this->systemError = ( defined( SYSTEM_ALERT ) ) ? SYSTEM_ALERT : '' );
-        }
 
 	/**
 	 * getInstance 
@@ -267,7 +249,12 @@ class Template {
 		if( $params != false ){
 
 			if( is_array( $params ) ){
-				for( $i = 0; $i <= count( $params ); $i++ )
+				/**
+				 * reindex array to start with 1 instead of 0
+				 */
+				$params = array_combine( range( 1, count( $params ) ), array_values( $params ) );
+
+				for( $i = 1; $i <= count( $params ); $i++ )
 					$error = str_replace( '%' . $i, $params[ $i ], $error );
 
 			}
@@ -279,6 +266,30 @@ class Template {
 		$this->runtimeError{ $id } = $error;
 
 		return true;	
+
+	}
+
+	/**
+	 * errorToString 
+	 * 
+	 * Converts an error id to the corresponding
+	 * lang string without adding it to the runtime
+	 * error array
+	 *
+	 * @param integer $id 
+	 * @param string or array $params 
+	 * @access public
+	 * @return string
+	 */
+	function errorToString( $id, $params = false ){
+
+		$this->runtimeError( $id, $params );
+
+		$error = $this->runtimeError{ $id };
+
+		unset( $this->runtimeError{ $id } );
+
+		return $error;
 
 	}
 
@@ -297,6 +308,7 @@ class Template {
 			return '';
 
 		$errors = '<div id="system-error">
+				<span class="right link" id="errors-close">close</span>
 				<span id="dialog-alert-logo" style="float:left">&nbsp;</span>';
 
 		foreach( $this->runtimeError as $key => $error )
@@ -344,7 +356,7 @@ class Template {
         }
 
         /**
-         * javascriptUrl
+         * javascriptUrls
 	 *
 	 * Returns a unique URL to load which will
 	 * contain all of the javascript loaded
@@ -353,45 +365,49 @@ class Template {
          * @access public
          * @return string
          */
-        public function javascriptUrl(){
+        public function javascriptUrls(){
 
 		$files = $this->javascriptFiles;
                 $sources = $this->javascriptSources;
-                $content = '';
+		$scripts = array( );
+		$urls = array( );
 
 		foreach($files as $file)
-			$content .= file_get_contents( HOME . $file );
+			$scripts[ $file ] = file_get_contents( HOME . $file );
 
-                foreach( $sources as $source => $contents ){
-                        $content .= $contents;
-                        array_push( $files, $source );
-                }
+                foreach( $sources as $source => $contents )
+			$scripts[ $source ] = $contents;
 
-                $cache_file = md5( implode( '', $files ) );
+		foreach( $scripts as $name => $content ){
 
-		/**
-		 * makes the SITEURL constant available
-		 * in JavaScript so that files etc can
-		 * be loaded properly
-		 */
-		$content = str_replace( '%SITEURL%', SITEURL, $content );
+	                $cache_file = md5( $name );
 
-		/**
-		 * check if diagnostic javascript is enabled
-		 * and if so do not compress data
-		 */
+			/**
+			 * makes the SITEURL constant available
+			 * in JavaScript so that files etc can
+			 * be loaded properly
+			 */
+			$content = str_replace( '%SITEURL%', SITEURL, $content );
 
-                if( !cache_exists( $cache_file, 'JS' ) ){
+			/**
+			 * check if diagnostic javascript is enabled
+			 * and if so do not compress data
+			 */
 			if( $this->diagnosticJavascript == 1 )
 				cache( $cache_file, $content, 'JS' );
-			else{
+			elseif( !cache_exists( $cache_file, 'JS' ) ){
 				$packer = new JavaScriptPacker( $content, 'Normal', true, false );
-	                        $content = $packer->pack( );
-        	                cache( $cache_file, $content, 'JS');
-			}
-                }
+				$content = $packer->pack( );
+				cache( $cache_file, $content, 'JS');
+	                }
 
-                return SITEURL . '_inc/js/js.php?' . $cache_file;
+			$url = SITEURL . '_inc/js/js.php?' . $cache_file;
+
+			array_push( $urls, $url );
+
+		}
+
+                return $urls;
         }
 
 	/*
@@ -431,6 +447,7 @@ class Template {
 	 * will contain all of the CSS added
 	 * during runtime.
          * 
+	 * @todo change to cssUrls, returning an array of css file urls
          * @access public
          * @return string
          */

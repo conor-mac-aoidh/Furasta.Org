@@ -73,7 +73,10 @@ function cache_is_good($name,$length,$dir=''){
 	if(!file_exists($file))
 		return false;
 
-	return (time()-$length>filemtime($file));
+	if( ( time( ) - $length ) < filemtime( $file ) )
+		return true;
+
+	return false;
 }
 
 /**

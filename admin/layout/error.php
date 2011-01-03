@@ -54,9 +54,12 @@ echo'
 </body>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="' . $Template->javascriptUrl( ) . '"></script>
-</html>
 ';
+
+foreach( $Template->javascriptUrls( ) as $url )
+        echo '<script type="text/javascript" src="' . $url . '"></script>';
+
+echo '</html>';
 
 ob_end_flush();
 ?>

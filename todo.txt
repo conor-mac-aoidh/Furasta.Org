@@ -3,7 +3,6 @@
 6. Complete the auto-update feature, and possibly allow for system wide 'alerts' which will appear on every page.
 10. Develop a few plugins to test, and adjust, the plugin architecture: File Manager (*), News Plugin (with RSS), something else..
 17. Finish the password reminder!
-21. Add system wide alerts, such as update etc.
 22. change the location of the backup folder to inside the _user dir and create that dir during installation.
 25. Create bugs@furasta.org and support@furasta.org emails
 

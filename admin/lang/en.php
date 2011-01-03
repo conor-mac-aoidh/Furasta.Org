@@ -26,6 +26,7 @@ $lang_en = array(
 	'11'=> 'User not activated.',
 	'12'=> 'Login details are incorrect',
 	'13'=> 'Details Updated',
+	'14'=> 'A new version of Furasta.Org is available. <a href="%2">Click here to download %1</a>',
 );
 
 ?>

@@ -62,7 +62,14 @@ else{
 
 
 
-$file = HOME . @$_GET[ 'file' ];
+$file = @$_GET[ 'file' ];
+
+if( strpos( $file, '..' ) != false )
+	die( 'not a valid filename' );
+
+$file = HOME . $file;
+
+//die( $file );
 
 if( !file_exists( $file ) )
 	die( 'The file at <i>' . $file . '</i> does not exist.' );

@@ -145,8 +145,6 @@ $(document).ready(function(){
 });
 ';
 
-//$Template->diagnosticJavascript=1;
-
 /**
  * load javascript to the template class, which will compress it 
  */
