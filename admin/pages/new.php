@@ -69,7 +69,7 @@ if( isset( $_POST[ 'new-save' ] ) && $valid == true ){
 		 */	
         	cache_clear( 'PAGES' );
 
-	        header( 'location: pages.php?page=edit&status=new&id=' . mysql_insert_id( ) );
+	        header( 'location: pages.php?page=edit&error=3&id=' . mysql_insert_id( ) );
 	}
 	else
 		$Template->runtimeError( '4', $name );

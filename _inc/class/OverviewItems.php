@@ -92,14 +92,10 @@ class OverviewItems{
                 );
 
 		/**
-		 * check if user has permission to use
-		 * plugins, if so add plugin overview
-		 * items
+		 * add plugin overview items
 		 */
-		if( $_SESSION[ 'user' ][ 'perm' ][ 2 ] == 1 ){
-			$Plugins = Plugins::getInstance( );
-			$items = array_merge( $Plugins->adminOverviewItems( ) , $items );
-		}
+		$Plugins = Plugins::getInstance( );
+		$items = array_merge( $Plugins->adminOverviewItems( ) , $items );
 
 		$this->items = $items;
 

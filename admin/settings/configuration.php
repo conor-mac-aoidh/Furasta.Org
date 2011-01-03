@@ -15,10 +15,10 @@
  * set up form validation
  */
 $conds = array(
-        'site_title' => array(
+        'Title' => array(
                 'required'      =>      true
         ),
-	'site_subtitle' => array(
+	'SubTitle' => array(
 		'required'	=>	true
 	)
 );
@@ -29,11 +29,22 @@ $valid = validate( $conds, "#config-settings", 'settings_general' );
  * executed if form is submitted 
  */
 if( isset( $_POST[ 'settings_general' ] ) && $valid == true ){
-        $SETTINGS['site_title']=$_POST['Title'];
-        $SETTINGS['site_subtitle']=$_POST['SubTitle'];
-        $SETTINGS['maintenance']=addslashes($_POST['Maintenance']);
-        $SETTINGS['index']=addslashes($_POST['Index']);
+
+        $SETTINGS['site_title']=addslashes($_POST['Title']);
+        $SETTINGS['site_subtitle']=addslashes($_POST['SubTitle']);
+        $SETTINGS['maintenance']=(int) $_POST['Maintenance'];
+        $SETTINGS['index']=(int) $_POST['Index'];
+
+        /**
+         * rewrite the settings file 
+         */
         settings_rewrite($SETTINGS,$DB,$PLUGINS);
+
+	/**
+	 * stripslashes from the settings array
+	 */
+	$SETTINGS = stripslashes_array( $SETTINGS );
+	$Template->runtimeError( '13' );
 }
 
 
@@ -57,8 +68,8 @@ $(document).ready(function(){
 
 $Template->loadJavascript( 'FURASTA_ADMIN_SETTINGS_CONFIGURATION', $javascript );
 
-$maintenance=($SETTINGS['maintenance']==1)?'CHECKED':'';
-$index=($SETTINGS['index']==1)?'CHECKED':'';
+$maintenance=($SETTINGS['maintenance']==1)?'checked="checked"':'';
+$index=($SETTINGS['index']==1)?'checked="checked"':'';
 
 $content='
 <span class="header-img" id="header-Configuration">&nbsp;</span><h1 class="image-left">Configuration</h1></span>
@@ -73,11 +84,11 @@ $content='
 	</tr>
 	<tr>
 		<td>Title:</td>
-		<td><input type="text" name="Title" value="'.$SETTINGS['site_title'].'" class="input" /></td>
+		<td><input type="text" name="Title" value="' . $SETTINGS[ 'site_title' ] . '" class="input" /></td>
 	</tr>
 	<tr>
 		<td>Sub Title:</td>
-		<td><input type="text" name="SubTitle" value="'.$SETTINGS['site_subtitle'].'" class="input" /></td>
+		<td><input type="text" name="SubTitle" value="' . $SETTINGS[ 'site_subtitle' ] . '" class="input" /></td>
 	</tr>
 	<tr>
 		<td>Enable Maintenance Mode: <a class="help link" id="help-maintenance">&nbsp;</a></td>

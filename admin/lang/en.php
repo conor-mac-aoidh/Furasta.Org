@@ -13,7 +13,6 @@
  */
 
 $lang_en = array( 
-
 	'1' => 'Page Updated',
 	'2' => 'Page Deleted',
 	'3' => 'Page Created',
@@ -26,7 +25,7 @@ $lang_en = array(
 	'10'=> 'Please enter a valid URL.',
 	'11'=> 'User not activated.',
 	'12'=> 'Login details are incorrect',
-
+	'13'=> 'Details Updated',
 );
 
 ?>

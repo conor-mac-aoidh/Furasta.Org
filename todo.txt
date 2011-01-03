@@ -2,7 +2,6 @@
 
 6. Complete the auto-update feature, and possibly allow for system wide 'alerts' which will appear on every page.
 10. Develop a few plugins to test, and adjust, the plugin architecture: File Manager (*), News Plugin (with RSS), something else..
-16. get rid of the admin/post dir - that was a stupid idea!
 17. Finish the password reminder!
 21. Add system wide alerts, such as update etc.
 22. change the location of the backup folder to inside the _user dir and create that dir during installation.
@@ -31,3 +30,4 @@
 12. make pages,trash and possibly plugins pages pagated
 13. convert list pages sortable into a jquery plugin - extention of jquery ui
 14. add icons.png to the $Template class - so that its cached or otherwise created on load, should have ability to add images from plugins. should use GD and check if its installed
+15. enable custom mantinence error and option to use mantinence template

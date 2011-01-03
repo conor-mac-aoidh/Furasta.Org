@@ -315,7 +315,7 @@ class Plugins{
 	 * @access public
 	 * @return void
 	 */
-	public function adminPageType( $type, $Page ){
+	public function adminPageType( $type, $id ){
 
 		foreach( $this->plugins as $plugin ){
 
@@ -329,13 +329,13 @@ class Plugins{
 			 * using functions
 			 */
 			if( function_exists( $plugin[ 'admin' ][ 'page_type' ][ 'function' ] ) )
-                               	return call_user_func( $plugin[ 'admin' ][ 'page_type' ][ 'function' ], $Page );
+                               	return call_user_func( $plugin[ 'admin' ][ 'page_type' ][ 'function' ], $id );
 
 			/**
 			 * using methods
 			 */
 			elseif( method_exists( @$plugin[ 'admin' ][ 'page_type' ][ 'function' ][ 0 ], @$plugin[ 'admin' ][ 'page_type' ][ 'function' ][ 1 ] ) )
-				return call_user_func( $plugin[ 'admin' ][ 'page_type' ][ 'function' ], $Page );
+				return call_user_func( $plugin[ 'admin' ][ 'page_type' ][ 'function' ], $id );
 
                 }
 
@@ -444,19 +444,19 @@ class Plugins{
 			/**
 			 * if not correct plugin, continue
 			 */
-			if( @$plugin[ 'admin' ][ 'page_type' ][ 'name' ] != $type || !isset( $plugin[ 'frontend' ][ 'page_type' ][ 'function' ] ) )
+			if( @$plugin[ 'admin' ][ 'page_type' ][ 'name' ] != $type || !isset( $plugin[ 'frontend' ][ 'page_type' ] ) )
 				continue;
 
                         /**
                          * is correct, attempting functions 
                          */
-                        if( function_exists( $plugin[ 'frontend' ][ 'page_type' ][ 'function' ] ) )
-                                return call_user_func( $plugin[ 'frontend' ][ 'page_type' ][ 'function' ], $Page );
+                        if( function_exists( $plugin[ 'frontend' ][ 'page_type' ] ) )
+                                return call_user_func( $plugin[ 'frontend' ][ 'page_type' ], $Page );
 
 			/**
 			 * using methods 
 			 */
-			if( method_exists( @$plugin[ 'frontend' ][ 'page_type' ][ 'function' ][ 0 ], @$plugin[ 'frontend' ][ 'page_type' ][ 'function' ][ 1 ] ) )
+			elseif( method_exists( @$plugin[ 'frontend' ][ 'page_type' ][ 0 ], @$plugin[ 'frontend' ][ 'page_type' ][ 1 ] ) )
 				return call_user_func( $plugin[ 'frontend' ][ 'page_type' ][ 'function' ], $Page );
 
                 }
@@ -522,7 +522,7 @@ class Plugins{
 			/**
 			 *  if match found, return content
 			 */
-			if( str_replace( ' ', '-', $plugin[ 'name' ] == $item_id ) ){
+			if( str_replace( ' ', '-', $plugin[ 'name' ] ) == $item_id ){
 
 				/**
 				 * using functions

@@ -15,7 +15,14 @@
 
 require '_inc/define.php';
 
-if($SETTINGS['maintenance']==1&&!is_logged_in($_SESSION['user_id']))
+/**
+ * if mantinence mode is enabled and user not
+ * logged in then display mantinence error
+ * @todo enable custom mantinence error and option to use
+ * mantinence template 
+ */
+$User = new User( );
+if( $SETTINGS[ 'maintenance' ] == 1 && $User->verify( ) == false )
 	error($SETTINGS['site_title'].' is undergoing maintenance. It should be back to normal shortly.','Maintenance');
 
 $page=@$_GET['page'];
@@ -32,7 +39,11 @@ else{
 		require HOME . '_inc/404.php';
 }
 
+/**
+ * get page rows in array and stripslashes 
+ */
 $Page = row( 'select * from ' . PAGES . ' where id=' . $id );
+$Page = stripslashes_array( $Page );
 
 require HOME.'_inc/smarty.php';
 

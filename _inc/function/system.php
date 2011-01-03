@@ -163,7 +163,7 @@ function htaccess_rewrite(){
 	file_put_contents(HOME.'.htaccess',$htaccess);
 	$_url='http://'.$_SERVER["SERVER_NAME"].'/';
 	
-	if($SETTINGS['index']==1){
+	if($SETTINGS['index']==0){
 		$robots=
 		"# robots.txt - Furasta.Org\n".
 		"User-agent: *\n".
@@ -477,4 +477,76 @@ function validate($conds,$selector,$post){
 
         return true;
 }
+
+/**
+ * stripslashes_array 
+ * 
+ * permforms the stripslashes function on an array
+ *
+ * @param string $value 
+ * @access public
+ * @return array
+ */
+function stripslashes_array( $value ){
+
+	$value = is_array( $value ) ? array_map( 'stripslashes_array', $value ) : stripslashes( $value );
+
+	return $value;
+}
+
+/**
+ * meta_keywords
+ *
+ * returns a string of imploded keywords for use
+ * in a meta keywords tag  
+ * 
+ * @param mixed $string 
+ * @access public
+ * @return string
+ */
+function meta_keywords( $string ){
+	$stop_words = array( 'i', 'a', 'about', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'com', 'de', 'en', 'for', 'from', 'how', 'in', 'is', 'it', 'la', 'of', 'on', 'or', 'that', 'the', 'this', 'to', 'was', 'what', 'when', 'where', 'who', 'will', 'with', 'und', 'the', 'www' );
+ 
+	$string = preg_replace( '/ss+/i', '', $string );
+	$string = trim( $string );
+
+	/**
+	 * only accept alphanumerical characters
+	 * but keep the spaces and dashes
+	 */
+	$string = preg_replace( '/[^a-zA-Z0-9 -]/', '', $string );
+
+	/**
+	 * convert to lower case
+	 */
+	$string = strtolower( $string );
+ 
+	preg_match_all( '/([a-z]*?)(?=s)/i', $string, $matches );
+
+	$matches = $matches[0];
+
+	foreach ( $matches as $key=>$item ) {
+		if ( $item == '' || in_array( strtolower( $item ), $stop_words ) || strlen( $item ) <= 3 )
+			unset( $matches[ $key ] );
+	}
+
+
+	$word_count = array();
+	if ( is_array( $matches ) ) {
+		foreach ( $matches as $key => $val ) {
+			$val = strtolower( $val );
+			if ( isset( $word_count[ $val ] ) )
+				$word_count[ $val ]++;
+			else
+				$word_count[ $val ] = 1;
+		}
+    	}
+
+	arsort( $word_count );
+	$word_count = array_slice( $word_count, 0, 10 );
+	$word_count = implode( ',', array_keys( $word_count ) );
+
+	return $word_count;
+}
+
 ?>

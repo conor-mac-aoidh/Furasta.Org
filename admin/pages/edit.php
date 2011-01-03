@@ -96,7 +96,11 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
 		$Template->runtimeError( '4', $name );
 }
 
+/**
+ * get page rows in array and stripslashes 
+ */
 $Page = row( 'select * from fr_pages where id= ' . $id );
+$Page = stripslashes_array( $Page );
 
 /**
  * check user has permission to edit pages
@@ -128,18 +132,6 @@ $(document).ready(function(){
 	var pagename = $( "#page-name" ).attr( "value" );
 
         getUrl( pagename );
-
-	/**
-	 * delete the page if delete button is clicked 
-	 *  @todo finish!
-	 */
-	$("#edit-delete").click(function(){
-
-		fConfirm("Are you sure you want to delete this page?");
-
-		return false;
-
-	});
 
         /**
          * display options when clicked 
@@ -378,8 +370,6 @@ $content.='
 	</div>
 
 	<div id="pages-type-content" type="'.$Page['type'].'" page-id="'.$Page['id'].'">&nbsp;</div>
-
-<input type="submit" name="edit-delete" value="Delete" class="submit" id="edit-delete"/>
 <input type="submit" name="edit-save" value="Save" class="submit" id="edit-save"/>
 </form>
 ';

@@ -8,11 +8,10 @@
  * @author     Conor Mac Aoidh <conormacaoidh@gmail.com>
  * @license    http://furasta.org/licence.txt The BSD License
  * @version    1.0
- * @todo	   move exclusively admin functions to /_inc/function/admin.php
  */
 
 define('HOME',substr(dirname(__FILE__),0,-4));
 
-die('<h1>JavaScript Error</h1><p>You must have a javascript enabled browser to contine. Please contact <a
-href="mailto:support@furasta.org">support@furasta.org</a> for support.</p>');
+die('<h1>JavaScript Error</h1><p>You must have a javascript enabled browser to contine. The jQuery library is also required. If you do not have internet access then you may not have access to jQuery. Please contact <a href="mailto:support@furasta.org">support@furasta.org</a> for support.</p>');
+
 ?>

@@ -146,7 +146,8 @@ $Template->loadJavascript( 'FURASTA_ADMIN_LOGIN', $javascript );
 
 $content='
 <div id="login-wrapper">
-	<img src="/_inc/img/login.png" class="left"/> <h1 id="login-header">Login</h1>
+	<span class="header-img" id="header-Login">&nbsp;</span>
+	<h1 id="login-header">Login</h1>
 	<br/>
 	<form id="login" method="post">
 		<table id="login-table">

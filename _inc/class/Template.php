@@ -300,7 +300,7 @@ class Template {
 				<span id="dialog-alert-logo" style="float:left">&nbsp;</span>';
 
 		foreach( $this->runtimeError as $key => $error )
-			$errors .= '<div class="runtime-errors" id="error-' . $key . '">' . $error . '</div>';
+			$errors .= '<span class="runtime-errors" id="error-' . $key . '">' . $error . '</span><br/>';
 
 		return ( $errors .= '<br style="clear:both"/></div>' );
 	}

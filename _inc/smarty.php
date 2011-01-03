@@ -15,28 +15,32 @@
 
 header('Content-Type: text/html; charset=UTF-8');
 
-$smarty_dir=HOME.'_inc/Smarty/';
+/**
+ * @todo move to _user dir 
+ */
+$smarty_dir=HOME.'_inc/smarty/';
 
-require $smarty_dir.'libs/Smarty.class.php';
+require $smarty_dir.'libs/smarty.class.php';
 require $function_dir.'frontend.php';
 
-$smarty=new Smarty();
+$Smarty=new Smarty();
 
-$smarty->template_dir=$smarty_dir.'templates';
-$smarty->compile_dir=$smarty_dir.'templates_c';
+$Smarty->template_dir=$smarty_dir.'templates';
+$Smarty->compile_dir=$smarty_dir.'templates_c';
 
 /**
  * register plugin functions 
  */
 $plugin_functions=$Plugins->frontendTemplateFunctions();
 foreach($plugin_functions as $function)
-	$smarty->register_function($function->frontendTemplateFunction,array($function,'frontendTemplateFunction'));
+	$Smarty->register_function($function->frontendTemplateFunction,array($function,'frontendTemplateFunction'));
 
 /**
- * assign values to smarty variables 
+ * assign values to Smarty variables 
  */
+$keywords = meta_keywords( $Page[ 'content' ] );
+$description = substr( strip_tags( $Page[ 'content' ] ), 0, 250 ) . '...';
 
-############# TODO add title and description meta tags #######
 $meta='
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
@@ -45,14 +49,16 @@ $meta='
 <link rel="stylesheet" type="text/css" href="' . SITEURL . '_inc/css/frontend.css"/>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Furasta.Org ' . VERSION . '" />
+<meta name="description" content="' . $description . '" />
+<meta name="keywords" content="' . $keywords . '" />
 <link rel="shortcut icon" href="' . SITEURL . '_inc/img/favicon.ico" />
 ';
-$smarty->assign('metadata',$meta);
+$Smarty->assign( 'metadata', $meta );
 
 /**
  * plugins - filter page content 
  */
-$content = $Plugins->filter( 'frontend', 'filter_page_content', stripslashes( $Page[ 'content' ] ) );
+$content = $Plugins->filter( 'frontend', 'filter_page_content', $Page[ 'content' ] );
 
 /**
  * assign content according to page type 
@@ -60,34 +66,34 @@ $content = $Plugins->filter( 'frontend', 'filter_page_content', stripslashes( $P
 $type = $Page[ 'type' ];
 
 if( $type == 'Normal' )
-	$smarty->assign( 'page_content', $content );
+	$Smarty->assign( 'page_content', $content );
 else
-	$smarty->assign( 'page_content', $Plugins->frontendPageType( $type, $Page ) );
+	$Smarty->assign( 'page_content', $Plugins->frontendPageType( $type, $Page ) );
 
 /**
  * assign other page vars 
  */
-$smarty->assign( 'page_name', $Page[ 'name' ] );
-$smarty->assign( 'page_id', $Page[ 'id' ] );
-$smarty->assign( 'page_slug', $Page[ 'slug' ] );
-$smarty->assign( 'page_edited', $Page[ 'edited' ] );
-$smarty->assign( 'page_user', $Page[ 'user' ] );
-$smarty->assign( 'page_parent_id', $Page[ 'parent' ] );
+$Smarty->assign( 'page_name', $Page[ 'name' ] );
+$Smarty->assign( 'page_id', $Page[ 'id' ] );
+$Smarty->assign( 'page_slug', $Page[ 'slug' ] );
+$Smarty->assign( 'page_edited', $Page[ 'edited' ] );
+$Smarty->assign( 'page_user', $Page[ 'user' ] );
+$Smarty->assign( 'page_parent_id', $Page[ 'parent' ] );
 
-$smarty->assign( 'siteurl', SITEURL );
+$Smarty->assign( 'siteurl', SITEURL );
 
 $time=microtime(true)-START_TIME;
-$smarty->assign('page_load_time',$time);
+$Smarty->assign('page_load_time',$time);
 
-$smarty->assign('site_title',$SETTINGS['site_title']);
-$smarty->assign('site_subtitle',$SETTINGS['site_subtitle']);
+$Smarty->assign('site_title',$SETTINGS['site_title']);
+$Smarty->assign('site_subtitle',$SETTINGS['site_subtitle']);
 
 /**
  * register default template functions 
  */
-$smarty->register_function( 'menu', 'frontend_menu' );
-$smarty->register_function( 'page_tree', 'frontend_page_tree' );
-$smarty->register_function( 'css_url', 'frontend_css_url' );
+$Smarty->register_function( 'menu', 'frontend_menu' );
+$Smarty->register_function( 'page_tree', 'frontend_page_tree' );
+$Smarty->register_function( 'css_url', 'frontend_css_url' );
 
 
 $file=($Page[ 'template' ]=='Default')?TEMPLATE_DIR.'index.html':TEMPLATE_DIR.$Page[ 'template' ].'.html';
@@ -100,5 +106,5 @@ if(!file_exists($file))
  */
 $Plugins->hook( 'frontend', 'on_load' );
 
-$smarty->display($file);
+$Smarty->display($file);
 ?>

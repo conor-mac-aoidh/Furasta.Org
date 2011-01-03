@@ -19,7 +19,7 @@ $Template->loadCSS('_inc/css/admin.css');
 echo'
 <html>
 <head>
-        <noscript><meta http-equiv="refresh" content="0;url=/_inc/noscript.php"></noscript>
+        <noscript><meta http-equiv="refresh" content="0;url=' . SITEURL . '_inc/noscript.php"></noscript>
         <link rel="stylesheet" href="' . $Template->cssUrl( ) . '"/>
 	<title>' . $Template->display( 'title' ) . ' - Furasta.Org</title>
 </head>

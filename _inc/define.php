@@ -53,6 +53,11 @@ if( ! mysql_select_db( $DB['name'], $connect ) )
 
 
 /**
+ * perform stripslashes on the $SETTINGS array 
+ */
+$SETTINGS = stripslashes_array( $SETTINGS );
+
+/**
  * start session and get instance of the Plugin class 
  * cycle through active plugins and require plugin files
  * finally refactor the plugins according to the $importance var
