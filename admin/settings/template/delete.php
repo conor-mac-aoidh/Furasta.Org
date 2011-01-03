@@ -11,6 +11,19 @@
  * @package    admin_settings
  */
 
+/**
+ * make sure ajax script was loaded and user is
+ * logged in 
+ */
+if( !defined( 'AJAX_LOADED' ) || !defined( 'AJAX_VERIFIED' ) )
+        die( );
+
+/**
+ * check if user has permission to delete template
+ */
+if( !$User->hasPerm( 's' ) )
+        die( 'perm' );
+
 $name=@$_GET['name'];
 
 if($name=='')

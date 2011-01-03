@@ -203,9 +203,14 @@ ul#pages li span{ padding:0 10px }
 
 #config-table{ border-width:1px 1px 1px 0;border-color:#999;border-style:solid;padding:0;width:80%;margin:25px 10%;border-spacing:0 }
 #config-table td{ border-left:1px solid #999;padding:7px 9px }
-ul#template{ list-style-type:none;margin:30px 0 0 }
-.template-selectable{ float:left;width:262px;border:1px solid #999;margin-left:20px }
+#template{ list-style-type:none }
+#template li{ padding: 0;margin-top:10px;display:inline-block;vertical-align:top }
+.template-selectable{ width:30%;min-width:262px;border-color:#999;border-style:solid;border-width:0 1px 1px 1px;margin-left:20px }
 .temp-cont{ margin:0 6px 6px }
+#temp-screenshot{ border:1px solid #999;margin-top:5px }
+#temp-screenshot p{ margin:3px;font-style:italic }
+p.th span.status{ float:right;margin-right:5px }
+.activated{ background:#ded }
 
 /* Prompt */
 

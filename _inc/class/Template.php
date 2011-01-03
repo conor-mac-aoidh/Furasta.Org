@@ -83,7 +83,7 @@ class Template {
 	 * @var mixed
 	 * @access public
 	 */
-	public $diagnosticJavascript = 0;
+	public $diagnosticJavascript = 1;
 
         /**
          * title 

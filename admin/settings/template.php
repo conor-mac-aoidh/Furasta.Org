@@ -12,32 +12,38 @@
  * @package    admin_settings
  */
 
-$head='
-<script type="text/javascript">
+$javascript='
 $(document).ready(function(){
-        $(".delete-link").click(function(){
-                fConfirm("Are you sure you want to delete this template?",function(element){
-                        element.parent().parent().parent().fadeOut("slow");
-                        fetch("/_inc/ajax.php?file=admin/settings/template/delete.php&name="+element.attr("id"));
-                },$(this));
-        });
-        $(".activate-link").click(function(){
-		$(".template-selectable").each(function(){
-			if($(this).hasClass("activated"))
-				$(this).removeClass("activated");
-		});
-		var element=$(this).parent().parent().parent();
-		element.stop().css("background-color","#FFFF9C").animate({backgroundColor:"#ffffff"},1500);
-                element.addClass("activated");
 
-		fetch("/_inc/ajax.php?file=admin/settings/template/activate.php&name="+$(this).attr("id"));
+        $(".delete-link").click(function(){
+
+                fConfirm("Are you sure you want to delete this template?",function(element){
+
+                        fetch( "/_inc/ajax.php?file=admin/settings/template/delete.php&name="+element.attr("id"), function( element, html ){
+
+                                if( html == "perm" )
+                                        fAlert( "You have insufficient privelages to delete this page." );
+
+                                else{
+
+                                        element.parent().parent().parent( ).fadeOut( "slow", function( ){
+
+                                                $( this ).remove( );
+
+                                        });
+
+                                }
+
+                        }, element );
+
+                },$(this));
+
         });
 
 });
-</script>
 ';
 
-$Template->add('head',$head);
+$Template->loadJavascript( 'FURASTA_ADMIN_SETTINGS_TEMPLATE', $javascript );
 
 $content='
 <span class="header-img" id="header-Template">&nbsp;</span><h1 class="image-left">Template</h1></span>
@@ -46,7 +52,8 @@ $content='
 ';
 
 $templates=scan_dir(HOME.'_www');
-$num=0;
+$validated = array( );
+
 foreach($templates as $template){
 	$loc=HOME.'_www/'.$template.'/';
 	if(!file_exists($loc.'index.html')||!file_exists($loc.'style.css'))
@@ -54,19 +61,45 @@ foreach($templates as $template){
 	$array=parse_template_file($loc.'style.css');
 	if($array==false)
 		continue;
-	$screenshot=(file_exists($loc.'screenshot.png'))?'/_www/'.$template.'/screenshot.png':'/_inc/img/screenshot.png';
+
+	if( !isset( $array[ 'Name' ] ) )
+		continue;
+
+	if( $array[ 'Name' ] == basename( TEMPLATE_DIR ) ){
+		array_unshift( $validated, $array );
+		continue;
+	}
+
+	array_push( $validated, $array );
+}
+
+$i=0;
+foreach( $validated as $array ){
+	$screenshot=(file_exists(HOME.'_www/'.$array['Name'].'/screenshot.png'))?'<img src="' . SITEURL . '_www/'.$array[ 'Name' ].'/screenshot.png" width="248px"/>': '<p>No Screenshot</p>';
+	if( $i == 0 ){
+		$class = ' activated';
+		$status = 'Activated';
+	}
+	else{
+		$activate = '<a href="' . SITEURL . 'admin/settings/template/activate.php?name=' . $array[ 'Name' ] . '" class="activate-link">Activate</a> | <a class="delete-link link" id="'.$array[ 'Name' ].'">Delete</a>';
+		$class = '';
+		$status = '';
+	}
+
 	$content.='
-	<li class="template-selectable">
-		<p class="th"><span>'.htmlspecialchars($array['Name']).' <span class="status"></span><span></p>
+	<li class="template-selectable' . $class . '">
+		<p class="th"><span>'.htmlspecialchars($array['Name']).'</span><span class="status">' . $status . '</span></p>
 		<div class="temp-cont">
-	       		<img src="'.$screenshot.'" max-height="200px" max-width="250px"/>
+	       		<div id="temp-screenshot">'.$screenshot.'</div>
 			<br/>
-			<p>'.htmlspecialchars($array['Description']).'</p>
-                        <p class="right">by <a href="'.htmlspecialchars($array['Author URL']).'">'.htmlspecialchars($array['Author']).'</a></p>
+			<p>'.htmlspecialchars(@$array['Description']).'</p>
+                        <p class="right">by <a href="'.htmlspecialchars(@$array['Author URL']).'">'.htmlspecialchars(@$array['Author']).'</a></p>
 			<br/>
-			<p><a href="#" class="activate-link" id="'.$template.'">Activate</a> | <a href="#" class="delete-link" id="'.$template.'">Delete</a></p>
+			<p>' . @$activate . '</p>
 		</div>
 	</li>';
+
+	$i++;
 }
 
 $content.='</ul><br style="clear:both"/>';

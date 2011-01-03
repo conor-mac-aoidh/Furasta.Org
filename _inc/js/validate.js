@@ -301,6 +301,8 @@ function validUrl( fields, errorHandler ){
 
 }
 
-if(typeof(fAlert)!='function')
-	function fAlert(message)
+if(typeof(fAlert)!='function'){
+	function fAlert(message){
 		alert(message);
+	}
+}

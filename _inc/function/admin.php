@@ -31,7 +31,10 @@
  * @return array
  */
 function parse_template_file($file){
+	$allowed = array( 'Name', 'URL', 'Description', 'Author', 'Author URL' );
+
 	$contents=file_get_contents($file);
+
 	if(!preg_match("/\/\*(.*?)\*\//s",$contents,$match))
 		return false;
 	$vals=preg_split("/[\s]*[\n][\s]*/",$match[0]);
@@ -41,6 +44,8 @@ function parse_template_file($file){
 	$array=array();
 	foreach($vals as $val){
 		$val=preg_split("/[\s]*[:] [\s]*/",$val);
+		if( !in_array( $val[ 0 ], $allowed ) )
+			continue;
 		$array[$val[0]]=$val[1];
 	}
 
