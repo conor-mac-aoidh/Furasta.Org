@@ -35,7 +35,8 @@ if( $type == 'Normal' ){
 			<textarea id="page-content" name="PageContent" class="tinymce" style="width:100%">' . @$content . '</textarea>
 		';
 }
-else
-        echo $Plugins->adminPageType( $type, $id );
+else{
+        $Plugins->adminPageType( $type, $id );
 
+}
 ?>

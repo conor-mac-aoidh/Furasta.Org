@@ -93,8 +93,9 @@ $Smarty->assign('site_subtitle',$SETTINGS['site_subtitle']);
  */
 $Smarty->register_function( 'menu', 'frontend_menu' );
 $Smarty->register_function( 'page_tree', 'frontend_page_tree' );
-$Smarty->register_function( 'css_url', 'frontend_css_url' );
-
+$Smarty->register_function( 'css_load', 'frontend_css_load' );
+$Smarty->register_function( 'javascript_load', 'frontend_javascript_load' );
+$Smarty->register_function( 'page_tree', 'frontend_page_tree' );
 
 $file=($Page[ 'template' ]=='Default')?TEMPLATE_DIR.'index.html':TEMPLATE_DIR.$Page[ 'template' ].'.html';
 

@@ -10,6 +10,8 @@
  * @version    1.0
  */
 
+$Template = Template::getInstance( );
+
 $Template->add( 'title', 'Login' );
 
 /**
@@ -60,6 +62,9 @@ if( @$check == 1 ){
 		 */
 		if( $remember == 1 )
 			$User->setCookie( );
+
+		if( isset( $_GET[ 'redirect' ] ) )
+			header( 'location: ' . SITEURL . substr( $_GET[ 'redirect' ], 1 ) );
 
                 header( 'location: ' . SITEURL . 'admin/index.php' );
 	}

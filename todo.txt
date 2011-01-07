@@ -1,10 +1,10 @@
 # TODO list for Furasta.Org v1.0 Beta 2 #
 
-6. Complete the auto-update feature, and possibly allow for system wide 'alerts' which will appear on every page.
 10. Develop a few plugins to test, and adjust, the plugin architecture: File Manager (*), News Plugin (with RSS), something else..
 17. Finish the password reminder!
-22. change the location of the backup folder to inside the _user dir and create that dir during installation.
 25. Create bugs@furasta.org and support@furasta.org emails
+26. finish installer
+27. frontend css caching, javascript caching
 
 # TODO list for Furasta.Org v1.0 - General Release #
 
@@ -13,6 +13,7 @@
 3. complete support for installing in sub directorys
 4. ensure CSS cross-browser compatability
 5. add plugin $importance var
+6. update installer if nessecary
 
 # TODO list for Furasta.Org v1.1 #
 
@@ -30,3 +31,5 @@
 13. convert list pages sortable into a jquery plugin - extention of jquery ui
 14. add icons.png to the $Template class - so that its cached or otherwise created on load, should have ability to add images from plugins. should use GD and check if its installed
 15. enable custom mantinence error and option to use mantinence template
+16. update installer if nessecary
+17. add capability to have users in multiple groups

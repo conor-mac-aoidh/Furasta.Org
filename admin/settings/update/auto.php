@@ -26,6 +26,41 @@ $(function() {
 $Template->loadJavascript( 'FURASTA_ADMIN_SETTINGS_UPDATE', $javascript );
 
 
+/**
+ * check for updates 
+ */
+$cache_file = 'FURASTA_ADMIN_RSS_UPDATE';
+
+/**
+ * fetch update feed
+ */
+$rss = rss_fetch( SITEURL . 'update.xml', 'item' );
+
+foreach( $rss as $feed ){
+
+	if( VERSION < $feed[ 'version' ] ){
+		$status = '<p>An update to the CMS is available. Press update below to automatically upgrade to 
+				<a href="' . $feed[ 'link' ] . '">' . $feed[ 'title' ] . '</a></p>
+				<h3>New Features</h3>
+				' . $feed[ 'description' ] . '
+				<p><a href="settings.php?page=update&action=verify-auto&file=' . $feed[ 'download' ] . '" class="grey-submit right">Auto Update</a></p>
+				<br style="clear:both" />
+		';
+
+	}
+
+}
+
+if( $rss == false )
+	$status = '<p>Could not make a connection. Please use the manual updater.</p>';
+
+if( !isset( $status ) )
+	$status = '<p>No Update Available. Please check back later.</p>';
+
+
+cache( $cache_file, json_encode( $rss ), 'RSS' );
+
+
 $content='
 <span><span class="header-img" id="header-Auto-Update">&nbsp;</span><h1 class="image-left">Core Update</h1></span>
 <br/>
@@ -37,7 +72,7 @@ $content='
 	</ul>
 	<div id="tabs-1">
 		<div id="tabs-content">
-			<p>Could not make a connection. Please use the manual updater.</p>
+			' . $status . '
 		</div>
 	</div>
 </div>

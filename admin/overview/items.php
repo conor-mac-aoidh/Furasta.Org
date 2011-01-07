@@ -12,6 +12,13 @@
  * @package    admin_overview
  */
 
+/**
+ * make sure ajax script was loaded and user is
+ * logged in 
+ */
+if( !defined( 'AJAX_LOADED' ) || !defined( 'AJAX_VERIFIED' ) )
+        die( );
+
 $overview_item = @$_GET['overview_item'];
 
 if( $overview_item == '' )
@@ -46,11 +53,16 @@ switch( $overview_item ){
 	case 'recently-edited':
 		echo '<table class="row-color">';
 
-		$pages = rows( 'select id,name,content,edited from ' . TRASH . ' order by edited desc limit 5' );
-		foreach( $pages as $page )
-        		echo '<tr><td><span>' . date( "F j, Y", strtotime( $page[ 'edited' ] ) ) . '
-        		</span><a href="pages.php?page=trash"><h3>' . $page[ 'name' ] . '</h3></a>
-        		<p>' . strip_tags( substr( $page[ 'content' ], 0, 125 ) ) . ' [...]</p></td></tr>';
+		$pages = rows( 'select id,name,content,edited,perm from ' . TRASH . ' order by edited desc limit 5' );
+		foreach( $pages as $page ){
+
+			$perm = explode( '|', $page[ 'perm' ] );
+
+			if( $User->pagePerm( $perm[ 1 ] ) )
+		        		echo '<tr><td><span>' . date( "F j, Y", strtotime( $page[ 'edited' ] ) ) . '
+		        		</span><a href="pages.php?page=trash"><h3>' . $page[ 'name' ] . '</h3></a>
+		        		<p>' . strip_tags( substr( $page[ 'content' ], 0, 125 ) ) . ' [...]</p></td></tr>';
+		}
 
 		echo '</table>';
 	break;
@@ -58,15 +70,16 @@ switch( $overview_item ){
 		echo '<table class="row-color">';
 
 		$pages = rows( 'select id,name,content,edited from ' . PAGES . ' order by edited desc limit 5' );
-		foreach( $pages as $page )
+		foreach( $pages as $page ){
         		echo '<tr><td><span>' . date( "F j,Y", strtotime( $page[ 'edited' ] ) ) . '</span><a
 		        href="pages.php?page=edit&id=' . $page[ 'id' ] . '"><h3>' . $page[ 'name' ] . '</h3></a>
 		        <p>' . strip_tags( substr( $page[ 'content' ], 0, 125 ) ) . ' [...]</p></td></tr>';
+		}
 
 		echo '</table>';
 	break;
 	case 'furasta-devblog':
-		$cache_file = 'FURASTA_RSS_DEVBLOG';
+		$cache_file = md5( 'FURASTA_RSS_DEVBLOG' );
 
 		if( cache_is_good( $cache_file, '60 * 60 * 24 * 3', 'RSS' ) )
         		$items = json_decode( cache_get( $cache_file, 'RSS' ), true );

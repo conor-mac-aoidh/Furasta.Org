@@ -39,5 +39,5 @@ switch( $function ){
 		error('Please contact bugs@macaoidh.name','Unknown Error');
 }
 
-header( 'location: pages.php?page=list&status=Pages Trashed' );
+header( 'location: pages.php?page=list&error=15' );
 ?>

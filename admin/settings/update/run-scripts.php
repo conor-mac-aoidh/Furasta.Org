@@ -14,15 +14,17 @@
 $script=HOME.'update.php';
 
 if(!file_exists($script))
-	die();
+	die( 'ok' );
 
 require $script;
 
 cache_clear();
 
-remove_dir(HOME.'update');
+if( is_dir( HOME . 'update' ) )
+	remove_dir(HOME.'update');
+
 unlink(HOME.'update.php');
-unlink(HOME.'update.zip');
+unlink(USERFILES.'update.zip');
 
 die('ok');
 ?>

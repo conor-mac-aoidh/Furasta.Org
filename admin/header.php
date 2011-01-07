@@ -37,7 +37,7 @@ $Plugins->hook( 'admin', 'on_load' );
 /**
  * check for updates 
  */
-$cache_file = 'FURASTA_ADMIN_RSS_UPDATE';
+$cache_file = md5( 'FURASTA_ADMIN_RSS_UPDATE' );
 if( !cache_is_good( $cache_file, '60*60*24*3', 'RSS' ) ){
 	/**
 	 * fetch update feed
@@ -59,7 +59,7 @@ if( !cache_is_good( $cache_file, '60*60*24*3', 'RSS' ) ){
 	cache( $cache_file, json_encode( $rss ), 'RSS' ); 
 }
 
-$cache_file = 'FURASTA_ADMIN_MENU_' . $_SESSION[ 'user' ][ 'id' ];
+$cache_file = md5( 'FURASTA_ADMIN_MENU_' . $_SESSION[ 'user' ][ 'id' ] );
 
 if(cache_exists($cache_file,'USERS'))
 	$menu=json_decode(cache_get($cache_file,'USERS'));

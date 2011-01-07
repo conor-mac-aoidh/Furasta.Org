@@ -55,8 +55,6 @@ if( isset( $_POST[ 'new-save' ] ) && $valid == true ){
 		 */
 		if( $home == 1 )
 			query( 'update ' . PAGES . ' set home=0 where home=1' );
-		elseif( $home == 'NA' )
-			$home = 1;
 
 		/**
 		 * save page to database 
@@ -149,51 +147,87 @@ $(document).ready(function(){
 
         /**
          * function to run when page-permissions-dialog
-	 * is saved 
+         * is saved 
          */
         var saveFunction = function( ){
 
-		var see = $( "input[name=\'who-can-see\']:checked" ).val( );
+                var see = $( "input[name=\'who-can-see\']:checked" ).val( );
 
-		var edit = $( "input[name=\'who-can-edit\']:checked" ).val( );
+                var edit = $( "input[name=\'who-can-edit\']:checked" ).val( );
 
+                var see_users = [];
+                var edit_users = [];
 		var see_groups = [];
 		var edit_groups = [];
+		var see_perm = "";
+		var edit_perm = "";
 
-		if( see == "selected" ){
+                if( see == "selected" ){
 
-			$( "input[name=\'see-groups\']:checked" ).each( function( i ){
+			var n = 0;
 
-				see_groups[ i ] = $( this ).val( );
+                        $( "input[name=\'see-users\']:checked" ).each( function( ){
 
-			});
-
-		}
-
-                if( edit == "selected" ){
-
-                        $( "input[name=\'edit-groups\']:checked" ).each( function( i ){
-
-                                edit_groups[ i ] = $( this ).val( );
+				if( !$( this ).attr( "disabled" ) ){
+					see_users[ n ] = $( this ).val( );
+					n++;
+				}
 
                         });
 
+                        $( "input[name=\'see-groups\']:checked" ).each( function( i ){
+
+				see_groups[ i ] = $( this ).val( );
+
+                        });
+
+			if( see_groups.length == 0 )
+				see_perm = see_users.join( "," );
+			else
+				see_perm = see_users.join( "," ) + "#" + see_groups.join( "," );
+
+
                 }
 
-		var groups = see_groups.join( "," ) + "|" + edit_groups.join( "," );
+                if( edit == "selected" ){
+			var n = 0;
 
-		$( "input[name=\'perm\']" ).attr( "value", groups );
+                        $( "input[name=\'edit-users\']:checked" ).each( function( ){
 
-		$( this ).dialog( "close" );
+                                if( !$( this ).attr( "disabled" ) ){
+	                                edit_users[ n ] = $( this ).val( );
+					n++;
+				}
+
+                        });
+
+                        $( "input[name=\'edit-groups\']:checked" ).each( function( i ){
+
+				edit_groups[ i ] = $( this ).val( );
+
+                        });
+
+                        if( edit_groups.length == 0 )
+                                edit_perm = edit_users.join( "," );
+                        else
+                                edit_perm = edit_users.join( "," ) + "#" + edit_groups.join( "," );
+
+                }
+
+                var users = see_perm + "|" + edit_perm;
+
+                $( "input[name=\'perm\']" ).attr( "value", users );
+
+                $( this ).dialog( "close" );
 
         };
 
-        $( "#page-permissions" ).click( function( ){
+       $( "#page-permissions" ).click( function( ){
 
                 $( "#page-permissions-dialog" ).dialog({
                         modal:  true,
 
-                        width:  "500px",
+                        width:  "55%",
 
                         buttons: {
         
@@ -213,24 +247,21 @@ $(document).ready(function(){
 
                 $( "#page-permissions-dialog" ).dialog( "open" );
 
-        });
+		/**
+		 * load content if not already loaded
+		 */
+		if( !$( "#page-permissions-content" ).hasClass( "loaded" ) ){
 
-	/**
-	 * page permissions radio button
-	 * this code changes the checkboxes
-	 * of groups to be disabled when
-	 * unavailable 
-	 */
-	$( "input[name=\'who-can-see\']" ).change( function( ){
+			$( "#page-permissions-content" ).load( "' . SITEURL . '_inc/ajax.php?file=admin/pages/permissions.php", function( ){
 
-		toggleCheckboxes( "input[name=\'see-groups\']" );
-	});
+				$( this ).addClass( "loaded" );
 
-        $( "input[name=\'who-can-edit\']" ).change( function( ){
+			});
 
-		toggleCheckboxes( "input[name=\'edit-groups\']" );
+		}
 
         });
+
 
 });
 ';
@@ -241,61 +272,19 @@ $(document).ready(function(){
 $Template->loadJavascript( '_inc/js/jquery/tinymce.min.js' );
 $Template->loadJavascript( 'FURASTA_ADMIN_PAGES_NEW', $javascript );
 
-
 /**
- * begin setup of the page 
+ * create base url 
  */
-$url = 'http://' . $_SERVER[ 'SERVER_NAME' ];
+$url = substr( SITEURL, 0, -1 );
 
 $content = '
 <div id="page-permissions-dialog" title="Page Permissions" style="display:none">
         <div id="complete-message" style="display:none"></div>
         <form id="page-permissions-content">
-                <table style="margin-top:0">                        <tr><td colspan="4"><h3>Who can view this page:</h3></td></tr>
-                        <tr>
-                                <td><input type="radio" class="checkbox" name="who-can-see" value="everyone" checked="checked" /> Everyone</td>
-                        </tr>
-                        <tr>
-                                <td><input type="radio" class="checkbox" name="who-can-see" value="selected"/> Selected Groups:</td>
-                        </tr>
-			<tr>
-				<td colspan="3"><p class="small" style="margin: 0pt 10px;">Using Groups, users must be logged in to view the page.</p></td>
-			</tr>
-                        <tr>';
-
-$groups = rows( 'select name from ' . GROUPS );
-
-for( $i = 0; $i < count( $groups ); $i++ ){
-        $content .= '<td><input disabled="disabled" type="checkbox" class="checkbox" name="see-groups" value="' . $groups[ $i ][ 'name' ] . '"/> ' . $groups[ $i ][ 'name' ] . '</t
-d>';
-
-        if( ( $i + 1 ) % 3 == 0 && ( $i + 1 ) < count( $groups ) )
-                $content .= '</tr><tr>';
-}
-
-$content .='
-                        </tr>
-                        <tr><td colspan="4"><h3>Who can edit this page:</h3></td></tr>
-                        <tr>
-                                <td><input checked="checked" type="radio" class="checkbox" name="who-can-edit" value="all-groups"/>All Groups</td>
-                        </tr>
-                        <tr>
-                                <td><input type="radio" class="checkbox" name="who-can-edit" value="selected"/> Selected Groups:</td>
-                        </tr>
-                        <tr>';
-
-for( $i = 0; $i < count( $groups ); $i++ ){
-        $content .= '<td><input disabled="disabled" type="checkbox" class="checkbox" name="edit-groups" value="' . $groups[ $i ][ 'name' ] . '"/> ' . $groups[ $i ][ 'name' ] . '</td>';
-
-        if( ( $i + 1 ) % 3 == 0 && ( $i + 1 ) < count( $groups ) )
-                $content .= '</tr><tr>';
-}
-
-$content .='
-                        </tr>
-                </table>
-        </form>
+		<p>Loading.. <img src="' . SITEURL . '_inc/img/loading.gif"/></p>
+	</form>
 </div>
+
 
 <span class="header-img" id="header-New-Page">&nbsp;</span>
 <h1 class="image-left">
@@ -308,7 +297,7 @@ $content .='
 	<table id="page-details">
 		<tr>
                         <td class="small">Name:</td>
-			<td><input type="text" name="Name" id="page-name" value=""/></td>
+			<td><input type="text" name="Name" id="page-name" value="" autocomplete="off"/></td>
 			<td class="options"><a id="options-link">Show Options</a></td>
 		</tr>
 		<tr>
@@ -375,7 +364,10 @@ else{
 $type = ( @$_GET[ 'type' ] == '' ) ? 'Normal' : @$_GET[ 'type '];
 
 $content .= '
-				<td class="small"><a class="link" id="page-permissions">Permissions</a><input type="hidden" name="perm" value="|"/></td>
+				<td class="small">
+					<a class="link" id="page-permissions">Permissions</a>
+					<input type="hidden" name="perm" value="|"/>
+				</td>
 			</tr>
 		</table>
 	</div>

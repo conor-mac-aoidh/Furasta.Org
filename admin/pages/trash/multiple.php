@@ -23,15 +23,18 @@ switch($function){
 			query('delete from '.TRASH.' where id='.$id,true);
 		}
 		cache_clear('PAGES');
-//		die(print_r($boxes));
+
+		$error = '16';
 	break;
 	case 'Delete':
 		foreach($boxes as $id)
                         query('delete from '.TRASH.' where id='.$id,true);
+
+		$error = '17';
 	break;
 	default:
 		error('Please contact bugs@macaoidh.name','Unknown Error');
 }
 
-header('location: pages.php?page=trash');
+header('location: pages.php?page=trash&error=' . $error);
 ?>

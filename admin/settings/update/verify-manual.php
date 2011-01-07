@@ -14,7 +14,7 @@
  */
 
 if(isset($_FILES['Update-Package'])&&file_exists($_FILES['Update-Package']['tmp_name'])){
-	if(move_uploaded_file($_FILES['Update-Package']['tmp_name'],HOME.'update.zip'))
+	if(move_uploaded_file($_FILES['Update-Package']['tmp_name'],USERFILES.'update.zip'))
 	        require 'perform-update.php';
 	else
                 $Template->add('content','There was an error uploading the file, please try again.');

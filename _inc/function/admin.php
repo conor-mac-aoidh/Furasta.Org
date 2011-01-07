@@ -103,7 +103,9 @@ function list_pages( $id, $pages, $level=0 ){
 
         $list='';
         foreach( $pages[ $id ] as $page ){
-		if( $User->pagePerm( $page[ 'perm' ] ) ){
+		$perm = explode( '|', $page[ 'perm' ] );
+
+		if( $User->pagePerm( $perm[ 1 ] ) ){
 	                $num++;
         	        $href = '<a href="pages.php?page=edit&id='.$page['id'].'" class="list-link">';
                 	$class = ( $level == 0 ) ? ' ':' class="child-of-node-'.$page['parent'].'"';
@@ -177,7 +179,7 @@ function display_menu($menu_items){
  */
 function pages_array( ){
 
-	$cache_file = 'FURASTA_ADMIN_PAGES_ARRAY';
+	$cache_file = md5( 'FURASTA_ADMIN_PAGES_ARRAY' );
 
 	if( cache_is_good( $cache_file, 'PAGES' ) )
 		return json_decode( cache_get( $cache_file, 'PAGES' ) );	

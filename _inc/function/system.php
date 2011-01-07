@@ -225,6 +225,7 @@ define(\'VERSION\',\''.$version.'\');
 define(\'SITEURL\',\''.$site_url.'\');
 define(\'USERFILES\',\''.$user_files.'\');
 define(\'SYSTEM_ALERT\',\''.$system_alert.'\');
+define(\'NEW_CONST\', \'test\' );
 
 $PLUGINS=array(';
 

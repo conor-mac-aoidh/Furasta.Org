@@ -31,7 +31,7 @@ function cache($name,$content,$dir=''){
 			mkdir(USERFILES.'cache/'.$dir);
 	}
 
-	$file=USERFILES.'cache/'.$dir.md5($name);
+	$file=USERFILES.'cache/'.$dir.$name;
 	return file_put_contents($file,$content);
 }
 
@@ -49,7 +49,7 @@ function cache_get($name,$dir=''){
         if($dir!=''&&substr($dir,-1)!='/')
                 $dir=$dir.'/';
 
-	$file=USERFILES.'cache/'.$dir.md5($name);
+	$file=USERFILES.'cache/'.$dir.$name;
 	return file_get_contents($file);
 }
 
@@ -68,12 +68,12 @@ function cache_is_good($name,$length,$dir=''){
         if($dir!=''&&substr($dir,-1)!='/')
                 $dir=$dir.'/';
 	
-	$file=USERFILES.'cache/'.$dir.md5($name);
+	$file=USERFILES.'cache/'.$dir.$name;
 
 	if(!file_exists($file))
 		return false;
 
-	if( ( time( ) - $length ) < filemtime( $file ) )
+	if( time( ) - filemtime( $file ) >= $length )
 		return true;
 
 	return false;
@@ -132,7 +132,7 @@ function cache_exists($file,$dir=''){
 	if($dir!=''&&substr($dir,-1)!='/')
 		$dir=$dir.'/';
 
-	return (file_exists(USERFILES.'cache/'.$dir.md5($file)));
+	return (file_exists(USERFILES.'cache/'.$dir.$file));
 }
 
 ?>

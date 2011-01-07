@@ -28,13 +28,13 @@ if( $SETTINGS[ 'maintenance' ] == 1 && $User->verify( ) == false )
 $page=@$_GET['page'];
 
 if($page=='')
-	$id=single('select id from '.PAGES.' where home=1','id');
+	$id=single('select id from '.PAGES.' where home=1 limit 1','id' );
 else{
         $array=explode('/',$page);
         if(end($array)=='')
                 array_pop($array);
         $slug=addslashes(end($array));
-	$id=single('select id from '.PAGES.' where slug="'.$slug.'"','id');
+	$id=single('select id from '.PAGES.' where slug="'.$slug.'"','id' );
 	if($id==false)
 		require HOME . '_inc/404.php';
 }
@@ -44,6 +44,11 @@ else{
  */
 $Page = row( 'select * from ' . PAGES . ' where id=' . $id );
 $Page = stripslashes_array( $Page );
+
+//$perm = explode( '|', $Page[ 'perm' ] );
+//if( !$User->pagePerm( $perm[ 0 ] ) )
+//	die( );
+//	header( 'location: ' . SITEURL . 'admin/index.php?redirect=' . $_SERVER[ 'REQUEST_URI' ] );
 
 require HOME.'_inc/smarty.php';
 

@@ -97,6 +97,13 @@ class OverviewItems{
 		$Plugins = Plugins::getInstance( );
 		$items = array_merge( $Plugins->adminOverviewItems( ) , $items );
 
+		/**
+		 * make sure user has permission to view trash item
+		 */
+		$User = User::getInstance( );
+		if( !$User->hasPerm( 't' ) )
+			unset( $items[ 3 ] );
+
 		$this->items = $items;
 
 	}

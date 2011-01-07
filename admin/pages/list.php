@@ -12,6 +12,14 @@
  */
 
 /**
+ * get the error if isset 
+ */
+$error = @$_GET[ 'error' ];
+
+if( $error != '' )
+        $Template->runtimeError( $error );
+
+/**
  * @todo finish the sortable below 
  */
 $javascript = '
@@ -120,7 +128,7 @@ function reclassifyItem( item ){
 
 $(document).ready( function( ){
 	/**
-	 * set up the treetable for the pages table
+	 r set up the treetable for the pages table
 	 */
 	$( "#pages" ).treeTable({
 
@@ -432,7 +440,7 @@ $content = '
 		<input id="p_1" class="p-submit submit" type="submit" value="Go"/>
         </div>
 	<div id="options-bar-left">
-		<a href="#" id="treeTable-toggle">
+		<a class="link" id="treeTable-toggle">
 			<img src="/_inc/img/expand-collapse-all.jpg"/>
 		</a>
 	</div>

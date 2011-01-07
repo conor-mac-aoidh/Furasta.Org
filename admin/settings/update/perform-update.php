@@ -12,8 +12,7 @@
  * @package    admin_settings
  */
 
-$head='
-<script type="text/javascript">
+$javascript='
 $(document).ready(function(){
 	$("#progress").progressbar({value:2});	
 	$("#percentage").html("2%");
@@ -59,11 +58,9 @@ function ajax_get(stage){
                 }
         }); 
 }
-
-</script>
 ';
 
-$Template->add('head',$head);
+$Template->loadJavascript('FURASTA_ADMIN_SETTINGS_PERFORM_UPDATE',$javascript);
 
 $Template->add('content','<h2 style="float:right;color:red" id="update-message"></h2><h1>Core Updater</h1><div id="update-content"><p class="right" id="percentage"></p><p id="status">Begining update..</p><img src="/_inc/img/loading.gif" id="loading-gif" class="right" style="margin-top:20px"/><div id="progress"></div><br style="clear:both"/></div>');
 

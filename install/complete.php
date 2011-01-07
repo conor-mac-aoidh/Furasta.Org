@@ -37,7 +37,7 @@ $pagecontent='
 ';
 
 query('drop table if exists '.$pages);
-query('create table '.$pages.' (id int auto_increment primary key,name text,content text,slug text,template text,type text,edited date,user text,position int,parent int,perm text,home int,display int)');
+query('create table '.$pages.' (id int auto_increment primary key,name text,content text,slug text,template text,type text,edited date,user text,position int,parent int,perm text, home int,display int)');
 query('insert into '.$pages.' values(0,"Home","'.$pagecontent.'","Home","Default","Normal","'.date('Y-m-d').'","Installer",1,0,"|",1,1)');
 
 query('drop table if exists '.$users);
@@ -59,7 +59,7 @@ define(\'TRASH\',\''.$trash.'\');
 define(\'GROUPS\',\''.$groups.'\');
 define(\'TEMPLATE_DIR\',\''.HOME.'_www/.default/\');
 define(\'PREFIX\',\''.$prefix.'\');
-define(\'VERSION\',\'0.9\');
+define(\'VERSION\',\'0.9.2\');
 define(\'SITEURL\',\''.$site_url.'\');
 define(\'USERFILES\',\''.$user_files.'\');
 define(\'SYSTEM_ALERT\',\'\');

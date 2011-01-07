@@ -398,9 +398,9 @@ class User{
 	 * 
 	 * used to check if the user has permission
 	 * to access the page, pass the pages permissions 
-	 * array
+	 * string
 	 * 
-	 * @param string or array $perm 
+	 * @param string $perm 
 	 * @access public
 	 * @return bool
 	 */
@@ -412,29 +412,51 @@ class User{
 		if( $this->group == '_superuser' )
 			return true;
 
-		/**
-		 * if perm string from database is given,
-		 * break it down 
-		 */
-		if( !is_array( $perm ) ){
-			$perm = explode( '|', $perm );
+                /**
+                 * if no perms are set for page, then everyone
+                 * can edit it assuming they have group edit
+                 * perms
+                 */
+                if( empty( $perm ) )
+                        return $this->hasPerm( 'e' );
 
-			$perm = explode( ',', $perm[ 1 ] );
+		/**
+		 * check if groups are used, if so add
+		 * all users from that group to the array
+		 * of users
+		 */
+		if( strpos( $perm, "#" ) !== false ){
+
+			$perm = explode( '#', $perm );
+
+			/**
+			 *  users and groups arrays
+			 */
+			$users = explode( ',', $perm[ 0 ] );
+
+			$groups = explode( ',', $perm[ 1 ] );
+			
+			foreach( $groups as $group ){
+
+				/**
+				 * if user is in group, then he has
+				 * permission
+				 */
+				if( $this->group == $group )
+					return true;
+		
+			}
+
+
 		}
-
-		/**
-		 * if no perms are set for page, then everyone
-		 * can edit it assuming they have group edit
-		 * perms
-		 */
-		if( empty( $perm ) || empty( $perm[ 0 ] ) )
-			return $this->hasPerm( 'e' );
+		else
+			$users = explode( ',', $perm );
 
 		/**
 		 * check if user id is in the array of allowed
 		 * ids to edit page 
 		 */
-		if( in_array( $this->id, $perm ) )
+		if( in_array( $this->id, $users ) )
 			return true;
 
 		/**

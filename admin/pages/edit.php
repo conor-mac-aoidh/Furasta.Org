@@ -53,10 +53,10 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
         $template = addslashes( $_POST[ 'Template' ] );
         $content = addslashes( $_POST[ 'PageContent' ] );
         $slug = addslashes( $_POST[ 'slug' ] );
-        $home = (int) @$_POST[ 'Homepage' ];
+        $home = addslashes( $_POST[ 'Homepage' ] );
         $navigation = ( @$_POST[ 'Navigation' ] == 1 ) ? 0 : 1;
         $parent = (int) $_POST[ 'Parent' ];
-        $perm = (int) $_POST[ 'perm' ];
+        $perm = addslashes( @$_POST[ 'perm' ] );
 
 	/**
 	 * get pages_array and remove current page
@@ -76,6 +76,13 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
 		 */
 		if( $home == 1 )
 			query( 'update ' . PAGES . ' set home=0 where home=1' );
+//                elseif( $home == 'NA' ){
+//			die( 'na' );
+  //                      $home = 1;
+//		}
+//		elseif( $home == '' )
+		else
+			$home = '0';
 
 		/**
 		 * update database with edited page 
@@ -106,7 +113,8 @@ $Page = stripslashes_array( $Page );
  * check user has permission to edit pages
  * in general, then check for this page
  */
-if( !$User->hasPerm( 'e' ) && !$User->pagePerm( $Page[ 'perm' ] ) )
+$perm = explode( '|', $Page[ 'perm' ] );
+if( !$User->hasPerm( 'e' ) && !$User->pagePerm( $perm[ 1 ] ) )
 	error( 'You have insufficient privelages to edit this page. Please contact one of the administrators.', 'Permissions Error' );
 
 /**
@@ -179,19 +187,105 @@ $(document).ready(function(){
 		
 	});
 
-	var saveFunction = function( ){
+        /**
+         * function to run when page-permissions-dialog
+         * is saved 
+         */
+        var saveFunction = function( ){
+                var see = $( "input[name=\'who-can-see\']:checked" ).val( );
+                var edit = $( "input[name=\'who-can-edit\']:checked" ).val( );
 
-		alert( "test" );
+                var see_users = [];
+                var edit_users = [];
+                var see_groups = [];
+                var edit_groups = [];
+                var see_perm = "";
+                var edit_perm = "";
 
-	};
+                if( see == "selected" ){
+
+                        var n = 0;
+
+                        $( "input[name=\'see-users\']:checked" ).each( function( ){
+
+                                if( !$( this ).attr( "disabled" ) ){
+                                        see_users[ n ] = $( this ).val( );
+                                        n++;
+                                }
+
+
+                        });
+
+                        $( "input[name=\'see-groups\']:checked" ).each( function( i ){
+
+                                see_groups[ i ] = $( this ).val( );
+
+                        });
+
+                        if( see_groups.length == 0 )
+                                see_perm = see_users.join( "," );
+                        else
+                                see_perm = see_users.join( "," ) + "#" + see_groups.join( "," );
+
+
+                }
+
+                if( edit == "selected" ){
+
+                        var n = 0;
+
+                        $( "input[name=\'edit-users\']:checked" ).each( function( ){
+
+                                if( !$( this ).attr( "disabled" ) ){
+                                        edit_users[ n ] = $( this ).val( );
+                                        n++;
+                                }
+
+                        });
+
+                        $( "input[name=\'edit-groups\']:checked" ).each( function( i ){
+
+                                edit_groups[ i ] = $( this ).val( );
+
+                        });
+
+                        if( edit_groups.length == 0 )
+                                edit_perm = edit_users.join( "," );
+                        else
+                                edit_perm = edit_users.join( "," ) + "#" + edit_groups.join( "," );
+
+                }
+
+	
+
+		var users = see_perm + "|" + edit_perm;
+
+                $( "input[name=\'perm\']" ).attr( "value", users );
+
+                $( this ).dialog( "close" );
+
+        };
 
 	$( "#page-permissions" ).click( function( ){
+
+                /**
+                 * load content if not already loaded
+                 */
+                if( !$( "#page-permissions-content" ).hasClass( "loaded" ) ){
+
+                        $( "#page-permissions-content" ).load( "' . SITEURL . '_inc/ajax.php?file=admin/pages/permissions.php&id=" + id, function( ){
+
+                                $( this ).addClass( "loaded" );
+
+                        });
+
+                }
 
                 $( "#page-permissions-dialog" ).dialog({
 
                         modal:  true,
 
-                        width:  "500px",
+                        width:  "55%",
 
                         buttons: {
         
@@ -223,54 +317,11 @@ $Template->loadJavascript( '_inc/js/jquery/tinymce.min.js' );
 $Template->loadJavascript( '_inc/js/tiny_mce.js' );
 $Template->loadJavascript( 'FURASTA_ADMIN_PAGES_EDIT', $javascript );
 
-$url = 'http://' . $_SERVER[ 'SERVER_NAME' ];
-
 $content='
 <div id="page-permissions-dialog" title="Page Permissions" style="display:none">
         <div id="complete-message" style="display:none"></div>
         <form id="page-permissions-content">
-                <table style="margin-top:0">
-		        <tr><td colspan="4"><h3>Who can view this page:</h3></td></tr>
-			<tr>
-				<td><input type="radio" class="checkbox" name="who-can-see" value="everyone"/> Everyone</td>
-			</tr>
-			<tr>
-				<td><input type="radio" class="checkbox" name="who-can-see" value="selected"/> Selected Groups:</td>
-			</tr>
-			<tr>';
-
-$groups = rows( 'select name from ' . GROUPS );
-
-for( $i = 0; $i < count( $groups ); $i++ ){
-	$content .= '<td><input disabled="disabled" type="checkbox" class="checkbox" name="see-groups" value="' . $groups[ $i ][ 'name' ] . '"/> ' . $groups[ $i ][ 'name' ] . '</td>';
-
-	if( ( $i + 1 ) % 3 == 0 && ( $i + 1 ) < count( $groups ) )
-		$content .= '</tr><tr>';
-}
-
-$content .='
-			</tr>
-			<tr><td colspan="4"><h3>Who can edit this page:</h3></td></tr>
-                        <tr>
-                                <td><input type="radio" class="checkbox" name="who-can-see" value="everyone"/>All Groups</td>
-                        </tr>
-                        <tr>
-                                <td><input type="radio" class="checkbox" name="who-can-see" value="selected"/> Selected Groups:</td>
-                        </tr>
-                        <tr>';
-
-$groups = rows( 'select name from ' . GROUPS );
-
-for( $i = 0; $i < count( $groups ); $i++ ){
-        $content .= '<td><input type="checkbox" class="checkbox" name="see-groups" value="' . $groups[ $i ][ 'name' ] . '"/> ' . $groups[ $i ][ 'name' ] . '</td>';
-
-        if( ( $i + 1 ) % 3 == 0 && ( $i + 1 ) < count( $groups ) )
-                $content .= '</tr><tr>';
-}
-
-$content .='
-			</tr>
-                </table>
+		<p>Loading.. <img src="' . SITEURL . '_inc/img/loading.gif"/></p>
         </form>
 </div>
 
@@ -281,16 +332,16 @@ $content .='
 	<table id="page-details">
 		<tr>
                         <td class="small">Name:</td>
-			<td><input type="text" name="Name" id="page-name" value="'.$Page['name'].'"/></td>
+			<td><input type="text" name="Name" id="page-name" value="'.$Page['name'].'" autocomplete="off"/></td>
 			<td class="options"><a id="options-link">Show Options</a></td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
-			<td><a href="'.$url.'/'.$Page['slug'].'" id="slug-url">'.$url.'/'.$Page['slug'].'</a></td>
+			<td><a href="' . SITEURL . $Page[ 'slug' ] . '" id="slug-url">' . SITEURL . $Page[ 'slug' ] . '</a></td>
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<input type="hidden" name="slug" id="slug-put" value="'.$Page['slug'].'"/>
+	<input type="hidden" name="slug" id="slug-put" value="' . $Page[ 'slug' ] . '"/>
 	<div id="options">
 		<h2>Options</h2>
 		<table id="page-details">
@@ -308,7 +359,7 @@ foreach($options as $option){
 		$content.='<option value="'.$option.'">'.$option.'</option>';
 }
 
-$homepage=($Page['home']==1)?'value="NA" checked="checked" disabled="disabled"':' value="1"';
+$homepage=($Page['home']==1)?' value="NA" checked="checked" disabled="disabled"':' value="1"';
 
 $content.='
 				</select></td>
@@ -364,7 +415,7 @@ else{
 }
 
 $content.='
-				<td class="small"><a class="link" id="page-permissions">Permissions</a><input type="hidden" name="perm" value=""/></td>
+				<td class="small"><a class="link" id="page-permissions">Permissions</a><input type="hidden" name="perm" value="' . $Page[ 'perm' ] . '"/></td>
 			</tr>
 		</table>
 	</div>

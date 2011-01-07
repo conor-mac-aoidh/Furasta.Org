@@ -11,6 +11,14 @@
  * @package    admin_pages
  */
 
+/**
+ * get the error if isset 
+ */
+$error = @$_GET[ 'error' ];
+
+if( $error != '' )
+        $Template->runtimeError( $error );
+
 $javascript = '
 $(document).ready(function(){
 

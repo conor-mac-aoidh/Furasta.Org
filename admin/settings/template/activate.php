@@ -27,7 +27,7 @@ if( !$User->verify( ) )
 if( !$User->hasPerm( 's' ) )
         error( 'You have insufficient privelages to view this page. Please contact one of the administrators.', 'Permissions Error' );
 
-$name=@$_GET['name'];
+$name=addslashes(@$_GET['name']);
 if($name=='')
         exit;
 

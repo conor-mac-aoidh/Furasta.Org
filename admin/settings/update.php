@@ -20,6 +20,9 @@ switch($action){
 	case 'verify-manual':
 		require HOME.'admin/settings/update/verify-manual.php';
 	break;
+	case 'verify-auto':
+		require HOME . 'admin/settings/update/verify-auto.php';
+	break;
 	default:
 		require HOME.'admin/settings/update/auto.php';
 }

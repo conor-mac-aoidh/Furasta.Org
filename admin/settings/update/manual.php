@@ -30,7 +30,7 @@ echo '
 	});
 </script>
 
-<div id="tabs-content"><h2>Manual Update <a href="#" id="help-manual"><img src="/_inc/img/help.png"/></a></h2>
+<div id="tabs-content"><h2>Manual Update</h2>
 
 	<form method="post" enctype="multipart/form-data" action="settings.php?page=update&action=verify-manual">
 		<table>

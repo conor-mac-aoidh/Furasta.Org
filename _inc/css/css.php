@@ -17,7 +17,7 @@ require '../define.php';
 
 $cache_file = $_SERVER['QUERY_STRING'];
 
-if( $cache_file == '' || strstr( $cache_file, '..' ) )
+if( $cache_file == '' || strpos( $cache_file, '..' ) !== false )
         die( 'hash cannot be blank, or contain ".." for security reasons.' );
 
 ob_start( 'ob_gzhandler' );

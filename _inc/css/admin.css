@@ -71,12 +71,12 @@ body{ text-align:center;background:#eee }
 /* page contents */
 
 h1{ color:#050;font-size:26px;font-style:italic }
-h2{ color:#050;font-size:18px;font-style:italic }
+h2{ color:#050;font-size:18px;font-style:italic;margin:0.5% }
 h3{ color:#050;font-size:16px }
 p{ margin:.5% }
 a{ text-decoration:none }
 b{ font-weight:bold }
-i{ font-weight:italic }
+i{ font-style:italic }
 em{ font-weight:italic }
 strong{ font-weight:bold }
 
@@ -203,6 +203,9 @@ ul#pages li span{ padding:0 10px }
 
 #config-table{ border-width:1px 1px 1px 0;border-color:#999;border-style:solid;padding:0;width:80%;margin:25px 10%;border-spacing:0 }
 #config-table td{ border-left:1px solid #999;padding:7px 9px }
+#perms-table{ border:1px solid #999;padding:0;width:95%;margin:10px 2.5% }
+#perms-table tr{ border-bottom: 1px solid #999 }
+.opacity{ opacity: 0.6; filter: alpha( opacity=60 ); }
 #template{ list-style-type:none }
 #template li{ padding: 0;margin-top:10px;display:inline-block;vertical-align:top }
 .template-selectable{ width:30%;min-width:262px;border-color:#999;border-style:solid;border-width:0 1px 1px 1px;margin-left:20px }

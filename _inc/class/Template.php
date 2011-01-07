@@ -83,7 +83,7 @@ class Template {
 	 * @var mixed
 	 * @access public
 	 */
-	public $diagnosticJavascript = 0;
+	public $diagnosticJavascript = 1;
 
         /**
          * title 
@@ -378,9 +378,9 @@ class Template {
                 foreach( $sources as $source => $contents )
 			$scripts[ $source ] = $contents;
 
-		foreach( $scripts as $name => $content ){
+		foreach( $scripts as $cache_file => $content ){
 
-	                $cache_file = md5( $name );
+			$cache_file = md5( $cache_file );
 
 			/**
 			 * makes the SITEURL constant available
@@ -398,6 +398,7 @@ class Template {
 			elseif( !cache_exists( $cache_file, 'JS' ) ){
 				$packer = new JavaScriptPacker( $content, 'Normal', true, false );
 				$content = $packer->pack( );
+				die( $content . ' ' . $cache_file );
 				cache( $cache_file, $content, 'JS');
 	                }
 
@@ -488,7 +489,7 @@ class Template {
                         cache( $cache_file, $content, 'CSS');
                 }
 
-                return SITEURL . '_inc/css/css.php?' . $cache_file;
+                return SITEURL . '_inc/css/css.php?' . md5( $cache_file );
         }
 
 }
