@@ -10,6 +10,7 @@
  * @license    http://furasta.org/licence.txt The BSD License
  * @version    1.0
  * @package    admin_pages
+ * @todo       load all select boxes on this page via ajax
  */
 
 /**
@@ -37,6 +38,8 @@ $conds = array(
 		'pattern'	=>	"^[A-Z a-z0-9]{1,40}$"
 	)
 );
+
+//$conds = $Plugins->filter( 'admin', 'filter_pages_required_conds' );
 
 $valid = validate( $conds, "#pages-edit", 'edit-save' );
 
@@ -372,12 +375,12 @@ $content.='
 					<option value="Default">Default</option>
 ';
 
-$files=scandir(TEMPLATE_DIR);
+$files = scandir( TEMPLATE_DIR );
 
 foreach($files as $file){
 	if(substr(strrchr($file,'.'),1)=='html'){
 		$file_n=basename($file,'.html');
-		if($file_n=='default')
+		if($file_n=='index')
 			continue;
 		if($file_n==$Page['template'])
 			$selected=' selected="selected"';

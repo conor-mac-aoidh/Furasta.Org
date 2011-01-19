@@ -32,8 +32,7 @@ table tr th{ height:30px;text-align:left;padding:2px 6px;color:#fff;font-size:13
 body{ text-align:center;background:#eee }
 #dialog{ display:none }
 #wrapper{ width:100% }
-/*#top{ height:80px;background:#20b220 url(%SITEURL%_inc/img/system.jpg) -154px -10px repeat-x }*/
-#top{ height:80px;background:#20b220 url(%SITEURL%_inc/img/top-bg.png) repeat-x }
+#top{ height:80px;background: url("http://furasta.l/_inc/img/top-bg.png") repeat-x #20B220 }
 #top-wrapper{ width:80%;margin:0 auto }
 #top #title{ margin:24px 0 0 3px;float:left;font-family:'Times New Roman' }
 #top #title a{ font-size:22px;color:#eee }
@@ -70,8 +69,8 @@ body{ text-align:center;background:#eee }
 
 /* page contents */
 
-h1{ color:#050;font-size:26px;font-style:italic }
-h2{ color:#050;font-size:18px;font-style:italic;margin:0.5% }
+h1{ color:#050;font-size:26px }
+h2{ color:#050;font-size:18px;margin:0.5% }
 h3{ color:#050;font-size:16px }
 p{ margin:.5% }
 a{ text-decoration:none }

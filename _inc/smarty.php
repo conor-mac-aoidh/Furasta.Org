@@ -80,7 +80,7 @@ $Smarty->assign( 'page_edited', $Page[ 'edited' ] );
 $Smarty->assign( 'page_user', $Page[ 'user' ] );
 $Smarty->assign( 'page_parent_id', $Page[ 'parent' ] );
 
-$Smarty->assign( 'siteurl', SITEURL );
+$Smarty->assign( 'site_url', SITEURL );
 
 $time=microtime(true)-START_TIME;
 $Smarty->assign('page_load_time',$time);
@@ -97,15 +97,10 @@ $Smarty->register_function( 'css_load', 'frontend_css_load' );
 $Smarty->register_function( 'javascript_load', 'frontend_javascript_load' );
 $Smarty->register_function( 'page_tree', 'frontend_page_tree' );
 
-$file=($Page[ 'template' ]=='Default')?TEMPLATE_DIR.'index.html':TEMPLATE_DIR.$Page[ 'template' ].'.html';
+$file = ( $Page[ 'template' ] == 'Default' ) ? TEMPLATE_DIR . 'index.html' : TEMPLATE_DIR . $Page[ 'template' ] . '.html';
 
-if(!file_exists($file))
+if( !file_exists( $file ) )
         error( 'Template files could not be found.', 'Template Error' );
 
-/**
- * execute onload plugin functions
- */
-$Plugins->hook( 'frontend', 'on_load' );
-
-$Smarty->display($file);
+$Smarty->display( $file );
 ?>

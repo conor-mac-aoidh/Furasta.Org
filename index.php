@@ -27,8 +27,8 @@ if( $SETTINGS[ 'maintenance' ] == 1 && $User->verify( ) == false )
 
 $page=@$_GET['page'];
 
-if($page=='')
-	$id=single('select id from '.PAGES.' where home=1 limit 1','id' );
+if( $page == '' )
+	$id = single( 'select id from ' . PAGES . ' where home=1 limit 1', 'id' );
 else{
         $array=explode('/',$page);
         if(end($array)=='')
@@ -42,7 +42,7 @@ else{
 /**
  * get page rows in array and stripslashes 
  */
-$Page = row( 'select * from ' . PAGES . ' where id=' . $id );
+$Page = row( 'select * from ' . PAGES . ' where id=' . $id, true );
 $Page = stripslashes_array( $Page );
 
 //$perm = explode( '|', $Page[ 'perm' ] );
@@ -50,6 +50,10 @@ $Page = stripslashes_array( $Page );
 //	die( );
 //	header( 'location: ' . SITEURL . 'admin/index.php?redirect=' . $_SERVER[ 'REQUEST_URI' ] );
 
-require HOME.'_inc/smarty.php';
+/**
+ * execute onload plugin functions
+ */
+$Plugins->hook( 'frontend', 'on_load' );
 
+require HOME.'_inc/smarty.php';
 ?>

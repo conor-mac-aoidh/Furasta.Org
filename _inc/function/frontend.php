@@ -64,6 +64,11 @@ function frontend_page_tree( $params ){
         if( end( $array ) == '' )
                 array_pop( $array );
 
+	if( count( $array ) == 0 ){
+		$home = single( 'select slug from ' . PAGES . ' where home=1 limit 1', 'slug' );
+		$array[ 0 ] = $home;
+	}
+
 	$seperator = isset( $params[ 'seperator' ] ) ? $params[ 'seperator' ] : ' > ';
 
 	$content = '<ul id="page-tree" style="list-style-type:none">
@@ -71,7 +76,13 @@ function frontend_page_tree( $params ){
 
 	for( $i = 0; $i < count( $array ); $i++ ){
 
-		$content .= '<li style="display:inline">' . $seperator . '<a href="' . SITEURL . $array[ $i ] . '">' . str_replace( '-', ' ', $array[ $i ] ) . '</a></li>';
+		$name = ( ( $i + 1 ) == count( $array ) ) ? '<b>' . str_replace( '-', ' ', $array[ $i ] ) . '</b>' : str_replace( '-', ' ', $array[ $i ] );
+
+		$url = SITEURL;
+		for( $n = 0; $n < ( $i + 1 ); $n++ )
+			$url .=	$array[ $n ] . '/';
+
+		$content .= '<li style="display:inline">' . $seperator . '<a href="' . $url . '">' . $name . '</a></li>';
 
 	}
 
@@ -118,7 +129,7 @@ function frontend_css_load( $params ){
         	$content = file_get_contents( $file );
 		$Template = Template::getInstance( true );
 		$Template->loadCSS( $cache_file, $content );
-		$Template->cssUrl( );
+		$Template->cssUrls( );
 
 	}
 

@@ -75,7 +75,7 @@ class Template {
 	private static $instance;
 
 	/**
-	 * diagnosticJavascript 
+	 * diagnosticMode
 	 * 
 	 * re-creates the javascript cache without compression
 	 * for diagnostic reasons
@@ -83,7 +83,7 @@ class Template {
 	 * @var mixed
 	 * @access public
 	 */
-	public $diagnosticJavascript = 1;
+	public $diagnosticMode = 1;
 
         /**
          * title 
@@ -346,7 +346,7 @@ class Template {
 		 * determine wether a file or source code are being loaded
 		 */
 		if( $content == false ){
-			if( !file_exists( HOME . $name ) )
+			if( !file_exists( HOME . $name ) || strpos( $name, '..' ) !== false )
 				return false;
 
 	                return ( array_push( $this->javascriptFiles, $name ) );
@@ -383,19 +383,28 @@ class Template {
 			$cache_file = md5( $cache_file );
 
 			/**
-			 * makes the SITEURL constant available
-			 * in JavaScript so that files etc can
-			 * be loaded properly
-			 */
-			$content = str_replace( '%SITEURL%', SITEURL, $content );
-
-			/**
 			 * check if diagnostic javascript is enabled
 			 * and if so do not compress data
 			 */
-			if( $this->diagnosticJavascript == 1 )
+			if( $this->diagnosticMode == 1 ){
+
+	                        /**
+        	                 * makes the SITEURL constant available
+                	         * in JavaScript so that files etc can
+                        	 * be loaded properly
+	                         */
+        	                $content = str_replace( '%SITEURL%', SITEURL, $content );
+
 				cache( $cache_file, $content, 'JS' );
+			}
 			elseif( !cache_exists( $cache_file, 'JS' ) ){
+	                        /**
+        	                 * makes the SITEURL constant available
+                	         * in JavaScript so that files etc can
+                        	 * be loaded properly
+	                         */
+        	                $content = str_replace( '%SITEURL%', SITEURL, $content );
+
 				$packer = new JavaScriptPacker( $content, 'Normal', true, false );
 				$content = $packer->pack( );
 				die( $content . ' ' . $cache_file );
@@ -419,7 +428,7 @@ class Template {
 	 * this function uses compression rather than packing.
 	 *
 	 * note: the compression is actually done in the
-	 * cssUrl function
+	 * cssUrls function
          * 
          * @param string $name 
          * @param string $content optional
@@ -432,7 +441,7 @@ class Template {
                  * determine wether a file or source code are being loaded
                  */
                 if( $content == false ){
-                        if( !file_exists( HOME . $name ) )
+                        if( !file_exists( HOME . $name ) || strpos( $name, '..' ) !== false )
                                 return false;
 
                         return ( array_push( $this->cssFiles, $name ) );
@@ -442,54 +451,78 @@ class Template {
         }
 
         /**
-         * cssUrl 
+         * cssUrls 
 	 *
 	 * Returns a unique URL to load which
 	 * will contain all of the CSS added
 	 * during runtime.
          * 
-	 * @todo change to cssUrls, returning an array of css file urls
+	 * @todo change to cssUrlss, returning an array of css file urls
          * @access public
          * @return string
          */
-        public function cssUrl(){
+        public function cssUrls(){
+
                 $files = $this->cssFiles;
                 $sources = $this->cssSources;
-                $content = '';
+                $scripts = array( );
+                $urls = array( );
 
                 foreach($files as $file)
-                        $content .= file_get_contents( HOME . $file );
+                        $scripts[ $file ] = file_get_contents( HOME . $file );
 
-                foreach( $sources as $source => $contents ){
-                        $content .= $contents;
-                        array_push( $files, $source );
+                foreach( $sources as $source => $contents )
+                        $scripts[ $source ] = $contents;
+
+                foreach( $scripts as $cache_file => $content ){
+
+                        $cache_file = md5( $cache_file );
+
+                        /**
+                         * check if diagnostic mode is enabled
+                         * and if so do not compress data
+                         */
+                        if( $this->diagnosticMode == 1 ){
+
+	                        /**
+        	                 * makes the SITEURL constant available
+                	         * in CSS so that files etc can
+                        	 * be loaded properly
+	                         */
+        	                $content = str_replace( '%SITEURL%', SITEURL, $content );
+
+                                cache( $cache_file, $content, 'CSS' );
+			}
+                        elseif( !cache_exists( $cache_file, 'CSS' ) ){
+
+        	                /**
+	                         * makes the SITEURL constant available
+                        	 * in CSS so that files etc can
+                	         * be loaded properly
+        	                 */
+	                        $content = str_replace( '%SITEURL%', SITEURL, $content );
+
+                        	/**
+                	         * remove comments
+        	                 */
+	                        $content = preg_replace( '!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $content );
+
+                        	/**
+                	         * remove spaces, tabs etc
+        	                 */
+	                        $content = str_replace( array( "\r\n", "\r", "\n", "\t", '  ', '    ', '    ' ), '', $content );
+
+                                cache( $cache_file, $content, 'CSS');
+                        }
+
+                        $url = SITEURL . '_inc/css/css.php?' . $cache_file;
+
+                        array_push( $urls, $url );
+
                 }
 
-                $cache_file = md5( implode( '', $files ) );
+		return $urls;
 
-                if( !cache_exists( $cache_file, 'CSS' ) ){
-
-			/**
-			 * remove comments
-			 */
-			$content = preg_replace( '!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $content );
-
-			/**
-			 * remove spaces, tabs etc
-			 */
-    			$content = str_replace( array( "\r\n", "\r", "\n", "\t", '  ', '    ', '    ' ), '', $content );
-
-			/**
-			 * makes the SITEURL constant available
-			 * in CSS so that images can be loaded
-			 * properly
-			 */
-			$content = str_replace( '%SITEURL%', SITEURL, $content );
-
-                        cache( $cache_file, $content, 'CSS');
-                }
-
-                return SITEURL . '_inc/css/css.php?' . md5( $cache_file );
         }
 
 }

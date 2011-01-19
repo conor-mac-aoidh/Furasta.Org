@@ -65,24 +65,25 @@ foreach($templates as $template){
 	if( !isset( $array[ 'Name' ] ) )
 		continue;
 
+        $array[ 'slug' ] = $template;
+
 	if( $template == basename( TEMPLATE_DIR ) ){
 		array_unshift( $validated, $array );
 		continue;
 	}
 
-	$array[ 'slug' ] = $template;
 	array_push( $validated, $array );
 }
 
 $i=0;
 foreach( $validated as $array ){
-	$screenshot=(file_exists(HOME.'_www/'.$slug.'/screenshot.png'))?'<img src="' . SITEURL . '_www/'.$slug.'/screenshot.png" width="248px"/>': '<p>No Screenshot</p>';
+	$screenshot=(file_exists(HOME.'_www/'.$array[ 'slug' ].'/screenshot.png'))?'<img src="' . SITEURL . '_www/'.$array[ 'slug' ].'/screenshot.png" width="248px"/>': '<p>No Screenshot</p>';
 	if( $i == 0 ){
 		$class = ' activated';
 		$status = 'Activated';
 	}
 	else{
-		$activate = '<a href="' . SITEURL . 'admin/settings/template/activate.php?name=' . $slug . '" class="activate-link">Activate</a> | <a class="delete-link link" id="'.$slug.'">Delete</a>';
+		$activate = '<a href="' . SITEURL . 'admin/settings/template/activate.php?name=' . $array[ 'slug' ] . '" class="activate-link">Activate</a> | <a class="delete-link link" id="'.$array[ 'slug' ].'">Delete</a>';
 		$class = '';
 		$status = '';
 	}

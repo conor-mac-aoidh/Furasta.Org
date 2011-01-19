@@ -33,3 +33,5 @@
 15. enable custom mantinence error and option to use mantinence template
 16. update installer if nessecary
 17. add capability to have users in multiple groups
+18. use jquery.cookie.js for admin overview area
+19. load select boxes in pages area via ajax
