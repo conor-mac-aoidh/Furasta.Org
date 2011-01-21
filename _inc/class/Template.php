@@ -118,6 +118,16 @@ class Template {
          */
         public $content='';
 
+	/**
+	 * javascript 
+	 * 
+	 * used to store page specific javascript
+	 *
+	 * @var string
+	 * @access public
+	 */
+	public $javascript='';
+
         /**
          * javascriptFiles
          * 
@@ -396,8 +406,14 @@ class Template {
         	                $content = str_replace( '%SITEURL%', SITEURL, $content );
 
 				cache( $cache_file, $content, 'JS' );
+
+				/**
+				 * rewrite settings file so that recache is set to one
+				 */
+				settings_rewrite( $GLOBALS[ 'SETTINGS' ], $GLOBALS[ 'DB' ], $GLOBALS[ 'PLUGINS' ], array( 'RECACHE' => 1 ) ); 
+
 			}
-			elseif( !cache_exists( $cache_file, 'JS' ) ){
+			elseif( !cache_exists( $cache_file, 'JS' ) || RECACHE == 1 ){
 	                        /**
         	                 * makes the SITEURL constant available
                 	         * in JavaScript so that files etc can
@@ -407,8 +423,10 @@ class Template {
 
 				$packer = new JavaScriptPacker( $content, 'Normal', true, false );
 				$content = $packer->pack( );
-				die( $content . ' ' . $cache_file );
 				cache( $cache_file, $content, 'JS');
+
+				if( RECACHE == 1 )
+	                                settings_rewrite( $GLOBALS[ 'SETTINGS' ], $GLOBALS[ 'DB' ], $GLOBALS[ 'PLUGINS' ], array( 'RECACHE' => 0 ) );
 	                }
 
 			$url = SITEURL . '_inc/js/js.php?' . $cache_file;

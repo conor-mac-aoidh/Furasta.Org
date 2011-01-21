@@ -198,65 +198,72 @@ function htaccess_rewrite(){
  * @param mixed $SETTINGS
  * @param mixed $DB
  * @param mixed $PLUGINS
- * @param mixed $template_dir optional
- * @param mixed $system_alert optional
- * @param mixed $version optional
- * @param mixed $prefix optional
- * @param mixed $pages optional
- * @param mixed $users optional
- * @param mixed $trash optional
- * @param mixed $groups optional
- * @param mixed $site_url optional
- * @param mixed $user_files optional
+ * @param mixed $constants optional
  * @access public
  * @return void
  */
-function settings_rewrite($SETTINGS,$DB,$PLUGINS,$template_dir=TEMPLATE_DIR,$system_alert=SYSTEM_ALERT,$version=VERSION,$prefix=PREFIX,$pages=PAGES,$users=USERS,$trash=TRASH,$groups=GROUPS,$site_url=SITEURL,$user_files=USERFILES){
-	$filecontents='<?php
+function settings_rewrite( $SETTINGS, $DB, $PLUGINS, $constants = array( ) ){
+
+	$default_constants = array(
+		'TEMPLATE_DIR' => TEMPLATE_DIR,
+		'SYSTEM_ALERT' => SYSTEM_ALERT,
+		'VERSION' => VERSION,
+		'PREFIX' => PREFIX,
+		'PAGES' => PAGES,
+		'USERS' => USERS,
+		'TRASH' => TRASH,
+		'GROUPS' => GROUPS,
+		'SITEURL' => SITEURL,
+		'USERFILES' => USERFILES,
+		'RECACHE' => RECACHE
+	);
+
+	$constants = array_merge( $default_constants, $constants );
+
+        /**
+         * plugins - filter the settings, constants and plugins arrays 
+         */
+        $Plugins = Plugins::getInstance( );
+
+        $filter = $Plugins->filter( 'general', 'filter_settings', array( $SETTINGS, $constants, $PLUGINS ) );
+	$SETTINGS = $filter[ 0 ];
+	$constants = $filter[ 1 ];
+	$PLUGINS = $filter[ 2 ];
+
+	$filecontents = '<?php
 # Furasta.Org - .settings.php #
 
-define(\'PAGES\',\''.$pages.'\');
-define(\'USERS\',\''.$users.'\');
-define(\'TRASH\',\''.$trash.'\');
-define(\'GROUPS\',\''.$groups.'\');
-define(\'TEMPLATE_DIR\',\''.$template_dir.'\');
-define(\'PREFIX\',\''.$prefix.'\');
-define(\'VERSION\',\''.$version.'\');
-define(\'SITEURL\',\''.$site_url.'\');
-define(\'USERFILES\',\''.$user_files.'\');
-define(\'SYSTEM_ALERT\',\''.$system_alert.'\');
-define(\'NEW_CONST\', \'test\' );
+';
 
-$PLUGINS=array(';
+	foreach( $constants as $constant => $value )
+		$filecontents .= 'define( \'' . $constant . '\', \'' . $value . '\' );' . "\n"; 
 
-	foreach($PLUGINS as $plugin)
-		$filecontents.='\''.$plugin.'\',';		
+	$filecontents .= '
 
-	$filecontents.=');
+$PLUGINS = array(';
 
-$SETTINGS=array(
-        \'site_title\'=>"'.$SETTINGS['site_title'].'",
-        \'site_subtitle\'=>"'.$SETTINGS['site_subtitle'].'",
-        \'index\'=>\''.$SETTINGS['index'].'\',
-        \'maintenance\'=>\''.$SETTINGS['maintenance'].'\'
+	foreach( $PLUGINS as $plugin )
+		$filecontents .= '\'' . $plugin . '\',';
+
+	$filecontents .= ');
+
+$SETTINGS = array(' . "\n";
+
+	foreach( $SETTINGS as $setting => $value )
+		$filecontents .= '	\'' . $setting . '\' => \'' . addslashes( $value ) . '\',' . "\n";
+
+	$filecontents .= '
 );
 
-$DB=array(
-        \'name\'=>\''.$DB['name'].'\',
-        \'host\'=>\''.$DB['host'].'\',
-        \'user\'=>\''.$DB['user'].'\',
-        \'pass\'=>\''.$DB['pass'].'\'
+$DB = array(
+        \'name\' => \'' . $DB[ 'name' ] . '\',
+        \'host\' => \'' . $DB[ 'host' ] . '\',
+        \'user\' => \'' . $DB[ 'user' ] . '\',
+        \'pass\' => \'' . $DB[ 'pass' ] . '\'
 );
 
 ?>
 ';
-
-	/**
-	 * plugins - filter the contents of the file 
-	 */
-	$Plugins = Plugins::getInstance( );
-
-	$filecontents = $Plugins->filter( 'general', 'filter_settings', $filecontents );
 
 	file_put_contents(HOME.'.settings.php',$filecontents) or error('You must grant <i>0777</i> write access to the <i>'.HOME.'</i> directory for <a href="http://furasta.org">Furasta.Org</a> to function correctly. Please do so then reload this page to save the settings.','Runtime Error');	
 
@@ -373,14 +380,12 @@ function validate($conds,$selector,$post){
 	 * set up javascript validation 
 	 */
         $javascript = '
-	$(document).ready(function(){
-		$("' . $selector . '").submit(function(){ 
-			return validate(' . json_encode( $conds ) . '); 
-		});
+	$( document ).ready( function( ){
+		$( "' . $selector . '" ).validate( ' . json_encode( $conds ) . ' );
 	});';
 
-	$Template->loadJavascript( 'FURASTA_VALIDATE_PLUGIN_' .  json_encode( $conds ), $javascript );
-
+	$Template->add( 'javascript', $javascript );
+	
         if(!isset($_POST[$post]))
                 return true;
 

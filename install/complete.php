@@ -63,6 +63,7 @@ define(\'VERSION\',\'0.9.2\');
 define(\'SITEURL\',\''.$site_url.'\');
 define(\'USERFILES\',\''.$user_files.'\');
 define(\'SYSTEM_ALERT\',\'\');
+define(\'RECACHE\',\'0\');
 
 $PLUGINS=array();
 

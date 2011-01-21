@@ -573,15 +573,21 @@ class Plugins{
 			/**
 			 * using functions
 			 */
-			if( function_exists( $plugin[ $area ][ $name ] ) )
-				call_user_func( $plugin[ $area ][ $name ], $params );
+			if( function_exists( $plugin[ $area ][ $name ] ) ){
+                                if( is_array( $params ) )
+					call_user_func_array( $plugin[ $area ][ $name ], $params );
+				else
+					call_user_func( $plugin[ $area ][ $name ], $params );
+			}
 
                         /**
                          * using methods 
                          */
                         elseif( method_exists( @$plugin[ $area ][ $name ][ 0 ], @$plugin[ $area ][ $name ][ 1 ] ) ){
-				die( $plugin[ $area ][ $name ][0] );
-                           //     call_user_func( $plugin[ $area ][ $name ], $params );
+                                if( is_array( $params ) )
+                                        call_user_func_array( $plugin[ $area ][ $name ], $params );
+                                else
+                                        call_user_func( $plugin[ $area ][ $name ], $params );
 			}
 
 		}
@@ -621,13 +627,17 @@ class Plugins{
                          * using functions
                          */
                         if( function_exists( $plugin[ $area ][ $name ] ) )
-                                $content = call_user_func( $plugin[ $area ][ $name ], $content );
+                                $content = ( is_array( $content ) ) ?
+						call_user_func_array( $plugin[ $area ][ $name ], $content ) :
+						call_user_func( $plugin[ $area ][ $name ], $content );
 
                         /**
                          * using methods 
                          */
                         elseif( method_exists( @$plugin[ $area ][ $name ][ 0 ], @$plugin[ $area ][ $name ][ 1 ] ) )
-                                $content = call_user_func( $plugin[ $area ][ $name ], $content );
+                                $content = ( is_array( $content ) ) ?
+                                                call_user_func_array( $plugin[ $area ][ $name ], $content ) :
+                                                call_user_func( $plugin[ $area ][ $name ], $content );
 
                 }
 

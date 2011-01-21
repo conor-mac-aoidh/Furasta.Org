@@ -21,7 +21,7 @@ header('Content-type: text/html; charset: UTF-8');
 $Template->loadJavascript( '_inc/js/jquery/multi-ddm.min.js' );
 $Template->loadJavascript( '_inc/js/admin/admin.js' );
 $Template->loadJavascript( '_inc/js/system.js' );
-$Template->loadJavascript( '_inc/js/validate.js' );
+$Template->loadJavascript( '_inc/js/jquery/validate.js' );
 
 $Template->loadCSS('_inc/css/admin.css');
 
@@ -90,7 +90,11 @@ echo '
 foreach( $Template->javascriptUrls( ) as $url )
 	echo '<script type="text/javascript" src="' . $url . '"></script>';
 
-echo '</html>';
+echo '
+<script type="text/javascript">
+' . $Template->display( 'javascript' ) . '
+</script>
+</html>';
 
 ob_end_flush();
 ?>

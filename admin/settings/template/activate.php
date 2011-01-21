@@ -34,7 +34,7 @@ if($name=='')
 if(!file_exists(HOME.'_www/'.$name.'/index.html'))
         error('Incomplete template files.','Template Error');
 
-settings_rewrite($SETTINGS,$DB,$PLUGINS,HOME.'_www/'.$name.'/');
+settings_rewrite($SETTINGS,$DB,$PLUGINS,array( 'TEMPLATE_DIR' => HOME.'_www/'.$name.'/' ) );
 
 header( 'location: ' . SITEURL . 'admin/settings.php?page=template' );
 ?>
