@@ -22,7 +22,7 @@ $lang_en = array(
 	'7' => 'The %1 field is not valid.',
 	'8' => 'The %1 field must be at least %2 characters long.',
 	'9' => 'The %1 must match the %2 field.', 
-	'10'=> 'Please enter a valid URL.',
+	'10'=> 'Please enter a valid URL in the %1 field.',
 	'11'=> 'User not activated.',
 	'12'=> 'Login details are incorrect',
 	'13'=> 'Details Updated',
@@ -30,6 +30,7 @@ $lang_en = array(
 	'15'=> 'Pages Trashed',
 	'16'=> 'Pages Restored',
 	'17'=> 'Pages Deleted',
+	'18'=> 'The %1 field must be at most %2 characters long',
 );
 
 ?>

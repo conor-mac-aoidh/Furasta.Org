@@ -407,6 +407,9 @@
 	 */
 	$.fn.validate = function( conds, errorHandler ) {
 
+		if( conds == 'execute' )
+			return Validate.execute( );
+
 	        if( typeof( errorHandler ) == 'function' )
         	        Validate.customErrorHandler = errorHandler;
 

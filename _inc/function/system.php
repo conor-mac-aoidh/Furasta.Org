@@ -362,6 +362,8 @@ function rss_fetch( $url, $tagname = 'item' ){
  * validate 
  * 
  * Used to validate forms both with javascript and PHP.
+ * Uses the Validate class for php validation and the
+ * jQuery Form Validation Plugin for javascript validation.
  *
  * @param array $conds 
  * @param string $selector 
@@ -371,117 +373,33 @@ function rss_fetch( $url, $tagname = 'item' ){
  */
 function validate($conds,$selector,$post){
 
-	/**
-	 * initiate an instance of the Template class
-	 */
-	$Template = Template::getInstance( );
+        $Validate = Validate::getInstance( );
 
-	/**
-	 * set up javascript validation 
-	 */
-        $javascript = '
-	$( document ).ready( function( ){
-		$( "' . $selector . '" ).validate( ' . json_encode( $conds ) . ' );
-	});';
+	if( !$Validate->hasConds ){
+		/**
+		 * initiate an instance of the Template class
+		 */
+		$Template = Template::getInstance( );
 
-	$Template->add( 'javascript', $javascript );
-	
-        if(!isset($_POST[$post]))
+		/**
+		 * set up javascript validation 
+		 */
+	        $javascript = '
+		$( document ).ready( function( ){
+			$( "' . $selector . '" ).validate( ' . json_encode( $conds ) . ' );
+		});';
+
+		$Template->add( 'javascript', $javascript );
+
+	}
+
+	$Validate->addConds( $conds );
+
+        if( !isset( $_POST[ $post ] ) )
                 return true;
 
-        $required_f=array();
-        $email_f=array();
-        $pattern_f=array();
-        $minlength_f=array();
-	$url_f=array();
-        $match_f=array();
-
-        foreach($conds as $selector=>$cond){
-                foreach($cond as $rule=>$value){
-                        switch($rule){
-                                case "required":
-                                        if($value==true)
-                                                array_push($required_f,$selector);
-                                break;
-                                case "pattern":
-					array_push($pattern_f,array($selector,$value));
-                                break;
-                                case "email":
-                                        if($value==true)
-                                                array_push($email_f,$selector);
-                                break;
-                                case "minlength":
-                                        array_push($minlength_f,array($selector,$value));
-                                break;
-                                case "match":
-                                        array_push($match_f,array($selector,$value));
-                                break;
-				case 'url':
-					array_push($url_f,$selector);
-				break;
-                        }
-                }
-        }
-
-        $errors=0;
-
-        if(count($required_f)!=0){
-		foreach($required_f as $field){
-			if($_POST[$field]==''){
-				$Template->runtimeError( '5', htmlspecialchars($field) );
-				return false;				
-			}	
-		}
-	}
-
-	if(count($email_f)!=0){
-                foreach($email_f as $field){
-                        if(!filter_var($_POST[$field],FILTER_VALIDATE_EMAIL)){
-                                $Template->runtimeError( '6', htmlspecialchars($field) );
-                                return false;
-                        }
-                }
-	}
-
-        if(count($pattern_f)!=0){
-                foreach($pattern_f as $field=>$regex){
-			if(!isset($_POST[$regex[0]])||preg_match($regex[1],$_POST[$regex[0]])){
-                                $Template->runtimeError( '7', htmlspecialchars($regex[0]) );
-				return false;
-			}
-		}
-        }
-
-        if(count($minlength_f)!=0){
-		foreach($minlength_f as $field=>$length){
-			if(!isset($_POST[$length[0]])||strlen($_POST[$length[0]])<$length[1]){
-                                $Template->runtimeError( '8', array( htmlspecialchars($length[0]), htmlspecialchars($length[1]) ) );
-				return false;
-			}
-		}
-	}
-
-	if(count($match_f)!=0){
-		foreach($match_f as $field=>$match){
-			if(!isset($_POST[$match[0]])||!isset($_POST[$match[1]])||$_POST[$match[1]]!=$_POST[$match[0]]){
-				$Template->runtimeError( '9', array( htmlspecialchars($match[0]), htmlspecialchars($match[1]) ) );
-				return false;
-			}
-		}
-	}
-
-	if(count($url_f)!=0){
-		$urlregex = "^(https?|ftp)\:\/\/([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*(\:[0-9]{2,5})?(\/([a-z0-9+\$_-]\.?)+)*\/?(\?[a-z+&\$_.-][a-z0-9;:@/&%=+\$_.-]*)?(#[a-z_.-][a-z0-9+\$_.-]*)?\$";
-
-		foreach($url_f as $field){
-			if(!eregi($urlregex,$_POST[$field]) && $_POST[$field] != ''){
-				$Template->runtimeError( '10' );
-				return false;
-			}
-		}
-	}
-
-        return true;
+	return $Validate->execute( );
+	
 }
 
 /**
