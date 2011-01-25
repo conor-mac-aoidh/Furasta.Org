@@ -32,11 +32,12 @@ if( $type == 'Normal' ){
 
 		echo '
 			<script type="text/javascript" src="/_inc/js/tiny_mce.js"></script>
-			<textarea id="page-content" name="PageContent" class="tinymce" style="width:100%">' . @$content . '</textarea>
-		';
+			<textarea id="page-content" name="PageContent" class="tinymce" style="width:100%">' . @$content . '</textarea>';
 }
 else{
         $Plugins->adminPageType( $type, $id );
 
+	$Template = Template::getInstance( );
+	require HOME . 'admin/layout/ajax.php';
 }
 ?>

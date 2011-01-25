@@ -114,6 +114,7 @@
 		 * adds the given conditions to the Validate object
 		 */
 	        addConds : function( pieces ){
+
         	        for( var i in pieces ){
                 	        for( var n in pieces[ i ] ){
 	                                switch( n ){

@@ -268,6 +268,8 @@ class Validate{
                         }
                 }
 
+		return true;
+
 	}
 
 	/**
@@ -285,6 +287,8 @@ class Validate{
                                 return false;
                         }
                 }
+
+		return true;
 
 	}
 
@@ -304,6 +308,8 @@ class Validate{
                         }
                 }
 
+		return true;
+
 	}
 
 	/**
@@ -321,6 +327,8 @@ class Validate{
                                 return false;
                         }
                 }
+
+		return true;
 
 	}
 
@@ -340,6 +348,8 @@ class Validate{
                         }
                 }
 
+		return true;
+
         }
 
 	/**
@@ -358,6 +368,8 @@ class Validate{
                         }
                 }
 
+		return true;
+
 	}
 
 	/**
@@ -375,6 +387,8 @@ class Validate{
                                 return false;
                         }
                 }
+
+		return true;
 
 	}
 

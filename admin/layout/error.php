@@ -8,7 +8,7 @@
  * @author     Conor Mac Aoidh <conormacaoidh@gmail.com>
  * @license    http://furasta.org/licence.txt The BSD License
  * @version    1.0
- * @package	   admin_temnplate
+ * @package	   admin_template
  */
 
 ob_start('ob_gzhandler');
@@ -56,14 +56,18 @@ echo '
 	</div>
 </div>
 </body>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
 ';
 
 foreach( $Template->javascriptUrls( ) as $url )
         echo '<script type="text/javascript" src="' . $url . '"></script>';
 
-echo '</html>';
+echo '
+<script type="text/javascript">
+' . $Template->display( 'javascript' ) . '
+</script>
+</html>';
 
 ob_end_flush();
 ?>

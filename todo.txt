@@ -35,3 +35,4 @@
 17. add capability to have users in multiple groups
 18. use jquery.cookie.js for admin overview area
 19. load select boxes in pages area via ajax
+20. all content, including ajax requests and plugins should run through the Template class for both clarity and compression

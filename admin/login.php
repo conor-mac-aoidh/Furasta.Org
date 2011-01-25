@@ -30,6 +30,9 @@ $conds = array(
 
 $valid = validate( $conds, "#login", 'login' );
 
+if( $valid == false )
+	die( 'ahh!' );
+
 /**
  * Check if form submitted, or if cookie is present
  */
@@ -71,6 +74,12 @@ if( @$check == 1 ){
 
 }
 
+/**
+ * load javascript files
+ */
+$Template->loadJavascript( '_inc/js/system.js' );
+$Template->loadJavascript( '_inc/js/jquery/validate.js' );
+
 /*
  * Display the login template and javascript
  */
@@ -79,18 +88,7 @@ $(document).ready(function(){
 
 	$( "#password-reminder" ).click( function( ){
 
-		var content = \'
-			<form method="post">
-                        	<table style="border:none">
-                                	<tr>
-                                        	<td>Email:</td>
-                                        	<td><input type="text" name="Email-Reminder" value=""/></td>
-                                	</tr>
-					<tr>
-						<td>&nbsp;</td>
-						<td><i id="reminder-information">Please enter your email address and a link will be sent to you to reset your password.</i></td>
-					</tr>
-			</form>\';
+		var content = \'<form method="post"><table style="border:none"><tr><td>Email:</td><td><input type="text" name="Email-Reminder" value=""/></td></tr><tr><td>&nbsp;</td><td><i id="reminder-information">Please enter your email address and a link will be sent to you to reset your password.</i></td></tr></form>\';
 
 
                 fDialog( content, "Password Reminder", function( param ){
@@ -144,10 +142,7 @@ $(document).ready(function(){
 });
 ';
 
-$Template->loadJavascript( '_inc/js/system.js' );
-$Template->loadJavascript( '_inc/js/validate.js' );
-$Template->loadJavascript( 'FURASTA_ADMIN_LOGIN', $javascript );
-
+$Template->add( 'javascript', $javascript );
 
 $content='
 <div id="login-wrapper">

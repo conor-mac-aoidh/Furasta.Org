@@ -83,11 +83,11 @@ $(document).ready(function(){
         /**
          * prepare and begin loading page type 
          */
-//        var type=$("#pages-type-content").attr("type");
+        var type=$("#pages-type-content").attr("type");
 
-//        $("#pages-type-content").html("Loading... <img src=\"/_inc/img/loading.gif\"/>");
+        $("#pages-type-content").html("Loading... <img src=\"/_inc/img/loading.gif\"/>");
 
-//        loadPageType(type,0);
+        loadPageType(type,0);
 
 	/**
 	 * initial url load, also loads url from querystring parent 
@@ -116,7 +116,7 @@ $(document).ready(function(){
 
 	/**
 	 * load a new page type if page type select box is changed 
-	 *
+	 */
         $("#edit-type").change(function(){
 
                 $("#pages-type-content").html("Loading... <img src=\"/_inc/img/loading.gif\"/>");
@@ -125,7 +125,7 @@ $(document).ready(function(){
 
                 loadPageType(type,0);
 
-        });*/
+        });
 
 
         /**
@@ -370,17 +370,7 @@ $content .= '
 		</table>
 	</div>
 
-	<div id="pages-type-content">';
-
-	$Template->add( 'content', $content );
-
-	if( isset( $_GET[ 'type' ] ) )
-		$Plugins->adminPageType( str_replace( '-', ' ' , $_GET[ 'type' ] ), 0 );
-	else
-                $Template->add( 'content', '<textarea id="page-content" name="PageContent" class="tinymce" style="width:100%">&nbsp;</textarea>' );
-
-$content = '
-</div>
+	<div id="pages-type-content" type="Normal"></div>
 
 <input type="submit" name="new-save" value="Save" class="submit" id="edit-save"/>
 </form>
