@@ -206,7 +206,6 @@ function settings_rewrite( $SETTINGS, $DB, $PLUGINS, $constants = array( ) ){
 
 	$default_constants = array(
 		'TEMPLATE_DIR' => TEMPLATE_DIR,
-		'SYSTEM_ALERT' => SYSTEM_ALERT,
 		'VERSION' => VERSION,
 		'PREFIX' => PREFIX,
 		'PAGES' => PAGES,
@@ -215,7 +214,6 @@ function settings_rewrite( $SETTINGS, $DB, $PLUGINS, $constants = array( ) ){
 		'GROUPS' => GROUPS,
 		'SITEURL' => SITEURL,
 		'USERFILES' => USERFILES,
-		'RECACHE' => RECACHE
 	);
 
 	$constants = array_merge( $default_constants, $constants );
@@ -224,7 +222,6 @@ function settings_rewrite( $SETTINGS, $DB, $PLUGINS, $constants = array( ) ){
          * plugins - filter the settings, constants and plugins arrays 
          */
         $Plugins = Plugins::getInstance( );
-
         $filter = $Plugins->filter( 'general', 'filter_settings', array( $SETTINGS, $constants, $PLUGINS ) );
 	$SETTINGS = $filter[ 0 ];
 	$constants = $filter[ 1 ];

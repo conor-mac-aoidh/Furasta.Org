@@ -29,8 +29,7 @@ if(function_exists('apache_get_modules')){
 else
 	$mods='Unknown';
 
-$head='
-<script type="text/javascript">
+$javascript = '
 $(document).ready(function(){
         $("#help-access").click(function(){
 		fHelp("Write Access must be enabled for Furasta.Org to perform properly. It is recommended not to install the CMS without granting write access. Read more <a href=\"http://furasta.Org\">here</a>.");
@@ -39,10 +38,9 @@ $(document).ready(function(){
 		fHelp("The Apache module Mod_rewrite is essential for the CMS to run properly. It must be installed. However there are also dependencies of the Mod_rewrite module itself, such as Mod_proxy. For more information on all of these modules, and on how to install them, <a href=\"http://Furasta.Org/\">click here.</a>");
 	});
 });
-</script>
 ';
 
-$Template->add('head',$head);
+$Template->add( 'javascript', $javascript );
 
 $content='
 <h1>Welcome to the Furasta.Org Installation</h1>
@@ -52,8 +50,8 @@ $content='
 	<tr><td>PHP Version:</td><td>5</td><td>'.$php.'</td></tr>
 	<tr><td>MySQL Version:</td><td>5</td><td>Unknown</td></tr>
 	<tr><td>Apache Version:</td><td>2</td><td>'.$apache.'</td></tr>
-	<tr><td>Apache Rewrite Module <a href="#" id="help-rewrite"><img src="/_inc/img/help.png"/></a>:</td><td>&nbsp;</td><td>'.$mods.'</td></tr>
-	<tr><td colspan="3">Write Access <a href="#" id="help-access"><img src="/_inc/img/help.png"/></a>:</td></tr>
+	<tr><td>Apache Rewrite Module: <a id="help-rewrite" class="help link">&nbsp;</a></td><td>&nbsp;</td><td>'.$mods.'</td></tr>
+	<tr><td colspan="3">Write Access: <a id="help-access" class="help link">&nbsp;</a></td></tr>
 	<tr><td colspan="2">'.HOME.'</td><td>'.$access.'</td></tr>
 </table>
 <br/>

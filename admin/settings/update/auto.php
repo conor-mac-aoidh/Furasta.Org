@@ -34,7 +34,7 @@ $cache_file = 'FURASTA_ADMIN_RSS_UPDATE';
 /**
  * fetch update feed
  */
-$rss = rss_fetch( SITEURL . 'update.xml', 'item' );
+$rss = rss_fetch( 'http://furasta.org/update.xml', 'item' );
 
 foreach( $rss as $feed ){
 

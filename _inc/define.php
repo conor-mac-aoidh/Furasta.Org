@@ -24,7 +24,7 @@ date_default_timezone_set( 'UTC' );
  * @todo figure out how to redirect to install dir even when in subdirs 
  */
 if( !file_exists( HOME . '.settings.php' ) )
-        header( 'location: /install' );
+        header( 'location: /install/index.php' );
 
 /**
  * require config - personal settings, db settings etc 
@@ -40,6 +40,7 @@ require $function_dir . 'system.php';
 require $function_dir . 'db.php';
 require $function_dir . 'plugin.php';
 require $function_dir . 'cache.php';
+require $function_dir . 'template.php';
 
 /**
  * connect to database - display error if details are wrong 
@@ -51,11 +52,15 @@ if( ! ( $connect = mysql_connect( $DB[ 'host' ], $DB[ 'user' ], $DB[ 'pass' ] ) 
 if( ! mysql_select_db( $DB['name'], $connect ) ) 
 	error( 'Cannot connect to the MySQL database. Please make sure that the database name is correct.', 'Database Connection Failure' );
 
-
 /**
  * perform stripslashes on the $SETTINGS array 
  */
 $SETTINGS = stripslashes_array( $SETTINGS );
+
+/**
+ * define the diagnostic mode constant 
+ */
+define( 'DIAGNOSTIC_MODE', $SETTINGS[ 'diagnostic_mode' ] );
 
 /**
  * start session and get instance of the Plugin class 

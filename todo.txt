@@ -5,6 +5,7 @@
 25. Create bugs@furasta.org and support@furasta.org emails
 26. finish installer
 27. frontend css caching, javascript caching
+28. template select box in edit pages not showing correct values
 
 # TODO list for Furasta.Org v1.0 - General Release #
 

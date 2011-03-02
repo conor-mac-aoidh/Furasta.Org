@@ -333,7 +333,21 @@ $content .= '
 			<tr>
 				<td class="small">Template:</td>
 				<td><select name="Template">
-					<option>Default</option>
+					<option>Default</option>';
+$files = scandir( TEMPLATE_DIR );
+
+foreach($files as $file){
+        if(substr(strrchr($file,'.'),1)=='html'){
+                $file_n=basename($file,'.html');
+                if($file_n=='index')
+                        continue;
+                if($file_n==$Page['template'])
+                        $selected=' selected="selected"';
+                $content .= '<option value="'.$file_n.'"'.@$selected.'>'.$file_n.'</option>';
+        }
+}
+
+$content .= '
 				</select></td>
 				<td class="small">Hide In Navigation</td>
 				<td><input type="checkbox" value="1" name="Navigation"/></td>
@@ -341,7 +355,7 @@ $content .= '
 			<tr>
 				<td class="small">Parent:</td>
 				<td><select name="Parent" id="select-parent">
-';
+' ;
 
 /**
  * load possible page parents and display in an indented list 

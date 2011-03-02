@@ -35,14 +35,16 @@ $content = $Plugins->filter( 'admin', 'filter_page_content', $Template->display(
  */
 echo'
 <html>
-<head>
-	<noscript><meta http-equiv="refresh" content="0;url=' . SITEURL . '_inc/noscript.php"></noscript>';
+<head>';
+//	<noscript><meta http-equiv="refresh" content="0;url=' . SITEURL . '_inc/noscript.php"></noscript>';
 
 foreach( $Template->cssUrls( ) as $url )
 	echo '<link rel="stylesheet" href="' . $url . '"/>';
 
 echo '
 	<title>' . $Template->display( 'title' ) . ' - Furasta.Org</title>
+
+	' . $Template->display( 'head' ) . '
 </head>
 <body>
 <div id="dialog">&nbsp;</div>
@@ -72,8 +74,8 @@ echo '
 				</div>
 			</div>
 			<div id="footer">
-				<img src="/_inc/img/footer-right.png" style="float:right"/>
-				<img src="/_inc/img/footer-left.png"/>
+				<img src="' . SITEURL . '_inc/img/footer-right.png" style="float:right"/>
+				<img src="' . SITEURL . '_inc/img/footer-left.png"/>
 			</div>
 		</div>
 		<div id="bottom">

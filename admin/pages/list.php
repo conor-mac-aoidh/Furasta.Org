@@ -71,6 +71,7 @@ function reclassifyItem( item ){
         
                         prevID = prevID[ prevID.length - 1 ];
 
+//			item.className.replace( /child-of-node\-.+?\b/, "" ); 
                         item.addClass( "child-of-node-" + prevID );
 
                         var padding = prev.children( "td" ).eq( "1" ).css( "padding-left" );
@@ -213,6 +214,9 @@ $(document).ready( function( ){
 
 		$(".holder").css("height", ui.item.height());
 
+		/**
+		 * if this is parent, drag children along as well
+		 */
 		if( $( ui.item ).hasClass( "parent" ) ){
 
 			toggleGroupedChildren( $( ui.item ).attr( "id" ) );
@@ -242,6 +246,41 @@ $(document).ready( function( ){
 			$( "#list-pages-dropbox" ).show( );
 							
 			$( ".holder" ).css( "height", ( ( $( "#list-pages-dropbox tr" ).length + 1 ) * ui.item.outerHeight( ) ) + "px" );
+
+		}
+
+		/**
+		 * if this is child, remove child-of-node tag and indentation
+		 */
+		if( $( ui.item ).className.match( /child-of-node\-.+?\b/ ) ){
+
+			$( ui.item ).className.replace( /child-of-node\-.+?\b/, "" );
+
+			$( ui.item ).css( "padding-left", 0 );
+
+		}
+
+		/**
+		 * if previous is expanded parent
+		 */
+		if( $( ui.item ).prev( ).hasClass( "parent" ).hasClass( "expanded" ) ){
+
+			var prevParentID = $( ui.item ).prev( ).attr( "id" );
+
+                        prevParentID = String( prevParentID ).split( "-" );
+        
+                        prevParentID = prevParentID[ prevParentID.length -1 ];
+
+                        /**
+                         * if has no children left, then remove arrow and parent class 
+                         */
+                        if( $( "child-of-node-" + prevParentID ).length == 0 ){
+
+				$( ui.item ).prev( ).removeClass( "parent" );
+
+				$( "td.first span.expander", $( ui.item ).prev( ) ).remove( );
+
+			}
 
 		}
 
@@ -318,7 +357,7 @@ $(document).ready( function( ){
 	/**
 	 *  delete page when delete button is pressed
 	 */
-	$(".delete").click(function(){
+	$(".delete").live( "click", function(){
 
 		fConfirm("Are you sure you want to trash this page?",function(element){
 

@@ -79,13 +79,6 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
 		 */
 		if( $home == 1 )
 			query( 'update ' . PAGES . ' set home=0 where home=1' );
-//                elseif( $home == 'NA' ){
-//			die( 'na' );
-  //                      $home = 1;
-//		}
-//		elseif( $home == '' )
-		else
-			$home = '0';
 
 		/**
 		 * update database with edited page 
@@ -362,12 +355,12 @@ foreach($options as $option){
 		$content.='<option value="'.$option.'">'.$option.'</option>';
 }
 
-$homepage=($Page['home']==1)?' value="NA" checked="checked" disabled="disabled"':' value="1"';
+$homepage = ( $Page[ 'home' ] == 1 ) ? ' checked="checked" disabled="disabled"' : '';
 
 $content.='
 				</select></td>
 				<td class="small">Is Home Page:</td>
-				<td><input type="checkbox" name="Homepage"'.$homepage.'/></td>
+				<td><input type="checkbox" name="Homepage"'.$homepage.'" value="1"/></td>
 			</tr>
 			<tr>
 				<td class="small">Template:</td>

@@ -20,6 +20,10 @@ $conds = array(
         ),
 	'SubTitle' => array(
 		'required'	=>	true
+	),
+	'URL' => array(
+		'required'	=> true,
+		'url'		=> true
 	)
 );
 
@@ -32,13 +36,33 @@ if( isset( $_POST[ 'settings_general' ] ) && $valid == true ){
 
         $SETTINGS['site_title']=addslashes($_POST['Title']);
         $SETTINGS['site_subtitle']=addslashes($_POST['SubTitle']);
-        $SETTINGS['maintenance']=(int) $_POST['Maintenance'];
-        $SETTINGS['index']=(int) $_POST['Index'];
+        $SETTINGS['maintenance']=(int) @$_POST['Maintenance'];
+        $SETTINGS['index']=(int) @$_POST['Index'];
+	$url = @$_POST[ 'URL' ];
+	$constants = array( );
+
+	/**
+	 * set the diagnostic mode setting if
+	 * diagnostic mode is to be enabled
+	 */
+	if( @$_POST[ 'DiagnosticMode' ] == 1 ){
+		$SETTINGS[ 'diagnostic_mode' ] = 1;
+		$SETTINGS[ 'recache' ] = 1;
+		$Template->diagnosticMode = 1;
+	}
+	else{
+		$SETTINGS[ 'diagnostic_mode' ] = 0;
+		$Template->diagnosticMode = 0;
+	}
+
+	if( $url != SITEURL )
+		$constants = array_merge( $constants, array( 'SITEURL' => $url ) );
 
         /**
          * rewrite the settings file 
          */
-        settings_rewrite($SETTINGS,$DB,$PLUGINS);
+        settings_rewrite( $SETTINGS, $DB, $PLUGINS, $constants );
+	cache_clear( );
 
 	/**
 	 * stripslashes from the settings array
@@ -63,13 +87,27 @@ $(document).ready(function(){
 
         });
 
+	$( "#help-diagnostic" ).click( function( ){
+
+		fHelp( "<b>Note: For developers only</b><br/>The CMS carrys out all kinds of caching to make page loads quicker, including that of CSS and JavaScript. If you want to temporarily disable this feature for development reasons then you can enable Diagnostic Mode. During this time there will be no caching of CSS or JavaScript, so it is recommended to enable it again when finished testing." );
+
+	});
+
+	$( "#help-url" ).click( function( ){
+
+		fHelp( "The default URL for the website. All links will use this URL. Some may want to add remove the \"www.\"" );
+
+	});
+
 });
 ';
 
-$Template->loadJavascript( 'FURASTA_ADMIN_SETTINGS_CONFIGURATION', $javascript );
+$Template->add( 'javascript', $javascript );
 
-$maintenance=($SETTINGS['maintenance']==1)?'checked="checked"':'';
-$index=($SETTINGS['index']==1)?'checked="checked"':'';
+$maintenance = ( $SETTINGS[ 'maintenance' ] == 1 ) ? 'checked="checked"' : '';
+$index = ( $SETTINGS[ 'index' ] == 1 ) ? 'checked="checked"' : '';
+$diagnostic = ( $Template->diagnosticMode == 1 ) ? 'checked="checked"' : '';
+$url = ( isset( $url ) ) ? $url : SITEURL;
 
 $content='
 <span class="header-img" id="header-Configuration">&nbsp;</span><h1 class="image-left">Configuration</h1></span>
@@ -91,13 +129,21 @@ $content='
 		<td><input type="text" name="SubTitle" value="' . $SETTINGS[ 'site_subtitle' ] . '" class="input" /></td>
 	</tr>
 	<tr>
-		<td>Enable Maintenance Mode: <a class="help link" id="help-maintenance">&nbsp;</a></td>
+		<td>Website URL: <a class="help link" id="help-url">&nbsp;</a></td>
+		<td><input type="text" name="URL" value="' . SITEURL . '" class="input" /></td>
+	</tr>
+	<tr>
+		<td>Maintenance Mode: <a class="help link" id="help-maintenance">&nbsp;</a></td>
 		<td><input type="checkbox" name="Maintenance" class="checkbox" value="1" '.$maintenance.'/></td>
 	</tr>
 	<tr>
 		<td>Don\'t Index Website: <a class="help link" id="help-index">&nbsp;</a></td>
 		<td><input type="checkbox" name="Index" value="1" class="checkbox" '.$index.'/></td>
 	</tr>
+        <tr>
+                <td>Diagnostic Mode: <a class="help link" id="help-diagnostic">&nbsp;</a></td>
+                <td><input type="checkbox" name="DiagnosticMode" value="1" class="checkbox" '. $diagnostic .'/></td>
+        </tr>
 </table>
 <input type="submit" id="config-save" name="settings_general" class="submit right" style="margin-right:10%" value="Save"/>
 </form></br style="clear:both"/>

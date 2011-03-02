@@ -212,4 +212,28 @@ function pages_array( ){
 	return $pages;
 }
 
+/**
+ * calculate_url
+ *
+ * Accurately calculates the current URL
+ * 
+ * @access public
+ * @return string
+ */
+function calculate_url( ){
+        $url = 'http';
+
+        if( $_SERVER[ 'HTTPS' ] == 'on' )
+                $url .= 's';
+
+        $url .= '://' . $_SERVER[ 'SERVER_NAME' ];
+
+        if( $_SERVER[ 'SERVER_PORT' ] != '80' )
+                $url .= ':' . $_SERVER[ 'SERVER_PORT' ];
+
+        $url .= $_SERVER[ 'REQUEST_URI' ];
+
+        return $url;
+}
+
 ?>

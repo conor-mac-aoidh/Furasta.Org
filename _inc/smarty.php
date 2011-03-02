@@ -67,8 +67,14 @@ $type = $Page[ 'type' ];
 
 if( $type == 'Normal' )
 	$Smarty->assign( 'page_content', $content );
-else
-	$Smarty->assign( 'page_content', $Plugins->frontendPageType( $type, $Page ) );
+else{
+	/**
+	 * @todo this is a quick fix, going to do something more here
+	 */
+	$Template = Template::getInstance( );
+	$Plugins->frontendPageType( $type, $Page );
+	$Smarty->assign( 'page_content', $Template->display( 'content' ) );
+}
 
 /**
  * assign other page vars 
@@ -100,7 +106,7 @@ $Smarty->register_function( 'page_tree', 'frontend_page_tree' );
 $file = ( $Page[ 'template' ] == 'Default' ) ? TEMPLATE_DIR . 'index.html' : TEMPLATE_DIR . $Page[ 'template' ] . '.html';
 
 if( !file_exists( $file ) )
-        error( 'Template files could not be found.', 'Template Error' );
+        error( 'Template files could not be found.<br/><i>' . $file . '</i>', 'Template Error' );
 
 $Smarty->display( $file );
 ?>

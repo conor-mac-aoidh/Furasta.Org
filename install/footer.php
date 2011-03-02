@@ -11,7 +11,7 @@
  * @package	   installer
  */
 
-$Template->add('content',$content);
+$Template->add( 'content', $content );
 
-require(HOME.'admin/layout/error.php');
+require( HOME . 'install/layout.php' );
 ?>

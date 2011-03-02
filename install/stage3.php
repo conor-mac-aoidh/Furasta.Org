@@ -99,10 +99,10 @@ $content='
 			<tr><th colspan="2">Website Settings</th></tr>
 			<tr><td>Title:</td><td><input type="text" name="Title" value="'.@$_SESSION['settings']['title'].'" class="input right" /></td></tr>
                         <tr><td>Sub Title:</td><td><input type="text" name="SubTitle" value="'.@$_SESSION['settings']['sub_title'].'" class="input right" /></td></tr>
-			<tr><td>Website URL <a href="#" id="help-url"><img src="/_inc/img/help.png"/></a>:</td><td><input type="text" name="Website-URL" value="'.$url.'" class="input right" /></td></tr>
-                        <tr><td>User Files Location <a href="#" id="help-files"><img src="/_inc/img/help.png"/></a>:</td><td><input type="text" name="User-Files" value="'.$user_files.'" class="input right" /></td></tr>
-			<tr><td>Don\'t Index Website <a href="#" id="help-index"><img src="/_inc/img/help.png"/></a>:</td><td><input type="checkbox" name="Index" value="1" class="checkbox" style="margin:0 10px 0 28%" '.$index_checked.'/></td></tr>
-		        <tr><td>Enable Maintenance Mode <a href="#" id="help-maintenance"><img src="/_inc/img/help.png"/></a>:</td><td><input type="checkbox" name="Maintenance" value="1" class="checkbox" style="margin:0 10px 0 28%"/ '.$maintenance_checked.'></td></tr>
+			<tr><td>Website URL: <a id="help-url" class="help link">&nbsp;</a></td><td><input type="text" name="Website-URL" value="'.$url.'" class="input right" /></td></tr>
+                        <tr><td>User Files Location: <a id="help-files" class="help link">&nbsp;</a></td><td><input type="text" name="User-Files" value="'.$user_files.'" class="input right" /></td></tr>
+			<tr><td>Don\'t Index Website: <a id="help-index" class="help link">&nbsp;</a></td><td><input type="checkbox" name="Index" value="1" class="checkbox" style="margin:0 10px 0 28%" '.$index_checked.'/></td></tr>
+		        <tr><td>Enable Maintenance Mode: <a id="help-maintenance" class="help link">&nbsp;</a></td><td><input type="checkbox" name="Maintenance" value="1" class="checkbox" style="margin:0 10px 0 28%"/ '.$maintenance_checked.'></td></tr>
 		</table>
 	        <br/>
         	<input type="submit" name="submit" id="form-submit" class="submit right" value="Next"/>

@@ -77,7 +77,7 @@ function checkConnection(details){
 function fetch( url, callback, param ){
 	$.ajax({
 		url	:	url,
-		timeout	:	5000,
+		timeout	:	10000,
 		success	:	function( html ){
 					if( html == '1' )
 						fAlert( 'There has been an unknown error. Please refresh the page and try again.' );
@@ -115,6 +115,3 @@ function queryString( name ){
   	else
     		return decodeURIComponent(results[1].replace(/\+/g, " "));
 }
-
-
-

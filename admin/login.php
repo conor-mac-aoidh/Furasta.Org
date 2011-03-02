@@ -30,9 +30,6 @@ $conds = array(
 
 $valid = validate( $conds, "#login", 'login' );
 
-if( $valid == false )
-	die( 'ahh!' );
-
 /**
  * Check if form submitted, or if cookie is present
  */
@@ -66,10 +63,7 @@ if( @$check == 1 ){
 		if( $remember == 1 )
 			$User->setCookie( );
 
-		if( isset( $_GET[ 'redirect' ] ) )
-			header( 'location: ' . SITEURL . substr( $_GET[ 'redirect' ], 1 ) );
-
-                header( 'location: ' . SITEURL . 'admin/index.php' );
+                header( 'location: ' . calculate_url( ) );
 	}
 
 }
@@ -88,54 +82,72 @@ $(document).ready(function(){
 
 	$( "#password-reminder" ).click( function( ){
 
-		var content = \'<form method="post"><table style="border:none"><tr><td>Email:</td><td><input type="text" name="Email-Reminder" value=""/></td></tr><tr><td>&nbsp;</td><td><i id="reminder-information">Please enter your email address and a link will be sent to you to reset your password.</i></td></tr></form>\';
-
-
-                fDialog( content, "Password Reminder", function( param ){
+		var saveFunction = function( ){
 
                         var email = $( "input[ name=\'Email-Reminder\' ]" ).attr( "value" );
 
-			var filter=/^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+                        var filter=/^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
 
-			if( filter.test( email ) == false ){
+                        if( filter.test( email ) == false ){
 
-				$( "#reminder-information" ).html( "Please enter a valid email address" );
+                                $( "#reminder-information" ).html( "Please enter a valid email address" );
 
-				return false;
+                                return false;
 
-			}
+                        }
 
-			$( "#reminder-information" ).html( "<img src=\'' . SITEURL . '_inc/img/loading.gif\' /> Loading.." );
+                        $( "#reminder-information" ).html( "<img src=\'' . SITEURL . '_inc/img/loading.gif\' /> Loading.." );
 
-			$.ajax({
+                        $.ajax({
 
-				url     :       "' . SITEURL . '_inc/ajax.php?file=admin/users/reminder.php&no_config&email=" + email,
+                                url     :       "' . SITEURL . '_inc/ajax.php?file=admin/users/reminder.php&no_config&email=" + email,
 
-				timeout :       5000,
+                                timeout :       5000,
 
-				success :       function( html ){
+                                success :       function( html ){
 
-							alert( html );
+                                                        if( html == 1 )
 
-							if( html == 1 )
+                                                                $( "#reminder-information" ).html( "The email address you provided does not correspond to a user account." );
 
-								$( "#reminder-information" ).html( "The email address you provided does not correspond to a user account." );
-
-							else
-
-								$( "#reminder-information" ).html( "An email has been sent to you containing password reset details." );
-						
+                                                        else
+                                                                $( "#reminder-information" ).html( "An email has been sent to you containing password reset details." );
                                 },
 
-                		error   :       function( ){
+                                error   :       function( ){
 
-						$( "#reminder-information" ).html( "There has been an error processing your request. Please try again." );
+                                                $( "#reminder-information" ).html( "There has been an error processing your request. Please try again." );
 
-				}
+                                }
 
-        		});
+                        });
+
+		};
+
+                $( "#password-reminder-dialog" ).dialog({
+
+                        modal:  true,
+
+                        width:  "400px",
+
+                        buttons: {
+        
+                                "Close": function( ) { $( this ).dialog( "close" ); },
+
+                                "Send": saveFunction,
+
+                        },
+
+                        hide:   "fade",
+
+                        show:   "fade",
+
+                        resizeable:     false
 
                 });
+
+                $( "#password-reminder-dialog" ).dialog( "open" );
+
 
 	} );
 
@@ -145,6 +157,21 @@ $(document).ready(function(){
 $Template->add( 'javascript', $javascript );
 
 $content='
+<div id="password-reminder-dialog" style="display:none" title="Password Reminder">
+	<form method="post">
+		<table style="border:none">
+			<tr>
+				<td>Email:</td>
+				<td><input type="text" name="Email-Reminder" value=""/></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td><i id="reminder-information">Please enter your email address and a link will be sent to you to reset your password.</i></td>
+			</tr>
+		</table>
+	</form>
+</div>
+
 <div id="login-wrapper">
 	<span class="header-img" id="header-Login">&nbsp;</span>
 	<h1 id="login-header">Login</h1>

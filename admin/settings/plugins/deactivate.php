@@ -29,6 +29,7 @@ foreach( $PLUGINS as $plugin ){
 /**
  * rewrite new settings file 
  */
+
 settings_rewrite( $SETTINGS, $DB, $new_plugs );
 
 cache_clear( );

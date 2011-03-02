@@ -18,7 +18,7 @@ foreach( $Template->cssUrls( ) as $url )
         echo '<link rel="stylesheet" href="' . $url . '"/>';
 
 echo '
-<div id="ajax-errors">' . $Template->displayErrors( ) . '</div>
+<div id="ajax-errors" style="display:none">' . $Template->displayErrors( ) . '</div>
 
 ' . $Template->display('content') . '</body>';
 

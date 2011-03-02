@@ -22,7 +22,7 @@ if( $error != '' )
 $javascript = '
 $(document).ready(function(){
 
-        $(".delete").click(function(){
+        $(".delete").live( "click", function(){
 
                 fConfirm("Are you sure you want to permenantly delete this page?",function(element){
 
@@ -40,7 +40,7 @@ $(document).ready(function(){
 
         });
 
-        $(".restore").click(function(){
+        $(".restore").live( "click", function(){
 
                 fConfirm("Are you sure you want to restore this page? Certain features have not been preserved, such as page parent, type, and template settings.",function(element){
 

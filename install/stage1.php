@@ -35,7 +35,7 @@ $conds=array(
  * Validate the conditions
  */
 
-$valid=validate($conds,'#install','form-submit');
+$valid = validate( $conds, '#install', 'form-submit');
 
 if(isset($_POST['submit'])&&$valid==true){
 	$_SESSION['db']['name']=$_POST['DatabaseName'];
@@ -47,9 +47,9 @@ if(isset($_POST['submit'])&&$valid==true){
 	header('location: stage2.php');
 }
 
-$head='
-<script type="text/javascript">
-	function validateCallback(){
+$javascript = '
+$( document ).ready( function( ){
+	$( "#install" ).submit( function( ){
 		$("#check_connection").html("<img src=\"/_inc/img/loading.gif\"/> Checking Details...");
 		var connection=checkConnection(["Hostname","Username","DatabaseName","Password"]);
 		$("input[name=DatabaseName]").removeClass("error");
@@ -71,11 +71,11 @@ $head='
 			return true;
 
 		return false;
-	}
-</script>
+	} );
+} );
 ';
 
-$Template->add('head',$head);
+$Template->add( 'javascript', $javascript );
 
 $prefix=(isset($_SESSION['db']['prefix']))?$_SESSION['db']['prefix']:'fr_';
 

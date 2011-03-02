@@ -57,21 +57,22 @@ define(\'PAGES\',\''.$pages.'\');
 define(\'USERS\',\''.$users.'\');
 define(\'TRASH\',\''.$trash.'\');
 define(\'GROUPS\',\''.$groups.'\');
-define(\'TEMPLATE_DIR\',\''.HOME.'_www/.default/\');
+define(\'TEMPLATE_DIR\',\''.HOME.'_www/Corporate-Office/\');
 define(\'PREFIX\',\''.$prefix.'\');
 define(\'VERSION\',\'0.9.2\');
 define(\'SITEURL\',\''.$site_url.'\');
 define(\'USERFILES\',\''.$user_files.'\');
-define(\'SYSTEM_ALERT\',\'\');
-define(\'RECACHE\',\'0\');
 
 $PLUGINS=array();
 
 $SETTINGS=array(
-	\'site_title\'=>"'.$_SESSION['settings']['title'].'",
-        \'site_subtitle\'=>"'.$_SESSION['settings']['sub_title'].'",
+	\'site_title\'=>\''.addslashes( $_SESSION['settings']['title'] ).'\',
+        \'site_subtitle\'=>\''.addslashes( $_SESSION['settings']['sub_title'] ).'\',
         \'index\'=>\''.$_SESSION['settings']['index'].'\',
-	\'maintenance\'=>\''.$_SESSION['settings']['maintenance'].'\'
+	\'maintenance\'=>\''.$_SESSION['settings']['maintenance'].'\',
+	\'diagnostic_mode\'=>false,
+	\'recache\'=>false,
+	\'system_alert\'=>\'\'
 );
 
 $DB=array(
@@ -140,26 +141,19 @@ else
 file_put_contents(HOME.'robots.txt',$robots);
 
 $url='http://'.$_SERVER['SERVER_NAME'];
-$subject='User Activation | Furasta.Org';
-$message=$_SESSION['user']['name'].',
-
-	Please activate your new user by clicking on the link below:
-
-	'.$url.'/admin/users/activate.php?hash='.$hash.'
-
-	If you are not the person stated above please ignore this email.
-
-	Thanks
-	---
-	Furasta.Org
-	http://furasta.org
-	support@furasta.org
+$subject='User Activation - Furasta.Org';
+$message='Hi ' . $_SESSION['user']['name'].',<br/>
+	<br/>
+	Please activate your new user by clicking on the link below:<br/>
+	<br/>
+	<a href="'.$url.'/admin/users/activate.php?hash='.$hash.'">'.$url.'/admin/users/activate.php?hash='.$hash.'</a><br/>
+	<br/>
+	If you are not the person stated above please ignore this email.<br/>
 ';
-$headers='From: support@furasta.org'."\r\n".'Reply-To: support@furasta.org'."\r\n".'X-Mailer: PHP/' .phpversion();
-mail($_SESSION['user']['email'],$subject,$message,$headers);
+email( $_SESSION['user']['email'], $subject, $message );
 
 $content='
-<h1>Installation Complete / Verification Email</h1>
+<h1>Complete! Verification Email Sent to ' . $_SESSION[ 'user' ][ 'email' ] . '</h1>
 <p>Your Furasta CMS installation has been performed successfully. A user verification email has been sent to your email address. You must verify this address before you can log in. Please now finish and configure your website.</p>
 <br/>
 <a href="../admin/index.php" class="grey-submit right">Finish</a>

@@ -83,16 +83,34 @@ class Template {
 	 * @var mixed
 	 * @access public
 	 */
-	public $diagnosticMode = 1;
+	public $diagnosticMode;
 
+	/**
+	 * recache
+	 *
+	 * Will be true when diagnostic mode has been diabled.
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
+	public $recache;
+	
         /**
          * title 
          * 
          * @var string
          * @access public
          */
-        public $title='';
+        public $title = '';
 
+
+	/**
+	 * head 
+	 * 
+	 * @var string
+	 * @access public
+	 */
+	public $head = '';
 
 	/**
 	 *  runtineError
@@ -161,6 +179,21 @@ class Template {
 	public $cssSources=array();
 
 	/**
+	 * __construct
+	 *
+	 * Sets values for $this->recache and $this->diagnostic_mode 
+	 * 
+	 * @access private
+	 * @return void
+	 */
+	private function __construct( ){
+		global $SETTINGS;
+
+		$this->diagnosticMode = $SETTINGS[ 'diagnostic_mode' ];
+		$this->recache = $SETTINGS[ 'recache' ];
+	}
+
+	/**
 	 * getInstance 
 	 * 
 	 * @static
@@ -177,7 +210,7 @@ class Template {
 			if( self::$instance )
 				self::$instance == '';
 
-			self::$instance = new Template() ;
+			self::$instance = new Template();
 			return self::$instance;
 		}
 
@@ -407,13 +440,8 @@ class Template {
 
 				cache( $cache_file, $content, 'JS' );
 
-				/**
-				 * rewrite settings file so that recache is set to one
-				 */
-				settings_rewrite( $GLOBALS[ 'SETTINGS' ], $GLOBALS[ 'DB' ], $GLOBALS[ 'PLUGINS' ], array( 'RECACHE' => 1 ) ); 
-
 			}
-			elseif( !cache_exists( $cache_file, 'JS' ) || RECACHE == 1 ){
+			elseif( !cache_exists( $cache_file, 'JS' ) || $this->recache == 1 ){
 	                        /**
         	                 * makes the SITEURL constant available
                 	         * in JavaScript so that files etc can
@@ -425,7 +453,7 @@ class Template {
 				$content = $packer->pack( );
 				cache( $cache_file, $content, 'JS');
 
-				if( RECACHE == 1 )
+				if( $this->recache == 1 )
 	                                settings_rewrite( $GLOBALS[ 'SETTINGS' ], $GLOBALS[ 'DB' ], $GLOBALS[ 'PLUGINS' ], array( 'RECACHE' => 0 ) );
 	                }
 

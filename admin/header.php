@@ -26,8 +26,8 @@ $Template = Template::getInstance( );
 /**
  * set system runtime errors 
  */
-if( SYSTEM_ALERT != '' && $User->hasPerm( 's' ) )
-	$Template->runtimeError{ 'system_alert' } = SYSTEM_ALERT;
+if( $SETTINGS[ 'system_alert' ] != '' && $User->hasPerm( 's' ) )
+	$Template->runtimeError{ 'system_alert' } = $SETTINGS[ 'system_alert' ];
 
 /**
  * execute the onload plugin functions 
@@ -36,29 +36,29 @@ $Plugins->hook( 'admin', 'on_load' );
 
 /**
  * check for updates 
- */
+ *
 $cache_file = md5( 'FURASTA_ADMIN_RSS_UPDATE' );
 if( !cache_is_good( $cache_file, '60*60*24*3', 'RSS' ) ){
 	/**
 	 * fetch update feed
-	 */
-	$rss = rss_fetch( SITEURL . 'update.xml', 'item' );
+	 *
+	$rss = rss_fetch( 'http://furasta.org/update.xml', 'item' );
 
 	/**
 	 * if a new version is available log a system error
-	 */
+	 *
 	foreach( $rss as $feed ){
 
 		if( VERSION < $feed[ 'description' ] ){
-			$error = '<span id="error-update">' . $Template->errorToString( '14', array( $feed[ 'title' ], $feed['link' ] ) ) . '</span>';
-			settings_rewrite( $SETTINGS, $DB, $PLUGINS, TEMPLATE_DIR, $error ); 
+			$SETTINGS[ 'system_alert' ] = '<span id="error-update">' . $Template->errorToString( '14', array( $feed[ 'title' ], $feed['link' ] ) ) . '</span>';
+			settings_rewrite( $SETTINGS, $DB, $PLUGINS ); 
 		}
 
 	}
 
 	cache( $cache_file, json_encode( $rss ), 'RSS' ); 
 }
-
+*/
 $cache_file = md5( 'FURASTA_ADMIN_MENU_' . $_SESSION[ 'user' ][ 'id' ] );
 
 if(cache_exists($cache_file,'USERS'))
@@ -140,7 +140,8 @@ $(document).ready(function(){
         else{
                 $("#menu li a[href=\'"+path+"\']").addClass("current");
         }
-	$( "#errors-close" ).click( function( ){
+
+	$( "#errors-close" ).live( "click", function( ){
 
 		if( $( "#error-update" ).length != 0 )
 
@@ -153,6 +154,6 @@ $(document).ready(function(){
 ';
 
 $Template->loadJavascript( '_inc/js/admin.js' );
-$Template->loadJavascript( 'FURASTA_ADMIN_HEADER', $javascript );
+$Template->add( 'javascript', $javascript );
 
 ?>
