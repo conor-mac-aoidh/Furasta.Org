@@ -35,7 +35,10 @@ $conds = array(
 	'Name' => array(
 		'required'	=>	true,
 		'minlength'	=>	2,
-		'pattern'	=>	"^[A-Z a-z0-9]{1,40}$"
+		'pattern'	=>	array(
+			'^[A-Za-z0-9 ]{2,40}$',
+			'The name field must be between 2 and 40 characters in length. It must only contain alphabetical characters, numbers and spaces.'
+		)
 	)
 );
 
@@ -56,7 +59,7 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
         $template = addslashes( $_POST[ 'Template' ] );
         $content = addslashes( $_POST[ 'PageContent' ] );
         $slug = addslashes( $_POST[ 'slug' ] );
-        $home = addslashes( $_POST[ 'Homepage' ] );
+        $home = ( int ) @$_POST[ 'Homepage' ];
         $navigation = ( @$_POST[ 'Navigation' ] == 1 ) ? 0 : 1;
         $parent = (int) $_POST[ 'Parent' ];
         $perm = addslashes( @$_POST[ 'perm' ] );
@@ -85,7 +88,7 @@ if( isset( $_POST[ 'edit-save' ] ) && $valid == true ){
 		 */
 		query('update '.PAGES.' set
 		name="'.$name.'",content="'.$content.'",slug="'.$slug.'",template="'.$template.'",type="'.$type.'",edited="'.date('Y-m-d
-		G:i:s').'",user="'.$User->name.'",parent='.$parent.',perm="'.$perm.'",home='.$home.',display='.$navigation.'
+		G:i:s').'",user="'.$User->name.'",parent='.$parent.',perm="'.$perm.'",home='.@$home.',display='.$navigation.'
 		where id='.$id,true);
 
 		/**
@@ -355,12 +358,12 @@ foreach($options as $option){
 		$content.='<option value="'.$option.'">'.$option.'</option>';
 }
 
-$homepage = ( $Page[ 'home' ] == 1 ) ? ' checked="checked" disabled="disabled"' : '';
+$homepage = ( @$Page[ 'home' ] == 1 ) ? '<input type="checkbox" checked="checked" disabled="disabled"/><input type="hidden" name="Homepage" value="1"/>' : '<input type="checkbox" value="1" name="Homepage" />';
 
 $content.='
 				</select></td>
 				<td class="small">Is Home Page:</td>
-				<td><input type="checkbox" name="Homepage"'.$homepage.'" value="1"/></td>
+				<td>' . $homepage . '</td>
 			</tr>
 			<tr>
 				<td class="small">Template:</td>

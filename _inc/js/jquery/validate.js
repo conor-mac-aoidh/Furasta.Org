@@ -14,7 +14,8 @@
  * {
  *   'Name' : {
  *      'required' : true,
- *      'minlength' : 5
+ *      'minlength' : 5,
+ *      'pattern' : /^[A-Za-z0-9 ]{2,40}$/
  *   },
  *   'Password' : {
  *      'required' : true,
@@ -23,6 +24,10 @@
  *   },
  *   'Repeat-Password' : {
  *	'required' : true
+ *   }
+ *   'Content' : {
+ *      'pattern' : [ /^[A-Za-z0-9 ]{2,40}$/, 'The content field
+ *      must be between 2 and 40 characters' ]
  *   }
  * }
  *
@@ -46,8 +51,8 @@
  * 			of string
  * match        -       accepts name of an input which the
  *                      key input should match
- * pattern      -       accepts a regex pattern of conditions
- *                      the string should match
+ * pattern      -       accepts regex string or an array in
+ * 			the format: [ regex, message ]
  * url          -       accepts boolean true or false
  *
  * Please note that in the case of boolean attributes they are
@@ -62,7 +67,7 @@
  *
  * @author     Conor Mac Aoidh <conormacaoidh@gmail.com> http://blog.conormacaoidh.com
  * @license    The BSD License
- * @version    1.0
+ * @version    1.1
  */
 ( function( $ ){
 
@@ -119,27 +124,27 @@
                 	        for( var n in pieces[ i ] ){
 	                                switch( n ){
         	                                case "required":
-                	                                if( pieces[ i ][ n ] == true && $( "input[name=" + i + "]").length )
+                	                                if( pieces[ i ][ n ] == true && $( "input[name=" + i + "]").length != 0 )
                         	                                this.required_f.push( i );
                                 	        break;
                                         	case "pattern":
-	                                                if( $( "input[name=" + i + "]" ).length )
+	                                                if( $( "input[name=" + i + "]" ).length != 0 )
         	                                                this.pattern_f[ i ] = pieces[ i ][ n ];
                 	                        break;
                         	                case "email":
-                                	                if( pieces[ i ][ n ] == true && $( "input[name=" + i + "]" ).length )
+                                	                if( pieces[ i ][ n ] == true && $( "input[name=" + i + "]" ).length != 0 )
                                         	                this.email_f.push( i );
 	                                        break;
         	                                case "minlength":
-                	                                if( $( "input[name=" + i + "]" ).length )
+                	                                if( $( "input[name=" + i + "]" ).length != 0 )
                         	                                this.minlength_f[ i ] = pieces[ i ][ n ];
                                 	        break;
 						case 'maxlength':
-                                                        if( $( "input[name=" + i + "]" ).length )
+                                                        if( $( "input[name=" + i + "]" ).length != 0 )
                                                                 this.maxlength_f[ i ] = pieces[ i ][ n ];
                                                 break;
                                         	case "match":
-	                                                if( $( "input[name=" + i + "]" ).length )
+	                                                if( $( "input[name=" + i + "]" ).length != 0 )
         	                                                this.match_f[ i ] = pieces[ i ][ n ];
                 	                        break;
                         	                case 'url':
@@ -336,18 +341,29 @@
 
 			for( var i in this.pattern_f ){
 
-			        if( typeof( this.pattern_f[ i ] ) != 'object' )
-			                pat = new RegExp( this.pattern_f[ i ] );
+				/**
+				 * check if array, or standard notaion is being used
+				 */
+				if( $.isArray( this.pattern_f[ i ] ) ){
+					var regex = this.pattern_f[ i ][ 0 ];
+					var message = this.pattern_f[ i ][ 1 ];
+				}
+				else{
+					var regex = this.pattern_f[ i ];
+					var message = 'The ' + i + ' field is not valid.';
+				}
+
+				/**
+				 * if its not a regex string then convert it to one
+				 */
+			        if( typeof( regex ) != 'object' )
+			                regex = new RegExp( regex );
 
 				var loc = $( "input[name=" + i + "]" );
 				loc.removeClass( 'error' );
 
-				if( this.pattern_f[ i ].test( loc.val( ) ) == false ){
-					/**
-					 * @todo add pattern_message field so that custom
-					 * error messages can be used for the pattern field 
-					 */
-					this.errors = 'The ' + i + ' field is not valid.';
+				if( regex.test( loc.val( ) ) == false ){
+					this.errors = message;
 			                loc.addClass( 'error' );
 					this.errorHandler( );
 					return false;

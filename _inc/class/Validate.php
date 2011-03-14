@@ -168,7 +168,7 @@ class Validate{
                                 	                array_push( $this->required_f, $selector );
 	                                break;
         	                        case "pattern":
-                	                        array_push( $this->pattern_f, array( $selector,$value ) );
+						$this->pattern_f{ $selector } = $value;
                         	        break;
                                 	case "email":
                                         	if( $value == true )
@@ -301,9 +301,26 @@ class Validate{
 	private function pattern( ){
 
                 foreach( $this->pattern_f as $field => $regex ){
-                        if( !isset( $_POST[ $regex[ 0 ] ] ) || preg_match( $regex[ 1 ], $_POST[ $regex[ 0 ] ] ) ){
-				$this->error = 7;
-                                $this->errorHandler( htmlspecialchars( $regex[ 0 ] ) );
+
+			/**
+			 * check if array, or normal notation
+			 * is being used
+			 */
+			if( is_array( $regex ) ){
+				$pattern = $regex[ 0 ];
+				$message = $regex[ 1 ];
+			}
+			else{
+				$pattern = $regex;
+				$message = 7;
+			}
+
+                        /**
+                         * if field is not valid, throw error 
+                         */
+                        if( !isset( $_POST[ $field ] ) || preg_match( $pattern, $_POST[ $field ] ) ){
+				$this->error = $message;
+                                $this->errorHandler( htmlspecialchars( $field ) );
                                 return false;
                         }
                 }
@@ -380,7 +397,7 @@ class Validate{
 	 */
 	private function url( ){
 
-                foreach( $url_f as $field ){
+                foreach( $this->url_f as $field ){
                         if( !filter_var( $_POST[ $field ], FILTER_VALIDATE_URL ) && $_POST[ $field ] != '' ){
 				$this->error = 10;
                                 $this->errorHandler( htmlspecialchars( $field ) );

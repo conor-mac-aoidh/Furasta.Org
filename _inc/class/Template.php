@@ -83,17 +83,7 @@ class Template {
 	 * @var mixed
 	 * @access public
 	 */
-	public $diagnosticMode;
-
-	/**
-	 * recache
-	 *
-	 * Will be true when diagnostic mode has been diabled.
-	 * 
-	 * @var mixed
-	 * @access public
-	 */
-	public $recache;
+	public $diagnosticMode = DIAGNOSTIC_MODE;
 	
         /**
          * title 
@@ -179,21 +169,6 @@ class Template {
 	public $cssSources=array();
 
 	/**
-	 * __construct
-	 *
-	 * Sets values for $this->recache and $this->diagnostic_mode 
-	 * 
-	 * @access private
-	 * @return void
-	 */
-	private function __construct( ){
-		global $SETTINGS;
-
-		$this->diagnosticMode = $SETTINGS[ 'diagnostic_mode' ];
-		$this->recache = $SETTINGS[ 'recache' ];
-	}
-
-	/**
 	 * getInstance 
 	 * 
 	 * @static
@@ -266,7 +241,7 @@ class Template {
 	 * register a runtime error by passing an id of the error
 	 * in the language file
 	 *
-	 * @param int $id of error in language file
+	 * @param int $id of error in language file or string if error is not in language file
 	 * @param params $params optional, can be string or array with multiple params
 	 * @access public
 	 * @return bool
@@ -277,6 +252,18 @@ class Template {
 
 		require_once HOME . 'admin/lang/en.php';
 
+		/**
+		 * if not numeric that means that an error is being
+		 * thrown without the use of the lang file 
+		 */
+		if( !is_numeric( $id ) ){
+			$this->runtimeError{ -1 } = $id;
+			return true;
+		}
+
+		/**
+		 * if error not in lang file print unknown error
+		 */
 		if( !isset( $lang_en[ $id ] ) ){
 			$this->runtimeError{ $id } = 'An unknown error occured.';
 			return false;
@@ -351,7 +338,7 @@ class Template {
 			return '';
 
 		$errors = '<div id="system-error">
-				<span class="right link" id="errors-close">close</span>
+				<span class="right link x-img" id="errors-close">&nbsp;</span>
 				<span id="dialog-alert-logo" style="float:left">&nbsp;</span>';
 
 		foreach( $this->runtimeError as $key => $error )
@@ -441,7 +428,7 @@ class Template {
 				cache( $cache_file, $content, 'JS' );
 
 			}
-			elseif( !cache_exists( $cache_file, 'JS' ) || $this->recache == 1 ){
+			elseif( !cache_exists( $cache_file, 'JS' ) ){
 	                        /**
         	                 * makes the SITEURL constant available
                 	         * in JavaScript so that files etc can
@@ -453,8 +440,6 @@ class Template {
 				$content = $packer->pack( );
 				cache( $cache_file, $content, 'JS');
 
-				if( $this->recache == 1 )
-	                                settings_rewrite( $GLOBALS[ 'SETTINGS' ], $GLOBALS[ 'DB' ], $GLOBALS[ 'PLUGINS' ], array( 'RECACHE' => 0 ) );
 	                }
 
 			$url = SITEURL . '_inc/js/js.php?' . $cache_file;

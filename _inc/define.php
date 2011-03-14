@@ -58,11 +58,6 @@ if( ! mysql_select_db( $DB['name'], $connect ) )
 $SETTINGS = stripslashes_array( $SETTINGS );
 
 /**
- * define the diagnostic mode constant 
- */
-define( 'DIAGNOSTIC_MODE', $SETTINGS[ 'diagnostic_mode' ] );
-
-/**
  * start session and get instance of the Plugin class 
  * cycle through active plugins and require plugin files
  * finally refactor the plugins according to the $importance var

@@ -45,12 +45,12 @@ query('create table '.$users.' (id int auto_increment primary key,name text,emai
 query('insert into '.$users.' values(0,"'.$_SESSION['user']['name'].'","'.$_SESSION['user']['email'].'","'.$_SESSION['user']['pass'].'","","_superuser","'.$hash.'","")');
 
 query( 'drop table if exists ' . $groups );
-query( 'create table ' . $groups . ' ( id int auto_increment primary key, name text, privellages text )' );
+query( 'create table ' . $groups . ' ( id int auto_increment primary key, name text, perm text )' );
 query( 'insert into ' . $groups . ' values ( "", "Users", "e,c,d,t,o,s,u" )' );
 
 query('drop table if exists '.$trash);
 query('create table '.$trash.' (id int auto_increment primary key,name text,content text,slug text,template text,type text,edited date,user text,position int,parent int,perm text,home int,display int)');
-query('insert into '.$trash.' values(0,"Example Page","Sample page content.","Example-Page","Default","Normal","'.date('Y-m-d').'","Installer",1,"","Public",1,1)');
+query('insert into '.$trash.' values(0,"Example Page","Sample page content.","Example-Page","Default","Normal","'.date('Y-m-d').'","Installer",1,"","|",1,1)');
 
 $filecontents='<?php
 define(\'PAGES\',\''.$pages.'\');

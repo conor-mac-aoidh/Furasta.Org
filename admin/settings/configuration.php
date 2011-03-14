@@ -46,17 +46,20 @@ if( isset( $_POST[ 'settings_general' ] ) && $valid == true ){
 	 * diagnostic mode is to be enabled
 	 */
 	if( @$_POST[ 'DiagnosticMode' ] == 1 ){
-		$SETTINGS[ 'diagnostic_mode' ] = 1;
-		$SETTINGS[ 'recache' ] = 1;
+		$constants[ 'DIAGNOSTIC_MODE' ] = 1;
 		$Template->diagnosticMode = 1;
 	}
 	else{
-		$SETTINGS[ 'diagnostic_mode' ] = 0;
+		$constants[ 'DIAGNOSTOC_MODE' ] = 0;
 		$Template->diagnosticMode = 0;
 	}
 
+	/**
+	 * if the siteurl has changes, then add the new
+	 * value to the constants array
+	 */
 	if( $url != SITEURL )
-		$constants = array_merge( $constants, array( 'SITEURL' => $url ) );
+		$constants[ 'SITEURL' ] = $url;
 
         /**
          * rewrite the settings file 

@@ -56,8 +56,15 @@ switch( $overview_item ){
 		$pages = rows( 'select id,name,content,edited,perm from ' . TRASH . ' order by edited desc limit 5' );
 		foreach( $pages as $page ){
 
+			/**
+			 * get admin perm from page perm string
+			 * perm rules are in _inc/class/User.php
+			 */
 			$perm = explode( '|', $page[ 'perm' ] );
 
+			/**
+			 * check if user has permission to view page
+			 */
 			if( $User->pagePerm( $perm[ 1 ] ) )
 		        		echo '<tr><td><span>' . date( "F j, Y", strtotime( $page[ 'edited' ] ) ) . '
 		        		</span><a href="pages.php?page=trash"><h3>' . $page[ 'name' ] . '</h3></a>
@@ -68,7 +75,6 @@ switch( $overview_item ){
 	break;
 	case 'recently-trashed':
 		echo '<table class="row-color">';
-
 		$pages = rows( 'select id,name,content,edited from ' . PAGES . ' order by edited desc limit 5' );
 		foreach( $pages as $page ){
         		echo '<tr><td><span>' . date( "F j,Y", strtotime( $page[ 'edited' ] ) ) . '</span><a
@@ -118,6 +124,12 @@ switch( $overview_item ){
 		echo '</table>';
 	break;
 	default:
-		echo $Plugins->adminOverviewItemContent( $overview_item );
+		/**
+		 * the template class is used here more as a matter
+		 * of consistency than anything else
+		 */
+		$Template = Template::getInstance( );
+		$Plugins->adminOverviewItemContent( $overview_item );
+		require HOME . 'admin/layout/ajax.php';
 }
 ?>

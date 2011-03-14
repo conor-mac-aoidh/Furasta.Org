@@ -42,13 +42,24 @@ function __autoload( $class_name ){
  * @access public
  * @return void
  */
-function error($error,$title='Error'){
-	$Template=Template::getInstance(true);
-	$Template->add('content','<h1>'.$title.'</h1>');
-	$Template->add('content','<p>'.$error.'</p>');
-	$Template->add('title','Fatal Error');
-	require HOME.'admin/layout/error.php';
+function error( $error, $title = 'Error' ){
+
+	/**
+	 * if ajax loaded then error output
+	 * will be dfferent
+	 */
+	if( defined( 'AJAX_LOADED' ) ){
+		echo '<span style="font-weight:bold">' . $title . '</span><br />' . $error;
+		exit;	
+	}
+
+	$Template = Template::getInstance( true );
+	$Template->add( 'content', '<h1>' . $title . '</h1>' );
+	$Template->add( 'content', '<p>' . $error . '</p>' );
+	$Template->add( 'title', 'Fatal Error' );
+	require HOME . 'admin/layout/error.php';
 	exit;
+
 }
 
 /**
@@ -214,6 +225,7 @@ function settings_rewrite( $SETTINGS, $DB, $PLUGINS, $constants = array( ) ){
 		'GROUPS' => GROUPS,
 		'SITEURL' => SITEURL,
 		'USERFILES' => USERFILES,
+		'DIAGNOSTIC_MODE' => DIAGNOSTIC_MODE,
 	);
 
 	$constants = array_merge( $default_constants, $constants );
